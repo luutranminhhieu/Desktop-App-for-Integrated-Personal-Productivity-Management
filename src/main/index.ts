@@ -1,6 +1,7 @@
 import { app, BrowserWindow } from 'electron';
 import { connectDB } from './db';
 import { join } from 'path';
+import { registerAuthIPC } from './ipc/auth.ipc';
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -29,6 +30,9 @@ function createWindow(): void {
 app.whenReady().then(async () => {
   // Connect to MongoDB
   await connectDB();
+
+  // Register IPC Handlers
+  registerAuthIPC();
   
   // Set app user model id for windows
   if (process.platform === 'win32') {
