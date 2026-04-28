@@ -13,7 +13,7 @@ export class AuthService {
    * @param name User's name
    * @returns JWT token and user info
    */
-  public async register(email: string, password: string, name: string) {
+  public async register(email: string, password: string, name: string): Promise<{ token: string; user: { id: string; email: string; name: string } }> {
     if (!email || !password || !name) {
       throw new Error('Email, password, and name are required.');
     }
@@ -48,7 +48,7 @@ export class AuthService {
     return {
       token,
       user: {
-        id: savedUser._id,
+        id: String(savedUser._id),
         email: savedUser.email,
         name: savedUser.name,
       },
@@ -61,7 +61,7 @@ export class AuthService {
    * @param password User's plain text password
    * @returns JWT token and user info
    */
-  public async login(email: string, password: string) {
+  public async login(email: string, password: string): Promise<{ token: string; user: { id: string; email: string; name: string } }> {
     if (!email || !password) {
       throw new Error('Email and password are required.');
     }
@@ -90,7 +90,7 @@ export class AuthService {
     return {
       token,
       user: {
-        id: user._id,
+        id: String(user._id),
         email: user.email,
         name: user.name,
       },
@@ -102,11 +102,11 @@ export class AuthService {
    * @param token JWT string
    * @returns Decoded payload if valid
    */
-  public verifyToken(token: string) {
+  public verifyToken(token: string): string | jwt.JwtPayload {
     try {
       const decoded = jwt.verify(token, JWT_SECRET);
       return decoded;
-    } catch (error) {
+    } catch {
       throw new Error('Invalid or expired token.');
     }
   }
