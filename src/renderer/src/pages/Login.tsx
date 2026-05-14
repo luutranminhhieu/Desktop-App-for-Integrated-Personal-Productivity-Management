@@ -63,7 +63,7 @@ const Login = (): JSX.Element => {
               >
                 bolt
               </span>
-              <span className="text-[24px] font-black tracking-tight text-white">FocusHub</span>
+              <span className="text-[24px] font-black tracking-tight text-white">Promos</span>
             </div>
 
             <div className="mt-8">
@@ -112,13 +112,6 @@ const Login = (): JSX.Element => {
         </section>
 
         <section className="flex-1 flex items-center justify-center p-6 bg-white relative overflow-hidden">
-          <div className="absolute top-8 right-8 opacity-60 hidden lg:block">
-            <img
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPGLWg2xo44OoOVyV3jPHA721a8l7NOxlZHsgII-XTuhZCqvAM3neLuE8OAaWGEoxQQo-3ZuJJ0qCZqJqPXi1OR0qQCleBTiTXqlxHvf_aKhyYklrktTtJGzU4NPbJAE3PBJbnJmlttaZwUuCQcZnZn0bTpHJn_8wZ89IvvNr4jqH8JPnBuoPrBZ4g82yGD2hr6qX5_ucGXAI4qbvFYnNIRb13CaHWxeJnh_R00jiaSZIVtYeLN-3erlUlT82zcrPzY45yc0zR0hA"
-              alt="Preview"
-              className="w-[180px] rounded-lg grayscale"
-            />
-          </div>
 
           <div className="w-full max-w-[400px]">
             <div className="md:hidden flex items-center gap-2 mb-8">
@@ -130,12 +123,12 @@ const Login = (): JSX.Element => {
                   bolt
                 </span>
               </div>
-              <span className="text-[18px] font-black text-[#4F3CC9]">FocusHub</span>
+              <span className="text-[18px] font-black text-[#4F3CC9]">Promos</span>
             </div>
 
             <div className="mb-8">
-              <h1 className="text-[24px] font-semibold text-[#1A1A2E] mb-2">Chào mừng trở lại</h1>
-              <p className="text-[14px] text-[#6B7280]">Đăng nhập để tiếp tục với FocusHub</p>
+              <h1 className="text-[24px] font-semibold text-[#1A1A2E] mb-2">Welcome</h1>
+              <p className="text-[14px] font-text-[#6B7280]">Sign in to continue with Promos</p>
             </div>
 
             {error && (
@@ -206,14 +199,9 @@ const Login = (): JSX.Element => {
                 disabled={loading}
                 className="w-full h-[44px] bg-[#4F3CC9] hover:bg-[#3A2D9E] text-white font-semibold rounded-lg transition-all active:scale-[0.98] disabled:opacity-60"
               >
-                {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+                {loading ? 'Waiting for login' : 'Sign in'}
               </button>
             </form>
-
-            <div className="relative flex items-center justify-center my-6">
-              <div className="w-full border-t border-[#E5E7EB]"></div>
-              <span className="absolute px-4 bg-white text-[12px] text-[#6B7280]">hoặc</span>
-            </div>
 
             <button
               type="button"
@@ -237,7 +225,7 @@ const Login = (): JSX.Element => {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-              Login with google
+              Sign in with google
             </button>
 
             <div className="mt-6 text-center text-[14px] text-[#6B7280]">
