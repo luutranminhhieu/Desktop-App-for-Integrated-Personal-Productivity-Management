@@ -1,12 +1,10 @@
 @import './base.css';
 
 body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background-image: url('./wavy-lines.svg');
-  background-size: cover;
+  margin: 0;
+  min-height: 100vh;
+  background-color: #F5F4FA;
+  color: #1A1A2E;
   user-select: none;
 }
 
@@ -27,11 +25,7 @@ code {
 }
 
 #root {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  margin-bottom: 80px;
+  min-height: 100vh;
 }
 
 .logo {
