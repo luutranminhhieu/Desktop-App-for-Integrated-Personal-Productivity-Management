@@ -1,5 +1,5 @@
 {
-  "name": "desktop-app-for-integrated-personal-productivity-management",
+  "name": "promos",
   "version": "1.0.0",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
