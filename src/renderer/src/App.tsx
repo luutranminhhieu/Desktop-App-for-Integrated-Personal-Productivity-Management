@@ -1,8 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import { JSX } from 'react';
 
-function ProtectedRoute({ children }: { children: React.JSX.Element }) {
+function ProtectedRoute({ children }: { children: React.JSX.Element }): JSX.Element {
   const token = localStorage.getItem('token');
   if (!token) {
     return <Navigate to="/login" replace />;
@@ -10,7 +11,7 @@ function ProtectedRoute({ children }: { children: React.JSX.Element }) {
   return children;
 }
 
-function MainApp() {
+function MainApp(): JSX.Element {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold">Welcome to Main App</h1>
