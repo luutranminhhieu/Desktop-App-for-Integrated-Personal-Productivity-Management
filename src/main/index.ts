@@ -39,7 +39,7 @@ app.whenReady().then(async () => {
   
   // Set app user model id for windows
   if (process.platform === 'win32') {
-    app.setAppUserModelId('com.electron');
+    app.setAppUserModelId('com.promos.app');
   }
 
   createWindow();

@@ -34,10 +34,11 @@ const Login = (): JSX.Element => {
         }
         navigate('/');
       } else {
-        setError(response.error || 'Đăng nhập thất bại. Vui lòng thử lại.');
+        setError(response.error || 'Failed to sign in. Please');
       }
-    } catch (err: any) {
-      setError(err.message || 'Có lỗi xảy ra trong quá trình đăng nhập.');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error occurred during sign in.';
+      setError(errorMessage || 'Error occurred during sign in.');
     } finally {
       setLoading(false);
     }
@@ -55,7 +56,7 @@ const Login = (): JSX.Element => {
             </svg>
           </div>
 
-          <div className="relative z-10">
+          {/* <div className="relative z-10"> */}
             <div className="flex items-center gap-2">
               <span
                 className="material-symbols-outlined text-white text-[32px]"
@@ -66,16 +67,16 @@ const Login = (): JSX.Element => {
               <span className="text-[24px] font-black tracking-tight text-white">Promos</span>
             </div>
 
-            <div className="mt-8">
+            {/* <div className="mt-8">
               <h2 className="text-[32px] font-extrabold text-white leading-tight mb-4">
                 Làm chủ thời gian.<br />Tập trung vào điều quan trọng.
               </h2>
               <p className="text-[14px] text-[#EDE9FF] opacity-80 max-w-[320px]">
                 Nâng cao hiệu suất công việc với hệ sinh thái quản lý thông minh được thiết kế cho sự tập trung tuyệt đối.
               </p>
-            </div>
+            </div> */}
 
-            <div className="mt-10 grid grid-cols-1 gap-6">
+            {/* <div className="mt-10 grid grid-cols-1 gap-6">
               {[
                 {
                   icon: 'calendar_today',
@@ -104,10 +105,10 @@ const Login = (): JSX.Element => {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
 
           <footer className="relative z-10 pt-4 border-t border-white/10">
-            <p className="text-[12px] text-white/40">Promos © 2026 Copyright </p>
+            <p className="text-[12px] text-white/40">Promos © 2026 Copyright</p>
           </footer>
         </section>
 
@@ -202,6 +203,14 @@ const Login = (): JSX.Element => {
                 {loading ? 'Waiting for login' : 'Sign in'}
               </button>
             </form>
+
+            <div className="mb-8 flex items-center gap-4 ">
+              <div className="flex-1 h-px bg-[#E5E7EB] "></div>
+              <p className="text-[12px] font-medium text-[#6B7280] whitespace-nowrap">
+                Other option
+              </p>
+              <div className="flex-1 h-px bg-[#E5E7EB]"></div>
+            </div>
 
             <button
               type="button"

@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { JSX, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const ForgotPassword = () => {
-  const [email, setEmail] = useState('');
+const ForgotPassword = (): JSX.Element => {
+  const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = (event: React.FormEvent): void => {
     event.preventDefault();
     setSubmitted(true);
   };
@@ -19,19 +19,26 @@ const ForgotPassword = () => {
 
       <main className="w-full max-w-[420px] bg-white rounded-xl p-[40px] shadow-soft border border-[#E5E7EB]">
         {!submitted ? (
-          <div className="flex flex-col items-center text-center">
-            <div className="mb-6 flex items-center justify-center w-[80px] h-[80px] rounded-full bg-[#EDE9FF]">
-              <span className="material-symbols-outlined text-[48px] text-[#4F3CC9]">mail</span>
+          <div className="flex flex-col gap-2 items-center text-center">
+            <div className="flex items-center justify-center w-[80px] h-[80px] rounded-full bg-[#EDE9FF]">
+              <span className="material-symbols-outlined text-[48px] text-[#4F3CC9]">
+                mail
+              </span>
             </div>
-            <h1 className="text-[24px] font-semibold text-[#1A1A2E] mb-2">Quên mật khẩu?</h1>
-            <p className="text-[14px] text-[#6B7280] mb-8">
-              Nhập email của bạn. Chúng tôi sẽ gửi link đặt lại mật khẩu.
+            <h1 className="text-[24px] font-semibold text-[#1A1A2E]">
+              Forgot your password?
+            </h1>
+            <p className="text-[14px] text-[#6B7280]">
+              Enter your email. We will send you a reset password link.
             </p>
 
             <form className="w-full space-y-6" onSubmit={handleSubmit}>
               <div className="text-left">
-                <label className="block text-[12px] font-medium text-[#6B7280] mb-2" htmlFor="email">
-                  Địa chỉ email
+                <label
+                  className="block text-[12px] font-medium text-[#6B7280] mb-2"
+                  htmlFor="email"
+                >
+                  Your email address
                 </label>
                 <input
                   id="email"
@@ -46,18 +53,19 @@ const ForgotPassword = () => {
               </div>
               <button
                 type="submit"
-                className="w-full h-[44px] bg-[#4F3CC9] hover:bg-[#3A2D9E] text-white font-medium rounded-lg transition-colors active:scale-[0.98]"
+                className="w-full mt-2 h-[44px] bg-[#4F3CC9] hover:bg-[#3A2D9E] text-white font-medium rounded-lg transition-colors active:scale-[0.98]"
               >
-                Gửi link đặt lại
+                Confirm your email
               </button>
             </form>
 
-            <Link
-              to="/login"
-              className="mt-8 flex items-center gap-2 text-[14px] text-[#6B7280] hover:text-[#4F3CC9] transition-colors"
-            >
-              <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-              <span className="underline underline-offset-4">Quay lại đăng nhập</span>
+            <Link to='/login' className=" mt-2 flex items-center gap-2 text-[14px] text-[#6B7280] hover:text-[#4F3CC9] transition-colors">
+              <span className="material-symbols-outlined text-[18px]">
+                arrow_back
+              </span>
+              <span className="underline underline-offset-4">
+                Back to sign in
+              </span>
             </Link>
           </div>
         ) : (
@@ -70,11 +78,15 @@ const ForgotPassword = () => {
                 check_circle
               </span>
             </div>
-            <h1 className="text-[24px] font-semibold text-[#1A1A2E] mb-2">Kiểm tra email của bạn</h1>
+            <h1 className="text-[24px] font-semibold text-[#1A1A2E] mb-2">
+              Check you email
+            </h1>
             <p className="text-[14px] text-[#6B7280] mb-8">
-              Chúng tôi đã gửi link đến{' '}
-              <span className="font-semibold text-[#1A1A2E]">{email || 'example@email.com'}</span>. Vui lòng kiểm tra hộp thư đến
-              (và cả thư rác).
+              We have send the mail to you{" "}
+              <span className="font-semibold text-[#1A1A2E]">
+                {email || "example@email.com"}
+              </span>
+              . Please check your email (even spam).
             </p>
 
             <div className="w-full space-y-4">
@@ -82,35 +94,21 @@ const ForgotPassword = () => {
                 className="w-full h-[44px] border border-[#E5E7EB] text-[#1A1A2E] font-medium rounded-lg hover:bg-[#F6F2FE] transition-colors active:scale-[0.98]"
                 type="button"
               >
-                Gửi lại email
+                Send again
               </button>
               <button
                 className="block w-full text-center text-[14px] text-[#6B7280] hover:text-[#4F3CC9]"
                 type="button"
                 onClick={() => setSubmitted(false)}
               >
-                <span className="underline underline-offset-4">Thử một email khác</span>
+                <span className="underline underline-offset-4">
+                  Try another email
+                </span>
               </button>
             </div>
-
-            <Link
-              to="/login"
-              className="mt-8 flex items-center gap-2 text-[14px] text-[#6B7280] hover:text-[#4F3CC9] transition-colors"
-            >
-              <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-              <span className="underline underline-offset-4">Quay lại đăng nhập</span>
-            </Link>
           </div>
         )}
       </main>
-
-      <div className="absolute bottom-4 right-4 opacity-20 hidden md:block">
-        <img
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnJwmtuzjdZjtuct2JSQ4YV66uA5wLfYuwerXOXXMCC_lf5RR4DEL3qIwOrh9POwVmmau4ju-g5ljDyPNUMNzGKIbVAbpWS5fOb-jdOqiiO9drmJxYO0cqOozh8-cRP8dHqnjxwDTUJhttC9IPiEDXh-EzH9FAIujDoaG82ojr8CcEBVBKHm_2OBG-dRDHgPHG_lt_vDe5_BC-9Kg0CPTgZz5vHiMH5I0C21hEjQrQm36-i5VO3a7QQr7Bz5XchCaBmJfb5Ogri1Q"
-          alt="Office workspace"
-          className="w-[200px] rounded-lg grayscale"
-        />
-      </div>
     </div>
   );
 };

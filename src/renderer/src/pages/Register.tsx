@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-const Register = () => {
+const Register = (): React.ReactElement => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,17 +20,17 @@ const Register = () => {
     }
   }, [navigate]);
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent): Promise<void> => {
     e.preventDefault();
     setError('');
 
     if (password !== confirmPassword) {
-      setError('Mật khẩu xác nhận không khớp.');
+      setError('Passwords do not match.');
       return;
     }
 
     if (!termsAccepted) {
-      setError('Vui lòng đồng ý với Điều khoản sử dụng và Chính sách bảo mật.');
+      setError('Please agree to the Terms of Service and Privacy Policy.');
       return;
     }
 
@@ -43,10 +43,10 @@ const Register = () => {
         localStorage.setItem('user', JSON.stringify(response.data.user));
         navigate('/');
       } else {
-        setError(response.error || 'Đăng ký thất bại. Vui lòng thử lại.');
+        setError(response.error || 'Register failed. Please try again.');
       }
-    } catch (err: any) {
-      setError(err.message || 'Có lỗi xảy ra trong quá trình đăng ký.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'An error occurred during the register.');
     } finally {
       setLoading(false);
     }
@@ -64,7 +64,7 @@ const Register = () => {
             </svg>
           </div>
 
-          <div className="relative z-10">
+          {/* <div className="relative z-10"> */}
             <div className="flex items-center gap-2">
               <span
                 className="material-symbols-outlined text-white text-[32px]"
@@ -75,7 +75,7 @@ const Register = () => {
               <span className="text-[24px] font-black tracking-tight text-white">FocusHub</span>
             </div>
 
-            <div className="mt-10">
+            {/* <div className="mt-10">
               <h2 className="text-[32px] font-extrabold text-white leading-tight mb-4">
                 Làm chủ thời gian.<br />Tập trung vào điều quan trọng.
               </h2>
@@ -83,10 +83,10 @@ const Register = () => {
                 Giải pháp tối ưu giúp bạn duy trì trạng thái tập trung và hoàn thành mọi mục tiêu trong công việc.
               </p>
             </div>
-          </div>
+          </div> */}
 
           <div className="relative z-10">
-            <div className="grid grid-cols-3 gap-6 mb-10">
+            {/* <div className="grid grid-cols-3 gap-6 mb-10">
               {[
                 { icon: 'calendar_today', label: 'Lịch biểu' },
                 { icon: 'timer', label: 'Tập trung' },
@@ -99,10 +99,10 @@ const Register = () => {
                   <span className="text-[12px] text-[#EDE9FF]">{item.label}</span>
                 </div>
               ))}
-            </div>
+            </div> */}
 
             <footer className="pt-4 border-t border-white/10">
-              <p className="text-[12px] text-white/40">© 2023 FocusHub Productivity Suite</p>
+              <p className="text-[12px] text-white/40">Promos © 2026 Copyright </p>
             </footer>
           </div>
         </section>
@@ -110,8 +110,7 @@ const Register = () => {
         <section className="flex-1 flex items-center justify-center p-6 bg-white">
           <div className="w-full max-w-[400px]">
             <div className="mb-8">
-              <h1 className="text-[24px] font-semibold text-[#1A1A2E] mb-2">Tạo tài khoản mới</h1>
-              <p className="text-[14px] text-[#6B7280]">Bắt đầu hành trình nâng cao năng suất của bạn ngay hôm nay.</p>
+              <h1 className="text-[24px] font-semibold text-[#1A1A2E] mb-2">Create a New Account</h1>
             </div>
 
             {error && (
@@ -123,10 +122,10 @@ const Register = () => {
 
             <form className="flex flex-col gap-4" onSubmit={handleRegister}>
               <div className="flex flex-col gap-2">
-                <label className="text-[12px] font-medium text-[#6B7280]">Họ và tên</label>
+                <label className="text-[12px] font-medium text-[#6B7280]">Username</label>
                 <input
                   className="w-full h-[44px] px-4 rounded-lg border border-[#E5E7EB] focus:ring-4 focus:ring-[#4F3CC9]/15 focus:border-[#4F3CC9] transition-all outline-none text-[14px]"
-                  placeholder="Nguyễn Văn A"
+                  placeholder="luutranminhhieu"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
@@ -146,7 +145,7 @@ const Register = () => {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-[12px] font-medium text-[#6B7280]">Mật khẩu</label>
+                <label className="text-[12px] font-medium text-[#6B7280]">Password</label>
                 <div className="relative">
                   <input
                     className="w-full h-[44px] px-4 pr-12 rounded-lg border border-[#E5E7EB] focus:ring-4 focus:ring-[#4F3CC9]/15 focus:border-[#4F3CC9] transition-all outline-none text-[14px]"
@@ -173,7 +172,7 @@ const Register = () => {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-[12px] font-medium text-[#6B7280]">Xác nhận mật khẩu</label>
+                <label className="text-[12px] font-medium text-[#6B7280]">Confirm your password</label>
                 <div className="relative">
                   <input
                     className="w-full h-[44px] px-4 pr-12 rounded-lg border border-[#E5E7EB] focus:ring-4 focus:ring-[#4F3CC9]/15 focus:border-[#4F3CC9] transition-all outline-none text-[14px]"
@@ -201,13 +200,13 @@ const Register = () => {
                   onChange={(e) => setTermsAccepted(e.target.checked)}
                 />
                 <label className="text-[13px] text-[#6B7280] leading-normal">
-                  Tôi đồng ý với{' '}
+                  I agree with{' '}
                   <a className="text-[#4F3CC9] hover:underline" href="#">
-                    Điều khoản sử dụng
+                    Terms of Service
                   </a>{' '}
-                  và{' '}
+                  and{' '}
                   <a className="text-[#4F3CC9] hover:underline" href="#">
-                    Chính sách bảo mật
+                    Privacy Policy
                   </a>
                 </label>
               </div>
@@ -217,44 +216,18 @@ const Register = () => {
                 disabled={loading}
                 className="w-full h-[44px] bg-[#4F3CC9] text-white font-semibold rounded-lg hover:bg-[#3A2D9E] active:scale-[0.98] transition-all disabled:opacity-60"
               >
-                {loading ? 'Đang tạo tài khoản...' : 'Tạo tài khoản'}
+                {loading ? 'Creating account' : 'Account is created'}
               </button>
 
               <div className="text-center mt-2">
                 <p className="text-[14px] text-[#6B7280]">
-                  Đã có tài khoản?{' '}
+                  Already have an account?{' '}
                   <Link className="text-[#4F3CC9] font-semibold hover:underline" to="/login">
-                    Đăng nhập ngay
+                    Sign in now
                   </Link>
                 </p>
               </div>
             </form>
-
-            <div className="mt-8">
-              <div className="relative flex items-center justify-center mb-4">
-                <div className="w-full border-t border-[#E5E7EB]"></div>
-                <span className="absolute px-4 bg-white text-[12px] text-[#6B7280]">Hoặc đăng ký bằng</span>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <button className="flex items-center justify-center gap-2 h-[44px] border border-[#E5E7EB] rounded-lg hover:bg-[#F5F4FA] transition-colors text-[14px]">
-                  <img
-                    alt="Google Logo"
-                    className="w-5 h-5"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDg3mcufAqWwgxunoKBiWSoFGNOnBByGirSdqUEnbmmnkhntV4UVku9Ro6vdoKHm4S7j2mDOlzKLcTWnsphdQhXVOIdIPDxuq9r2ewCuVB0u7Z2kJuyU4_x06fKq4PWevcdQrk75BxdVURvNueri1qCVPdEH-LAXH_feUfLxkG7W8tW19P-NdBMle8K6Aie6LjqB4s7x08njgKpchHmTTAgJg8Od0ki4F3sraiyBYdLs3RIgV39jJtML79adpCC5yZkXRJGYe2OEpY"
-                  />
-                  Google
-                </button>
-                <button className="flex items-center justify-center gap-2 h-[44px] border border-[#E5E7EB] rounded-lg hover:bg-[#F5F4FA] transition-colors text-[14px]">
-                  <span
-                    className="material-symbols-outlined text-[#1A1A2E]"
-                    style={{ fontVariationSettings: "'FILL' 1" }}
-                  >
-                    ios
-                  </span>
-                  Apple
-                </button>
-              </div>
-            </div>
           </div>
         </section>
       </main>
