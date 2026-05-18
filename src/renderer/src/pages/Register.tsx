@@ -64,7 +64,6 @@ const Register = (): React.ReactElement => {
             </svg>
           </div>
 
-          {/* <div className="relative z-10"> */}
             <div className="flex items-center gap-2">
               <span
                 className="material-symbols-outlined text-white text-[32px]"
@@ -72,35 +71,10 @@ const Register = (): React.ReactElement => {
               >
                 bolt
               </span>
-              <span className="text-[24px] font-black tracking-tight text-white">FocusHub</span>
+              <span className="text-[24px] font-black tracking-tight text-white">Promos</span>
             </div>
-
-            {/* <div className="mt-10">
-              <h2 className="text-[32px] font-extrabold text-white leading-tight mb-4">
-                Làm chủ thời gian.<br />Tập trung vào điều quan trọng.
-              </h2>
-              <p className="text-[14px] text-[#EDE9FF] opacity-80 max-w-[320px]">
-                Giải pháp tối ưu giúp bạn duy trì trạng thái tập trung và hoàn thành mọi mục tiêu trong công việc.
-              </p>
-            </div>
-          </div> */}
 
           <div className="relative z-10">
-            {/* <div className="grid grid-cols-3 gap-6 mb-10">
-              {[
-                { icon: 'calendar_today', label: 'Lịch biểu' },
-                { icon: 'timer', label: 'Tập trung' },
-                { icon: 'description', label: 'Ghi chú' },
-              ].map((item) => (
-                <div key={item.label} className="flex flex-col gap-2">
-                  <div className="w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center">
-                    <span className="material-symbols-outlined text-white">{item.icon}</span>
-                  </div>
-                  <span className="text-[12px] text-[#EDE9FF]">{item.label}</span>
-                </div>
-              ))}
-            </div> */}
-
             <footer className="pt-4 border-t border-white/10">
               <p className="text-[12px] text-white/40">Promos © 2026 Copyright </p>
             </footer>
@@ -162,12 +136,6 @@ const Register = (): React.ReactElement => {
                   >
                     <span className="material-symbols-outlined text-[20px]">visibility</span>
                   </button>
-                </div>
-                <div className="flex gap-2 mt-1">
-                  <div className="password-strength-bar flex-1 bg-[#EF4444]"></div>
-                  <div className="password-strength-bar flex-1 bg-[#F59E0B]"></div>
-                  <div className="password-strength-bar flex-1 bg-[#4F3CC9]"></div>
-                  <div className="password-strength-bar flex-1 bg-[#10B981]"></div>
                 </div>
               </div>
 

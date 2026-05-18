@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 const ResetPassword = (): React.JSX.Element => {
   const [password, setPassword] = useState('');
@@ -7,7 +7,11 @@ const ResetPassword = (): React.JSX.Element => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get('token') || '';
 
   useEffect(() => {
     if (!showSuccess) {
@@ -21,12 +25,34 @@ const ResetPassword = (): React.JSX.Element => {
     return () => window.clearTimeout(timer);
   }, [showSuccess, navigate]);
 
-  const handleSubmit = (event: React.FormEvent): void => {
+  const handleSubmit = async (event: React.FormEvent): Promise<void> => {
     event.preventDefault();
-    if (!password || password !== confirmPassword) {
+    if (!token) {
+      setError('Reset link is invalid or missing.');
       return;
     }
-    setShowSuccess(true);
+
+    if (!password || password !== confirmPassword) {
+      setError('Passwords do not match.');
+      return;
+    }
+
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await window.api.auth.resetPassword(token, password);
+      if (response.success) {
+        setShowSuccess(true);
+      } else {
+        setError(response.error || 'Reset password failed.');
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Reset password failed.';
+      setError(errorMessage || 'Reset password failed.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -41,7 +67,7 @@ const ResetPassword = (): React.JSX.Element => {
               bolt
             </span>
           </div>
-          <h2 className="text-[24px] font-semibold text-[#4F3CC9] tracking-tight">FocusHub</h2>
+          <h2 className="text-[24px] font-semibold text-[#4F3CC9] tracking-tight">Promos</h2>
         </div>
 
         {showSuccess && (
@@ -49,6 +75,15 @@ const ResetPassword = (): React.JSX.Element => {
             <span className="material-symbols-outlined text-[#10B981]">check_circle</span>
             <p className="text-[14px] text-[#10B981] font-medium">
               Update successful! Redirecting to sign in page...
+            </p>
+          </div>
+        )}
+
+        {error && (
+          <div className="mb-6 bg-[#EF4444]/10 border border-[#EF4444]/20 p-4 rounded-lg flex items-start gap-3">
+            <span className="material-symbols-outlined text-[#EF4444]">error</span>
+            <p className="text-[14px] text-[#EF4444] font-medium">
+              {error}
             </p>
           </div>
         )}
@@ -63,7 +98,7 @@ const ResetPassword = (): React.JSX.Element => {
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-2">
-              <label className="text-[12px] font-medium text-[#1A1A2E] uppercase tracking-wider block" htmlFor="new-password">
+              <label className="text-[12px] font-medium text-[#1A1A2E] tracking-wider block" htmlFor="new-password">
                 New Password
               </label>
               <div className="relative">
@@ -84,19 +119,10 @@ const ResetPassword = (): React.JSX.Element => {
                   <span className="material-symbols-outlined">visibility</span>
                 </button>
               </div>
-              <div className="pt-2">
-                <div className="flex gap-1 h-[6px]">
-                  <div className="flex-1 rounded-full bg-[#EF4444]"></div>
-                  <div className="flex-1 rounded-full bg-[#F59E0B]"></div>
-                  <div className="flex-1 rounded-full bg-[#4F3CC9]"></div>
-                  <div className="flex-1 rounded-full bg-[#10B981]"></div>
-                </div>
-                <p className="text-[12px] text-[#10B981] mt-1">Mật khẩu mạnh</p>
-              </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-[12px] font-medium text-[#1A1A2E] uppercase tracking-wider block" htmlFor="confirm-password">
+              <label className="text-[12px] font-medium text-[#1A1A2E] tracking-wider block" htmlFor="confirm-password">
                 Confirm New Password
               </label>
               <div className="relative">
@@ -121,9 +147,10 @@ const ResetPassword = (): React.JSX.Element => {
 
             <button
               type="submit"
-              className="w-full bg-[#4F3CC9] hover:bg-[#3A2D9E] text-white h-[48px] rounded-lg font-medium transition-all active:scale-[0.98] shadow-md shadow-[#4F3CC9]/20"
+              className="w-full bg-[#4F3CC9] hover:bg-[#3A2D9E] text-white h-[48px] rounded-lg font-medium transition-all active:scale-[0.98] shadow-md shadow-[#4F3CC9]/20 disabled:opacity-60"
+              disabled={loading}
             >
-              Update Password
+              {loading ? 'Updating...' : 'Update Password'}
             </button>
 
             <div className="pt-2 text-center">

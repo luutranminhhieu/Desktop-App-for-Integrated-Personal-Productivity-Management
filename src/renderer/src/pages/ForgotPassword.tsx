@@ -2,12 +2,50 @@ import React, { JSX, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const ForgotPassword = (): JSX.Element => {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (event: React.FormEvent): void => {
+  const handleSubmit = async (event: React.FormEvent): Promise<void> => {
     event.preventDefault();
-    setSubmitted(true);
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await window.api.auth.requestPasswordReset(email);
+      if (response.success) {
+        setSubmitted(true);
+      } else {
+        setError(response.error || 'Failed to send reset email.');
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error occurred during reset request.';
+      setError(errorMessage || 'Error occurred during reset request.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResend = async (): Promise<void> => {
+    if (!email) {
+      return;
+    }
+
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await window.api.auth.resendPasswordReset(email);
+      if (!response.success) {
+        setError(response.error || 'Failed to resend email.');
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error occurred while resending email.';
+      setError(errorMessage || 'Error occurred while resending email.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -32,6 +70,13 @@ const ForgotPassword = (): JSX.Element => {
               Enter your email. We will send you a reset password link.
             </p>
 
+            {error && (
+              <div className="text-[12px] text-[#EF4444] flex items-center gap-2">
+                <span className="material-symbols-outlined text-[16px]">error</span>
+                {error}
+              </div>
+            )}
+
             <form className="w-full space-y-6" onSubmit={handleSubmit}>
               <div className="text-left">
                 <label
@@ -53,9 +98,10 @@ const ForgotPassword = (): JSX.Element => {
               </div>
               <button
                 type="submit"
-                className="w-full mt-2 h-[44px] bg-[#4F3CC9] hover:bg-[#3A2D9E] text-white font-medium rounded-lg transition-colors active:scale-[0.98]"
+                className="w-full mt-2 h-[44px] bg-[#4F3CC9] hover:bg-[#3A2D9E] text-white font-medium rounded-lg transition-colors active:scale-[0.98] disabled:opacity-60"
+                disabled={loading}
               >
-                Confirm your email
+                {loading ? 'Sending...' : 'Confirm your email'}
               </button>
             </form>
 
@@ -93,8 +139,10 @@ const ForgotPassword = (): JSX.Element => {
               <button
                 className="w-full h-[44px] border border-[#E5E7EB] text-[#1A1A2E] font-medium rounded-lg hover:bg-[#F6F2FE] transition-colors active:scale-[0.98]"
                 type="button"
+                onClick={handleResend}
+                disabled={loading}
               >
-                Send again
+                {loading ? 'Sending...' : 'Send again'}
               </button>
               <button
                 className="block w-full text-center text-[14px] text-[#6B7280] hover:text-[#4F3CC9]"

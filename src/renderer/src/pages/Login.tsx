@@ -8,6 +8,7 @@ const Login = (): JSX.Element => {
   const [remember, setRemember] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,6 +45,32 @@ const Login = (): JSX.Element => {
     }
   };
 
+  const handleGoogleSignIn = async (): Promise<void> => {
+    setError('');
+    setGoogleLoading(true);
+
+    try {
+      const response = await window.api.auth.googleSignIn();
+      if (response.success && response.data) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        if (remember) {
+          localStorage.setItem('rememberLogin', 'true');
+        } else {
+          localStorage.removeItem('rememberLogin');
+        }
+        navigate('/');
+      } else {
+        setError(response.error || 'Google sign-in failed.');
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error occurred during Google sign in.';
+      setError(errorMessage || 'Error occurred during Google sign in.');
+    } finally {
+      setGoogleLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white text-[#1A1A2E]">
       <main className="flex min-h-screen w-full">
@@ -56,7 +83,6 @@ const Login = (): JSX.Element => {
             </svg>
           </div>
 
-          {/* <div className="relative z-10"> */}
             <div className="flex items-center gap-2">
               <span
                 className="material-symbols-outlined text-white text-[32px]"
@@ -66,46 +92,6 @@ const Login = (): JSX.Element => {
               </span>
               <span className="text-[24px] font-black tracking-tight text-white">Promos</span>
             </div>
-
-            {/* <div className="mt-8">
-              <h2 className="text-[32px] font-extrabold text-white leading-tight mb-4">
-                Làm chủ thời gian.<br />Tập trung vào điều quan trọng.
-              </h2>
-              <p className="text-[14px] text-[#EDE9FF] opacity-80 max-w-[320px]">
-                Nâng cao hiệu suất công việc với hệ sinh thái quản lý thông minh được thiết kế cho sự tập trung tuyệt đối.
-              </p>
-            </div> */}
-
-            {/* <div className="mt-10 grid grid-cols-1 gap-6">
-              {[
-                {
-                  icon: 'calendar_today',
-                  title: 'Lịch biểu thông minh',
-                  subtitle: 'Tự động tối ưu hóa lộ trình làm việc',
-                },
-                {
-                  icon: 'center_focus_strong',
-                  title: 'Chế độ Tập trung',
-                  subtitle: 'Giảm thiểu xao nhãng bằng AI',
-                },
-                {
-                  icon: 'description',
-                  title: 'Ghi chú & Tác vụ',
-                  subtitle: 'Lưu trữ mọi ý tưởng tức thì',
-                },
-              ].map((item) => (
-                <div key={item.title} className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center border border-white/20">
-                    <span className="material-symbols-outlined text-white">{item.icon}</span>
-                  </div>
-                  <div>
-                    <p className="text-[15px] font-medium text-white">{item.title}</p>
-                    <p className="text-[12px] text-[#EDE9FF] opacity-60">{item.subtitle}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div> */}
 
           <footer className="relative z-10 pt-4 border-t border-white/10">
             <p className="text-[12px] text-white/40">Promos © 2026 Copyright</p>
@@ -215,6 +201,8 @@ const Login = (): JSX.Element => {
             <button
               type="button"
               className="w-full h-[44px] border border-[#E5E7EB] rounded-lg bg-white flex items-center justify-center gap-3 text-[14px] text-[#1A1A2E] hover:bg-[#F5F4FA] transition-all active:scale-[0.98]"
+              onClick={handleGoogleSignIn}
+              disabled={googleLoading}
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -234,7 +222,7 @@ const Login = (): JSX.Element => {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-              Sign in with google
+              {googleLoading ? 'Connecting to Google...' : 'Sign in with google'}
             </button>
 
             <div className="mt-6 text-center text-[14px] text-[#6B7280]">

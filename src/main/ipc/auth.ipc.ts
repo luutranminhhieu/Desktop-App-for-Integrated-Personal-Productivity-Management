@@ -28,4 +28,40 @@ export function registerAuthIPC(): void {
       return { success: false, error: (error as Error).message };
     }
   });
+
+  ipcMain.handle('auth:googleSignIn', async () => {
+    try {
+      const result = await authService.googleSignIn();
+      return { success: true, data: result };
+    } catch (error) {
+      return { success: false, error: (error as Error).message };
+    }
+  });
+
+  ipcMain.handle('auth:requestPasswordReset', async (_, { email }) => {
+    try {
+      await authService.requestPasswordReset(email);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: (error as Error).message };
+    }
+  });
+
+  ipcMain.handle('auth:resendPasswordReset', async (_, { email }) => {
+    try {
+      await authService.resendPasswordReset(email);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: (error as Error).message };
+    }
+  });
+
+  ipcMain.handle('auth:resetPassword', async (_, { token, newPassword }) => {
+    try {
+      await authService.resetPassword(token, newPassword);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: (error as Error).message };
+    }
+  });
 }
