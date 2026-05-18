@@ -8,7 +8,8 @@ const api = {
     verifyToken: (token) => ipcRenderer.invoke('auth:verifyToken', { token }),
     googleSignIn: () => ipcRenderer.invoke('auth:googleSignIn'),
     requestPasswordReset: (email) => ipcRenderer.invoke('auth:requestPasswordReset', { email }),
-    resendPasswordReset: (email) => ipcRenderer.invoke('auth:resendPasswordReset', { email })
+    resendPasswordReset: (email) => ipcRenderer.invoke('auth:resendPasswordReset', { email }),
+    resetPassword: (token, newPassword) => ipcRenderer.invoke('auth:resetPassword', { token, newPassword })
   },
   app: {
     onDeepLink: (callback) => {

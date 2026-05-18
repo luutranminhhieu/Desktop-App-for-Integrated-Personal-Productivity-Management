@@ -12,6 +12,26 @@ const APP_DEEPLINK_SCHEME = process.env.APP_DEEPLINK_SCHEME || 'promos';
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const GOOGLE_REDIRECT_PORT = process.env.GOOGLE_REDIRECT_PORT ? Number(process.env.GOOGLE_REDIRECT_PORT) : 53682;
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 5;
+
+const rateLimiter = new Map<string, { count: number; resetAt: number }>();
+
+function consumeRateLimit(key: string): void {
+  const now = Date.now();
+  const current = rateLimiter.get(key);
+
+  if (!current || current.resetAt <= now) {
+    rateLimiter.set(key, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return;
+  }
+
+  if (current.count >= RATE_LIMIT_MAX) {
+    throw new Error('Too many attempts. Please try again later.');
+  }
+
+  current.count += 1;
+}
 
 export class AuthService {
   private buildToken(userId: string, email: string): string {
@@ -144,6 +164,8 @@ export class AuthService {
       throw new Error('Email, password, and name are required.');
     }
 
+    consumeRateLimit(`register:${email.toLowerCase()}`);
+
     // 1. Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -185,6 +207,8 @@ export class AuthService {
     if (!email || !password) {
       throw new Error('Email and password are required.');
     }
+
+    consumeRateLimit(`login:${email.toLowerCase()}`);
 
     // 1. Find the user by email
     const user = await User.findOne({ email });
@@ -262,6 +286,29 @@ export class AuthService {
 
     const resetLink = `${APP_DEEPLINK_SCHEME}://reset-password?token=${token}`;
     await sendResetPasswordEmail(email, resetLink);
+  }
+
+  public async resetPassword(token: string, newPassword: string): Promise<void> {
+    if (!token || !newPassword) {
+      throw new Error('Token and new password are required.');
+    }
+
+    const record = await PasswordReset.findOne({ token, used: false });
+    if (!record || record.expiresAt.getTime() < Date.now()) {
+      throw new Error('Reset link is invalid or expired.');
+    }
+
+    const user = await User.findById(record.userId);
+    if (!user) {
+      throw new Error('User not found.');
+    }
+
+    const saltRounds = 10;
+    user.password = await bcrypt.hash(newPassword, saltRounds);
+    await user.save();
+
+    record.used = true;
+    await record.save();
   }
 
   public async resendPasswordReset(email: string): Promise<void> {

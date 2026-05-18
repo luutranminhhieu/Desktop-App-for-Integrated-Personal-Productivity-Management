@@ -27,10 +27,6 @@ export async function sendResetPasswordEmail(to: string, resetLink: string): Pro
     from: smtpFrom,
     to,
     subject: 'Reset your password',
-    text: `Click the link to reset your password: ${resetLink}`,
-    html: `
-      <p>Copy and paste this link to reset your password:</p>
-      <p><a href="${resetLink}">${resetLink}</a></p>
-    `
+    text: `Copy and paste this link to reset your password: ${resetLink}`,
   });
 }

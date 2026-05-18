@@ -23,6 +23,7 @@ export interface IAuthAPI {
   googleSignIn: () => Promise<{ success: boolean; data?: AuthResponse; error?: string }>;
   requestPasswordReset: (email: string) => Promise<{ success: boolean; error?: string }>;
   resendPasswordReset: (email: string) => Promise<{ success: boolean; error?: string }>;
+  resetPassword: (token: string, newPassword: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 export interface IAppAPI {

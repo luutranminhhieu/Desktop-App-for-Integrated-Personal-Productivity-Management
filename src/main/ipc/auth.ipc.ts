@@ -55,4 +55,13 @@ export function registerAuthIPC(): void {
       return { success: false, error: (error as Error).message };
     }
   });
+
+  ipcMain.handle('auth:resetPassword', async (_, { token, newPassword }) => {
+    try {
+      await authService.resetPassword(token, newPassword);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: (error as Error).message };
+    }
+  });
 }
