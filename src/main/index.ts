@@ -1,11 +1,29 @@
 import { app, BrowserWindow } from 'electron';
 import { connectDB } from './db';
-import { join } from 'path';
+import { join, resolve } from 'path';
 import { registerAuthIPC } from './ipc/auth.ipc';
 import icon from '../../resources/icon.png?asset';
 
+const DEEPLINK_SCHEME = process.env.APP_DEEPLINK_SCHEME || 'promos';
+
+let mainWindow: BrowserWindow | null = null;
+let pendingDeepLink: string | null = null;
+
+function extractDeepLink(argv: string[]): string | null {
+  const prefix = `${DEEPLINK_SCHEME}://`;
+  const match = argv.find((arg) => arg.startsWith(prefix));
+  return match || null;
+}
+
+function handleDeepLink(url: string): void {
+  pendingDeepLink = url;
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('app:deeplink', url);
+  }
+}
+
 function createWindow(): void {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
     show: false,
@@ -19,7 +37,13 @@ function createWindow(): void {
   });
 
   mainWindow.on('ready-to-show', () => {
-    mainWindow.show();
+    mainWindow?.show();
+  });
+
+  mainWindow.webContents.on('did-finish-load', () => {
+    if (pendingDeepLink) {
+      mainWindow?.webContents.send('app:deeplink', pendingDeepLink);
+    }
   });
 
   // Load the remote URL for development or the local html file for production.
@@ -30,7 +54,42 @@ function createWindow(): void {
   }
 }
 
+const gotLock = app.requestSingleInstanceLock();
+if (!gotLock) {
+  app.quit();
+} else {
+  app.on('second-instance', (_event, argv) => {
+    const url = extractDeepLink(argv);
+    if (url) {
+      handleDeepLink(url);
+    }
+
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) {
+        mainWindow.restore();
+      }
+      mainWindow.focus();
+    }
+  });
+}
+
+app.on('open-url', (event, url) => {
+  event.preventDefault();
+  handleDeepLink(url);
+});
+
 app.whenReady().then(async () => {
+  if (process.defaultApp) {
+    app.setAsDefaultProtocolClient(DEEPLINK_SCHEME, process.execPath, [resolve(process.argv[1])]);
+  } else {
+    app.setAsDefaultProtocolClient(DEEPLINK_SCHEME);
+  }
+
+  const initialDeepLink = extractDeepLink(process.argv);
+  if (initialDeepLink) {
+    handleDeepLink(initialDeepLink);
+  }
+
   // Connect to MongoDB
   await connectDB();
 

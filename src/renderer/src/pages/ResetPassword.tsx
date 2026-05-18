@@ -41,7 +41,7 @@ const ResetPassword = (): React.JSX.Element => {
               bolt
             </span>
           </div>
-          <h2 className="text-[24px] font-semibold text-[#4F3CC9] tracking-tight">FocusHub</h2>
+          <h2 className="text-[24px] font-semibold text-[#4F3CC9] tracking-tight">Promos</h2>
         </div>
 
         {showSuccess && (
@@ -63,7 +63,7 @@ const ResetPassword = (): React.JSX.Element => {
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-2">
-              <label className="text-[12px] font-medium text-[#1A1A2E] uppercase tracking-wider block" htmlFor="new-password">
+              <label className="text-[12px] font-medium text-[#1A1A2E] tracking-wider block" htmlFor="new-password">
                 New Password
               </label>
               <div className="relative">
@@ -84,19 +84,10 @@ const ResetPassword = (): React.JSX.Element => {
                   <span className="material-symbols-outlined">visibility</span>
                 </button>
               </div>
-              <div className="pt-2">
-                <div className="flex gap-1 h-[6px]">
-                  <div className="flex-1 rounded-full bg-[#EF4444]"></div>
-                  <div className="flex-1 rounded-full bg-[#F59E0B]"></div>
-                  <div className="flex-1 rounded-full bg-[#4F3CC9]"></div>
-                  <div className="flex-1 rounded-full bg-[#10B981]"></div>
-                </div>
-                <p className="text-[12px] text-[#10B981] mt-1">Mật khẩu mạnh</p>
-              </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-[12px] font-medium text-[#1A1A2E] uppercase tracking-wider block" htmlFor="confirm-password">
+              <label className="text-[12px] font-medium text-[#1A1A2E] tracking-wider block" htmlFor="confirm-password">
                 Confirm New Password
               </label>
               <div className="relative">

@@ -5,7 +5,17 @@ const api = {
   auth: {
     login: (email, password) => ipcRenderer.invoke('auth:login', { email, password }),
     register: (email, password, name) => ipcRenderer.invoke('auth:register', { email, password, name }),
-    verifyToken: (token) => ipcRenderer.invoke('auth:verifyToken', { token })
+    verifyToken: (token) => ipcRenderer.invoke('auth:verifyToken', { token }),
+    googleSignIn: () => ipcRenderer.invoke('auth:googleSignIn'),
+    requestPasswordReset: (email) => ipcRenderer.invoke('auth:requestPasswordReset', { email }),
+    resendPasswordReset: (email) => ipcRenderer.invoke('auth:resendPasswordReset', { email })
+  },
+  app: {
+    onDeepLink: (callback) => {
+      const listener = (_event: Electron.IpcRendererEvent, url: string): void => callback(url)
+      ipcRenderer.on('app:deeplink', listener)
+      return () => ipcRenderer.removeListener('app:deeplink', listener)
+    }
   }
 }
 
