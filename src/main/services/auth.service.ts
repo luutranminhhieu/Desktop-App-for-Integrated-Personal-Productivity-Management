@@ -17,6 +17,13 @@ const RATE_LIMIT_MAX = 5;
 
 const rateLimiter = new Map<string, { count: number; resetAt: number }>();
 
+function getJwtSecret(): string {
+  if (!JWT_SECRET) {
+    throw new Error('Missing JWT_SECRET.');
+  }
+  return JWT_SECRET;
+}
+
 function consumeRateLimit(key: string): void {
   const now = Date.now();
   const current = rateLimiter.get(key);
@@ -36,7 +43,7 @@ function consumeRateLimit(key: string): void {
 export class AuthService {
   private buildToken(userId: string, email: string): string {
     const payload = { userId, email };
-    return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+    return jwt.sign(payload, getJwtSecret(), { expiresIn: '7d' });
   }
 
   private async openGoogleOAuth(): Promise<{ email: string; name: string }>{
@@ -49,12 +56,13 @@ export class AuthService {
     const redirectUri = `http://127.0.0.1:${GOOGLE_REDIRECT_PORT}/oauth2/callback`;
 
     const authCode = await new Promise<string>((resolve, reject) => {
-      let timeoutId: NodeJS.Timeout | undefined;
+      const timeoutId = setTimeout(() => {
+        server.close();
+        reject(new Error('Google sign-in timeout.'));
+      }, 120000);
 
       const cleanup = (): void => {
-        if (timeoutId) {
-          clearTimeout(timeoutId);
-        }
+        clearTimeout(timeoutId);
         server.close();
       };
 
@@ -104,11 +112,6 @@ export class AuthService {
 
         shell.openExternal(`https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`);
       });
-
-      timeoutId = setTimeout(() => {
-        cleanup();
-        reject(new Error('Google sign-in timeout.'));
-      }, 120000);
 
       server.on('error', (error) => {
         cleanup();
@@ -242,7 +245,7 @@ export class AuthService {
    */
   public verifyToken(token: string): string | jwt.JwtPayload {
     try {
-      const decoded = jwt.verify(token, JWT_SECRET);
+      const decoded = jwt.verify(token, getJwtSecret());
       return decoded;
     } catch {
       throw new Error('Invalid or expired token.');
