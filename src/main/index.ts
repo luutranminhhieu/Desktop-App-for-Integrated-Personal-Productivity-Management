@@ -2,6 +2,9 @@ import { app, BrowserWindow } from 'electron';
 import { connectDB } from './db';
 import { join, resolve } from 'path';
 import { registerAuthIPC } from './ipc/auth.ipc';
+import { registerDashboardIPC } from './ipc/dashboard.ipc';
+import { registerNoteIPC } from './ipc/note.ipc';
+import { registerTodoIPC } from './ipc/todo.ipc';
 import icon from '../../resources/icon.png?asset';
 
 const DEEPLINK_SCHEME = process.env.APP_DEEPLINK_SCHEME || 'promos';
@@ -95,6 +98,9 @@ app.whenReady().then(async () => {
 
   // Register IPC Handlers
   registerAuthIPC();
+  registerTodoIPC();
+  registerNoteIPC();
+  registerDashboardIPC();
   
   // Set app user model id for windows
   if (process.platform === 'win32') {

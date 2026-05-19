@@ -4,6 +4,25 @@
 	font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
+.focus-ring {
+	transform: rotate(-90deg);
+	transform-origin: 50% 50%;
+}
+
+.heatmap-cell {
+	aspect-ratio: 1 / 1;
+	border-radius: 2px;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+	display: none;
+}
+
+.no-scrollbar {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+
 .shadow-soft {
 	box-shadow: 0 4px 12px rgba(79, 60, 201, 0.08);
 }
