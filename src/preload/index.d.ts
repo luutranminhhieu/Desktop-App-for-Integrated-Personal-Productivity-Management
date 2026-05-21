@@ -2,6 +2,7 @@ export interface AuthUser {
   id: string;
   email: string;
   name: string;
+  avatarUrl?: string;
 }
 
 export interface AuthResponse {
@@ -52,7 +53,13 @@ export interface TaskStats {
   pending: number;
   overdue: number;
   urgent: number;
+  canceled: number;
   tasksThisMonth: number;
+}
+
+export interface PomodoroStats {
+  completed: number;
+  target: number;
 }
 
 export interface FocusDay {
@@ -83,6 +90,21 @@ export interface DashboardStats {
   timelineEvents: TimelineEvent[];
   notifications: number;
   yearFocusHours: number;
+  pomodoroStats: PomodoroStats;
+  newNotesThisMonth: number;
+}
+
+export interface CalendarEvent {
+  _id: string;
+  title: string;
+  startTime: string;
+  endTime: string;
+  color: string;
+  userId: string;
+  location?: string;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface IAuthAPI {
@@ -130,7 +152,21 @@ export interface INoteAPI {
 }
 
 export interface IDashboardAPI {
-  getStats: (userId: string) => Promise<{ success: boolean; data?: DashboardStats; error?: string }>;
+  getStats: (
+    userId: string,
+    focusRange?: 'week' | 'month' | 'year'
+  ) => Promise<{ success: boolean; data?: DashboardStats; error?: string }>;
+}
+
+export interface ICalendarAPI {
+  create: (payload: Partial<CalendarEvent>) => Promise<{ success: boolean; data?: CalendarEvent; error?: string }>;
+  list: (userId: string, date?: string) => Promise<{ success: boolean; data?: CalendarEvent[]; error?: string }>;
+  update: (
+    eventId: string,
+    updates: Partial<CalendarEvent>,
+    userId: string
+  ) => Promise<{ success: boolean; data?: CalendarEvent; error?: string }>;
+  delete: (eventId: string, userId: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 declare global {
@@ -140,6 +176,7 @@ declare global {
       todo: ITodoAPI;
       note: INoteAPI;
       dashboard: IDashboardAPI;
+      calendar: ICalendarAPI;
       app: IAppAPI;
     }
   }

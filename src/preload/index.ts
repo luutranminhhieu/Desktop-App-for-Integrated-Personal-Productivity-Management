@@ -26,7 +26,13 @@ const api = {
     count: (userId) => ipcRenderer.invoke('note:count', { userId })
   },
   dashboard: {
-    getStats: (userId) => ipcRenderer.invoke('dashboard:getStats', { userId })
+    getStats: (userId, focusRange) => ipcRenderer.invoke('dashboard:getStats', { userId, focusRange })
+  },
+  calendar: {
+    create: (payload) => ipcRenderer.invoke('calendar:create', payload),
+    list: (userId, date) => ipcRenderer.invoke('calendar:list', { userId, date }),
+    update: (eventId, updates, userId) => ipcRenderer.invoke('calendar:update', { eventId, updates, userId }),
+    delete: (eventId, userId) => ipcRenderer.invoke('calendar:delete', { eventId, userId })
   },
   app: {
     onDeepLink: (callback) => {

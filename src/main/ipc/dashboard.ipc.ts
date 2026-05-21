@@ -1,30 +1,70 @@
 import { ipcMain } from 'electron';
+import { calendarService } from '../services/calendar.service';
 import { noteService } from '../services/note.service';
 import { todoService } from '../services/todo.service';
 
+type FocusRange = 'week' | 'month' | 'year';
+
+const focusRangeToDays = (range?: FocusRange): number => {
+  switch (range) {
+    case 'month':
+      return 30;
+    case 'year':
+      return 365;
+    case 'week':
+    default:
+      return 7;
+  }
+};
+
+const formatTimeRange = (start: Date, end: Date): string => {
+  const formatter = new Intl.DateTimeFormat('vi-VN', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  return `${formatter.format(start)} - ${formatter.format(end)}`;
+};
+
 export function registerDashboardIPC(): void {
-  ipcMain.handle('dashboard:getStats', async (_, { userId }) => {
+  ipcMain.handle('dashboard:getStats', async (_, { userId, focusRange }) => {
     try {
-      const [taskStats, focusHours, urgentTasks, todayTasks, noteCount, streak, activity, yearFocusHours] = await Promise.all([
+      const focusDays = focusRangeToDays(focusRange as FocusRange);
+      const today = new Date();
+
+      const [
+        taskStats,
+        focusHours,
+        urgentTasks,
+        todayTasks,
+        noteCount,
+        streak,
+        activity,
+        yearFocusHours,
+        pomodoroStats,
+        newNotesThisMonth,
+        calendarEvents
+      ] = await Promise.all([
         todoService.getTaskStats(userId),
-        todoService.getFocusHours(userId, 7),
+        todoService.getFocusHours(userId, focusDays),
         todoService.getUrgentTasks(userId),
         todoService.getTodayTasks(userId),
         noteService.getNoteCount(userId),
         todoService.getFocusStreak(userId),
         todoService.getActivityHeatmap(userId, 12),
-        todoService.getFocusHoursTotal(userId, 365)
+        todoService.getFocusHoursTotal(userId, 365),
+        todoService.getPomodoroStatsToday(userId),
+        noteService.getNewNotesCount(userId),
+        calendarService.listEventsForDay(userId, today)
       ]);
 
       const weeklyFocusHours = focusHours.reduce((sum, day) => sum + day.hours, 0);
       const notifications = taskStats.urgent + taskStats.overdue;
 
-      const timelineEvents = [
-        { time: '09:00 - 10:30', title: 'Họp chiến lược Marketing', color: '#4F3CC9' },
-        { time: '11:00 - 12:00', title: 'Deep Work Session 1', color: '#E5E7EB' },
-        { time: '14:00 - 15:30', title: 'Design Critique Meeting', color: '#7C3AED' },
-        { time: '16:00 - 17:00', title: 'Trình bày Proposal', color: '#E5E7EB' }
-      ];
+      const timelineEvents = calendarEvents.map((event) => ({
+        time: formatTimeRange(event.startTime, event.endTime),
+        title: event.title,
+        color: event.color
+      }));
 
       return {
         success: true,
@@ -38,6 +78,8 @@ export function registerDashboardIPC(): void {
           weeklyFocusHours,
           activity,
           yearFocusHours,
+          pomodoroStats,
+          newNotesThisMonth,
           timelineEvents,
           notifications
         }

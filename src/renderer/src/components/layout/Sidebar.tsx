@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import UserProfile from './UserProfile';
 
 type SidebarKey = 'home' | 'calendar' | 'tasks' | 'notes' | 'focus';
 
@@ -27,24 +28,10 @@ const Sidebar = ({ activeKey }: SidebarProps): React.JSX.Element => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const currentKey = activeKey ?? routeToKey(location.pathname);
+
 	return (
 		<aside className="fixed left-0 top-0 h-screen w-[220px] bg-white border-r border-[#E5E7EB] flex flex-col justify-between py-6 z-50">
 			<div>
-				<div className="px-6 mb-8 flex items-center gap-2">
-					<span
-						className="material-symbols-outlined text-[24px] font-black text-[#4F3CC9]"
-						style={{ fontVariationSettings: "'FILL' 0" }}
-					>
-						bolt
-					</span>
-					<span className="text-[24px] font-black text-[#4F3CC9]">FocusHub</span>
-				</div>
-
-				<button className="mx-6 mb-8 w-[calc(100%-48px)] bg-[#4F3CC9] text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2 active:scale-95 transition-transform">
-					<span className="material-symbols-outlined text-[20px]">add</span>
-					<span className="text-[15px] font-medium">New Task</span>
-				</button>
-
 				<nav className="flex flex-col">
 					{navItems.map((item) => {
 						const isActive = item.key === currentKey;
@@ -73,16 +60,7 @@ const Sidebar = ({ activeKey }: SidebarProps): React.JSX.Element => {
 				</nav>
 			</div>
 
-			<div className="flex flex-col border-t border-[#E5E7EB] pt-6">
-				<div className="text-[#6B7280] px-6 py-3 flex items-center gap-4 cursor-pointer hover:bg-[#F6F2FE] transition-colors">
-					<span className="material-symbols-outlined">account_circle</span>
-					<span className="text-[14px]">Profile</span>
-				</div>
-				<div className="text-[#6B7280] px-6 py-3 flex items-center gap-4 cursor-pointer hover:bg-[#F6F2FE] transition-colors">
-					<span className="material-symbols-outlined">settings</span>
-					<span className="text-[14px]">Settings</span>
-				</div>
-			</div>
+			<UserProfile />
 		</aside>
 	);
 };

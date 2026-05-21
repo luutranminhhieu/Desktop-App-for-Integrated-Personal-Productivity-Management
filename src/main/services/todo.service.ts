@@ -18,7 +18,13 @@ export type TaskStats = {
 	pending: number;
 	overdue: number;
 	urgent: number;
+	canceled: number;
 	tasksThisMonth: number;
+};
+
+export type PomodoroStats = {
+	completed: number;
+	target: number;
 };
 
 export type FocusDay = {
@@ -139,7 +145,7 @@ export class TodoService {
 		const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 		const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
 
-		const [total, completed, pending, urgent, overdue, tasksThisMonth] = await Promise.all([
+		const [total, completed, pending, urgent, overdue, canceled, tasksThisMonth] = await Promise.all([
 			Todo.countDocuments({ userId: uid }),
 			Todo.countDocuments({ userId: uid, status: 'completed' }),
 			Todo.countDocuments({ userId: uid, status: { $in: ['pending', 'in_progress'] } }),
@@ -149,10 +155,33 @@ export class TodoService {
 				status: { $nin: ['completed', 'canceled'] },
 				dueDate: { $lt: now }
 			}),
+			Todo.countDocuments({ userId: uid, status: 'canceled' }),
 			Todo.countDocuments({ userId: uid, createdAt: { $gte: monthStart, $lte: monthEnd } })
 		]);
 
-		return { total, completed, pending, overdue, urgent, tasksThisMonth };
+		return { total, completed, pending, overdue, urgent, canceled, tasksThisMonth };
+	}
+
+	public async getPomodoroStatsToday(userId: string, target = 10): Promise<PomodoroStats> {
+		const uid = new mongoose.Types.ObjectId(userId);
+		const now = new Date();
+		const start = startOfDay(now);
+		const end = endOfDay(now);
+
+		const rows = await Todo.aggregate<{ totalMinutes: number }>([
+			{ $match: { userId: uid, focusMinutes: { $gt: 0 } } },
+			{
+				$addFields: {
+					focusDay: { $ifNull: ['$focusDate', '$updatedAt'] }
+				}
+			},
+			{ $match: { focusDay: { $gte: start, $lte: end } } },
+			{ $group: { _id: null, totalMinutes: { $sum: '$focusMinutes' } } }
+		]);
+
+		const totalMinutes = rows[0]?.totalMinutes ?? 0;
+		const completed = Math.floor(totalMinutes / 25);
+		return { completed, target };
 	}
 
 	public async getFocusHours(userId: string, days = 7): Promise<FocusDay[]> {

@@ -1,0 +1,70 @@
+import mongoose from 'mongoose';
+import { CalendarEvent, ICalendarEvent } from '../models/CalendarEvent';
+
+const DEFAULT_LIST_LIMIT = 200;
+
+function startOfDay(value: Date): Date {
+  const date = new Date(value);
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
+function endOfDay(value: Date): Date {
+  const date = new Date(value);
+  date.setHours(23, 59, 59, 999);
+  return date;
+}
+
+export class CalendarService {
+  public async createEvent(payload: Partial<ICalendarEvent>): Promise<ICalendarEvent> {
+    if (!payload.title) {
+      throw new Error('Title is required.');
+    }
+    if (!payload.userId) {
+      throw new Error('User is required.');
+    }
+    if (!payload.startTime || !payload.endTime) {
+      throw new Error('Start and end time are required.');
+    }
+
+    return CalendarEvent.create(payload);
+  }
+
+  public async listEvents(userId: string, limit = DEFAULT_LIST_LIMIT): Promise<ICalendarEvent[]> {
+    return CalendarEvent.find({ userId: new mongoose.Types.ObjectId(userId) })
+      .sort({ startTime: 1 })
+      .limit(limit);
+  }
+
+  public async listEventsForDay(userId: string, date: Date): Promise<ICalendarEvent[]> {
+    const start = startOfDay(date);
+    const end = endOfDay(date);
+    return CalendarEvent.find({
+      userId: new mongoose.Types.ObjectId(userId),
+      startTime: { $gte: start, $lte: end }
+    }).sort({ startTime: 1 });
+  }
+
+  public async updateEvent(eventId: string, updates: Partial<ICalendarEvent>, userId: string): Promise<ICalendarEvent> {
+    const event = await CalendarEvent.findOneAndUpdate(
+      { _id: eventId, userId: new mongoose.Types.ObjectId(userId) },
+      updates,
+      { new: true }
+    );
+
+    if (!event) {
+      throw new Error('Calendar event not found.');
+    }
+
+    return event;
+  }
+
+  public async deleteEvent(eventId: string, userId: string): Promise<void> {
+    const result = await CalendarEvent.findOneAndDelete({ _id: eventId, userId: new mongoose.Types.ObjectId(userId) });
+    if (!result) {
+      throw new Error('Calendar event not found.');
+    }
+  }
+}
+
+export const calendarService = new CalendarService();

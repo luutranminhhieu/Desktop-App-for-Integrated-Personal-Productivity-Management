@@ -61,6 +61,15 @@ export class NoteService {
   public async getNoteCount(userId: string): Promise<number> {
     return Note.countDocuments({ userId: new mongoose.Types.ObjectId(userId) });
   }
+
+  public async getNewNotesCount(userId: string, fromDate?: Date): Promise<number> {
+    const now = new Date();
+    const start = fromDate ?? new Date(now.getFullYear(), now.getMonth(), 1);
+    return Note.countDocuments({
+      userId: new mongoose.Types.ObjectId(userId),
+      createdAt: { $gte: start, $lte: now }
+    });
+  }
 }
 
 export const noteService = new NoteService();

@@ -162,7 +162,7 @@ export class AuthService {
    * @param name User's name
    * @returns JWT token and user info
    */
-  public async register(email: string, password: string, name: string): Promise<{ token: string; user: { id: string; email: string; name: string } }> {
+  public async register(email: string, password: string, name: string): Promise<{ token: string; user: { id: string; email: string; name: string; avatarUrl?: string } }> {
     if (!email || !password || !name) {
       throw new Error('Email, password, and name are required.');
     }
@@ -196,6 +196,7 @@ export class AuthService {
         id: String(savedUser._id),
         email: savedUser.email,
         name: savedUser.name,
+        avatarUrl: savedUser.avatarUrl
       },
     };
   }
@@ -206,7 +207,7 @@ export class AuthService {
    * @param password User's plain text password
    * @returns JWT token and user info
    */
-  public async login(email: string, password: string): Promise<{ token: string; user: { id: string; email: string; name: string } }> {
+  public async login(email: string, password: string): Promise<{ token: string; user: { id: string; email: string; name: string; avatarUrl?: string } }> {
     if (!email || !password) {
       throw new Error('Email and password are required.');
     }
@@ -234,6 +235,7 @@ export class AuthService {
         id: String(user._id),
         email: user.email,
         name: user.name,
+        avatarUrl: user.avatarUrl
       },
     };
   }
@@ -252,7 +254,7 @@ export class AuthService {
     }
   }
 
-  public async googleSignIn(): Promise<{ token: string; user: { id: string; email: string; name: string } }> {
+  public async googleSignIn(): Promise<{ token: string; user: { id: string; email: string; name: string; avatarUrl?: string } }> {
     const profile = await this.openGoogleOAuth();
 
     let user = await User.findOne({ email: profile.email });
@@ -267,7 +269,8 @@ export class AuthService {
       user: {
         id: String(user._id),
         email: user.email,
-        name: user.name
+        name: user.name,
+        avatarUrl: user.avatarUrl
       }
     };
   }

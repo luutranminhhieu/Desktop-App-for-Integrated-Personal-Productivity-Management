@@ -2,6 +2,7 @@ import { app, BrowserWindow } from 'electron';
 import { connectDB } from './db';
 import { join, resolve } from 'path';
 import { registerAuthIPC } from './ipc/auth.ipc';
+import { registerCalendarIPC } from './ipc/calendar.ipc';
 import { registerDashboardIPC } from './ipc/dashboard.ipc';
 import { registerNoteIPC } from './ipc/note.ipc';
 import { registerTodoIPC } from './ipc/todo.ipc';
@@ -100,6 +101,7 @@ app.whenReady().then(async () => {
   registerAuthIPC();
   registerTodoIPC();
   registerNoteIPC();
+  registerCalendarIPC();
   registerDashboardIPC();
   
   // Set app user model id for windows
