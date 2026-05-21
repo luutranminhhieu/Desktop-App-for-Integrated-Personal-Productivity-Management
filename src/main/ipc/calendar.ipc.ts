@@ -21,6 +21,17 @@ export function registerCalendarIPC(): void {
     }
   });
 
+  ipcMain.handle('calendar:listRange', async (_, { userId, startDate, endDate }) => {
+    try {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const data = await calendarService.listEventsInRange(userId, start, end);
+      return { success: true, data };
+    } catch (error) {
+      return { success: false, error: (error as Error).message };
+    }
+  });
+
   ipcMain.handle('calendar:update', async (_, { eventId, updates, userId }) => {
     try {
       const data = await calendarService.updateEvent(eventId, updates, userId);

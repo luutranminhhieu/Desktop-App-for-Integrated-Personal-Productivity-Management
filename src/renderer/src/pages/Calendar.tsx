@@ -62,7 +62,6 @@ const Calendar = (): React.JSX.Element => {
 	const [modalData, setModalData] = useState<CalendarFormData>(defaultFormData);
 	const [activeEventId, setActiveEventId] = useState<string | null>(null);
 	const calendarRef = useRef<FullCalendar | null>(null);
-	const eventsByDateRef = useRef<Map<string, CalendarEventRecord[]>>(new Map());
 
 	const calendarEvents = useMemo(() => {
 		return events.map((event) => ({
@@ -86,44 +85,19 @@ const Calendar = (): React.JSX.Element => {
 			if (!userId) return;
 			setLoadingEvents(true);
 			setEventsError('');
+			const response = await window.api.calendar.listRange(
+				userId,
+				start.toISOString(),
+				end.toISOString()
+			);
 
-			const dateKeys: string[] = [];
-			let cursor = start.startOf('day');
-			const endCursor = end.startOf('day');
-			while (cursor.isBefore(endCursor)) {
-				dateKeys.push(toDateKey(cursor));
-				cursor = cursor.add(1, 'day');
+			if (!response.success || !response.data) {
+				setEventsError(response.error || 'Không thể tải lịch.');
+				setLoadingEvents(false);
+				return;
 			}
 
-			const missingKeys = dateKeys.filter((key) => !eventsByDateRef.current.has(key));
-
-			if (missingKeys.length) {
-				const responses = await Promise.all(
-					missingKeys.map((key) => window.api.calendar.list(userId, key))
-				);
-
-				responses.forEach((response, index) => {
-					const key = missingKeys[index];
-					if (response.success && response.data) {
-						eventsByDateRef.current.set(key, response.data as CalendarEventRecord[]);
-					}
-				});
-
-				const failed = responses.find((response) => !response.success);
-				if (failed) {
-					  setEventsError(failed.error || 'Không thể tải lịch.');
-				}
-			}
-
-			const mergedEvents = dateKeys
-				.flatMap((key) => eventsByDateRef.current.get(key) ?? [])
-				.reduce((acc: CalendarEventRecord[], next) => {
-					if (acc.find((item) => item._id === next._id)) return acc;
-					acc.push(next);
-					return acc;
-				}, []);
-
-			setEvents(mergedEvents);
+			setEvents(response.data as CalendarEventRecord[]);
 			setLoadingEvents(false);
 		},
 		[userId]
@@ -181,7 +155,6 @@ const Calendar = (): React.JSX.Element => {
 			setEventsError(response.error || 'Không thể cập nhật lịch.');
 			return;
 		}
-		eventsByDateRef.current.clear();
 		fetchEventsForRange(rangeStart, rangeEnd).catch(() => undefined);
 	};
 
@@ -223,7 +196,6 @@ const Calendar = (): React.JSX.Element => {
 		setModalOpen(false);
 		setModalData(defaultFormData);
 		setActiveEventId(null);
-		eventsByDateRef.current.clear();
 		fetchEventsForRange(rangeStart, rangeEnd).catch(() => undefined);
 	};
 
@@ -238,7 +210,6 @@ const Calendar = (): React.JSX.Element => {
 		}
 		setModalOpen(false);
 		setActiveEventId(null);
-		eventsByDateRef.current.clear();
 		fetchEventsForRange(rangeStart, rangeEnd).catch(() => undefined);
 	};
 

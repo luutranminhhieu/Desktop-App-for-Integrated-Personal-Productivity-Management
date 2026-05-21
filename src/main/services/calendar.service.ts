@@ -45,6 +45,17 @@ export class CalendarService {
     }).sort({ startTime: 1 });
   }
 
+  public async listEventsInRange(userId: string, startDate: Date, endDate: Date): Promise<ICalendarEvent[]> {
+    if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+      throw new Error('Invalid date range.');
+    }
+
+    return CalendarEvent.find({
+      userId: new mongoose.Types.ObjectId(userId),
+      startTime: { $gte: startDate, $lt: endDate }
+    }).sort({ startTime: 1 });
+  }
+
   public async updateEvent(eventId: string, updates: Partial<ICalendarEvent>, userId: string): Promise<ICalendarEvent> {
     const event = await CalendarEvent.findOneAndUpdate(
       { _id: eventId, userId: new mongoose.Types.ObjectId(userId) },
