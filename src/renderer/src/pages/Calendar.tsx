@@ -22,20 +22,6 @@ const defaultFormData: CalendarFormData = {
 
 const toDateKey = (value: Dayjs): string => value.format('YYYY-MM-DD');
 
-const formatRangeTitle = (start: Dayjs, end: Dayjs, view: CalendarViewType): string => {
-	if (view === 'dayGridMonth') {
-		return `Tháng ${start.format('M')} ${start.format('YYYY')}`;
-	}
-
-	const endLabel = end.subtract(1, 'day');
-	if (start.isSame(endLabel, 'month')) {
-		return `${start.format('D')} - ${endLabel.format('D')} Tháng ${start.format('M')}, ${start.format('YYYY')}`;
-	}
-
-	return `${start.format('D')} Tháng ${start.format('M')} - ${endLabel.format('D')} Tháng ${endLabel.format(
-		'M'
-	)}, ${endLabel.format('YYYY')}`;
-};
 
 const Calendar = (): React.JSX.Element => {
 	const [userId] = useState<string | null>(() => {
@@ -235,11 +221,6 @@ const Calendar = (): React.JSX.Element => {
 		fetchEventsForRange(rangeStart, rangeEnd).catch(() => undefined);
 	}, [fetchEventsForRange, rangeStart, rangeEnd, userId]);
 
-	const rangeTitle = useMemo(
-		() => formatRangeTitle(rangeStart, rangeEnd, view),
-		[rangeEnd, rangeStart, view]
-	);
-
 	return (
 		<div className="min-h-screen text-[#1A1A2E]">
 			<div className="flex min-h-[720px] border border-[#E5E7EB] bg-white rounded-xl overflow-hidden">
@@ -333,7 +314,7 @@ const Calendar = (): React.JSX.Element => {
 									chevron_right
 								</button>
 							</div>
-							<h2 className="text-[18px] font-semibold ml-2">{rangeTitle}</h2>
+							<h2 className="text-[18px] font-semibold ml-2"></h2>
 						</div>
 						<div className="flex bg-[#F6F2FE] p-1 rounded-xl">
 							<button
