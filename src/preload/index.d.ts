@@ -161,6 +161,11 @@ export interface IDashboardAPI {
 export interface ICalendarAPI {
   create: (payload: Partial<CalendarEvent>) => Promise<{ success: boolean; data?: CalendarEvent; error?: string }>;
   list: (userId: string, date?: string) => Promise<{ success: boolean; data?: CalendarEvent[]; error?: string }>;
+  listRange: (
+    userId: string,
+    startDate: string,
+    endDate: string
+  ) => Promise<{ success: boolean; data?: CalendarEvent[]; error?: string }>;
   update: (
     eventId: string,
     updates: Partial<CalendarEvent>,
