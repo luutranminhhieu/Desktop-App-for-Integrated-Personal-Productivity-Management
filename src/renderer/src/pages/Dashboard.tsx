@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 type FocusDay = {
   date: string;
@@ -49,12 +49,6 @@ type DashboardData = {
 const focusRingCircumference = 301.59;
 const donutCircumference = 439.82;
 
-const dayLabelForDate = (value: string): string => {
-  const date = new Date(value);
-  const day = date.getDay();
-  const labels = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
-  return labels[day] ?? 'T2';
-};
 
 const formatHours = (hours: number): string => {
   const totalMinutes = Math.round(hours * 60);
@@ -81,7 +75,7 @@ const Dashboard = (): React.JSX.Element => {
   const storedToken = localStorage.getItem('token');
   const [loading, setLoading] = useState(() => Boolean(storedToken));
   const [error, setError] = useState(() => (storedToken ? '' : 'Thiếu token xác thực.'));
-  const [focusRange, setFocusRange] = useState<'week' | 'month' | 'year'>('week');
+  const [focusRange] = useState<'week' | 'month' | 'year'>('week');
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -130,23 +124,6 @@ const Dashboard = (): React.JSX.Element => {
     void loadDashboard();
   }, [userId, focusRange]);
 
-  const focusBars = useMemo(() => {
-    if (!data?.focusHours?.length) {
-      return [] as Array<{ label: string; height: number; active: boolean }>;
-    }
-
-    const maxHours = Math.max(8, ...data.focusHours.map((item) => item.hours));
-    const lastIndex = data.focusHours.length - 1;
-
-    return data.focusHours.map((item, index) => {
-      const scaled = Math.round((item.hours / maxHours) * 224);
-      return {
-        label: dayLabelForDate(item.date),
-        height: Math.max(24, scaled),
-        active: index === lastIndex
-      };
-    });
-  }, [data]);
 
   const todayFocusHours = data?.focusHours?.length
     ? data.focusHours[data.focusHours.length - 1].hours
@@ -155,7 +132,6 @@ const Dashboard = (): React.JSX.Element => {
   const focusPercent = focusGoal > 0 ? Math.min(1, todayFocusHours / focusGoal) : 0;
   const focusOffset = Math.round(focusRingCircumference * (1 - focusPercent) * 100) / 100;
 
-  const todayTasks = data?.todayTasks ?? [];
 
   if (loading) {
     return <div className="text-[14px] text-[#6B7280]">Đang tải dashboard...</div>;
