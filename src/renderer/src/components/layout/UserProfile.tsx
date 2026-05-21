@@ -1,0 +1,155 @@
+import React, { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+type UserInfo = {
+	id: string;
+	name: string;
+	email: string;
+	avatarUrl?: string;
+};
+
+const UserProfile = (): React.JSX.Element => {
+	const navigate = useNavigate();
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+	const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+
+	const [user] = useState<UserInfo | null>(() => {
+		const stored = localStorage.getItem('user');
+		if (!stored) return null;
+		try {
+			return JSON.parse(stored) as UserInfo;
+		} catch {
+			return null;
+		}
+	});
+
+	const initials = useMemo(() => {
+		const source = user?.name || user?.email || '';
+		if (!source) return 'U';
+		const parts = source.trim().split(' ');
+		const val = parts.length === 1 ? parts[0].slice(0, 2) : `${parts[0][0]}${parts[1][0]}`;
+		return val.toUpperCase();
+	}, [user?.name, user?.email]);
+
+	const handleSignOut = (): void => {
+		setIsMenuOpen(false);
+		setIsProfileModalOpen(false);
+		setIsSettingsModalOpen(false);
+
+		localStorage.removeItem('token');
+		localStorage.removeItem('user');
+		localStorage.removeItem('rememberLogin');
+
+		navigate('/login', { replace: true });
+	};
+
+	return (
+		<div className="px-4 border-t border-[#E5E7EB] pt-4">
+			<div className="relative">
+				<button
+					className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-[#F5F4FA] transition-colors"
+					onClick={() => setIsMenuOpen((prev) => !prev)}
+					aria-expanded={isMenuOpen}
+					aria-haspopup="menu"
+					type="button"
+				>
+					{user?.avatarUrl ? (
+						<img
+							alt={user?.name ? `${user.name} avatar` : 'User Avatar'}
+							className="w-8 h-8 rounded-full object-cover border border-[#E5E7EB]"
+							src={user.avatarUrl}
+						/>
+					) : (
+						<div className="w-8 h-8 rounded-full bg-[#EDE9FF] border border-[#E5E7EB] flex items-center justify-center text-[12px] font-semibold text-[#4F3CC9]">
+							{initials}
+						</div>
+					)}
+					<div className="flex-1 text-left min-w-0">
+						<p className="text-[13px] font-medium text-[#1A1A2E] truncate">
+							{user?.name || user?.email || 'User'}
+						</p>
+						<p className="text-[11px] text-[#6B7280] truncate">{user?.email || ''}</p>
+					</div>
+				</button>
+
+				{isMenuOpen && (
+					<div
+						className="absolute bottom-15 left-0 mb-2 w-full rounded-xl border border-[#E5E7EB] bg-white shadow-xl overflow-hidden z-50"
+						role="menu"
+					>
+						<button
+							className="w-full px-4 py-2 text-left text-[14px] text-[#1A1A2E] hover:bg-[#F5F4FA] flex items-center gap-2"
+							onClick={() => {
+								setIsMenuOpen(false);
+								setIsProfileModalOpen(true);
+							}}
+							role="menuitem"
+							type="button"
+						>
+							<span className="material-symbols-outlined text-[18px]">person</span>
+							<span>Profile</span>
+						</button>
+						<button
+							className="w-full px-4 py-2 text-left text-[14px] text-[#1A1A2E] hover:bg-[#F5F4FA] flex items-center gap-2"
+							onClick={() => {
+								setIsMenuOpen(false);
+								setIsSettingsModalOpen(true);
+							}}
+							role="menuitem"
+							type="button"
+						>
+							<span className="material-symbols-outlined text-[18px]">settings</span>
+							<span>Settings</span>
+						</button>
+						<button
+							className="w-full px-4 py-2 text-left text-[14px] text-[#EF4444] hover:bg-[#FEF2F2] flex items-center gap-2"
+							onClick={handleSignOut}
+							role="menuitem"
+							type="button"
+						>
+							<span className="material-symbols-outlined text-[18px]">logout</span>
+							<span>Sign out</span>
+						</button>
+					</div>
+				)}
+			</div>
+
+			{isProfileModalOpen && (
+				<div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/30 p-6">
+					<div className="w-full max-w-lg bg-white rounded-xl border border-[#E5E7EB] p-6 shadow-xl">
+						<div className="flex items-center justify-between mb-4">
+							<h2 className="text-[18px] font-semibold text-[#1A1A2E]">Profile</h2>
+							<button
+								className="text-[#6B7280] hover:text-[#1A1A2E]"
+								onClick={() => setIsProfileModalOpen(false)}
+							>
+								<span className="material-symbols-outlined">close</span>
+							</button>
+						</div>
+						<p className="text-[14px] text-[#6B7280]">Nội dung Profile sẽ được bổ sung sau.</p>
+					</div>
+				</div>
+			)}
+
+			{isSettingsModalOpen && (
+				<div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/30 p-6">
+					<div className="w-full max-w-lg bg-white rounded-xl border border-[#E5E7EB] p-6 shadow-xl">
+						<div className="flex items-center justify-between mb-4">
+							<h2 className="text-[18px] font-semibold text-[#1A1A2E]">Settings</h2>
+							<button
+								className="text-[#6B7280] hover:text-[#1A1A2E]"
+								onClick={() => setIsSettingsModalOpen(false)}
+							>
+								<span className="material-symbols-outlined">close</span>
+							</button>
+						</div>
+						<p className="text-[14px] text-[#6B7280]">Nội dung Settings sẽ được bổ sung sau.</p>
+					</div>
+				</div>
+			)}
+		</div>
+	);
+};
+
+export default UserProfile;

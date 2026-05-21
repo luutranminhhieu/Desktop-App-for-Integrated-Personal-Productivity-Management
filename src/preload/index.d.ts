@@ -2,6 +2,7 @@ export interface AuthUser {
   id: string;
   email: string;
   name: string;
+  avatarUrl?: string;
 }
 
 export interface AuthResponse {
@@ -14,6 +15,96 @@ export interface TokenPayload {
   email: string;
   iat?: number;
   exp?: number;
+}
+
+export type TodoStatus = 'pending' | 'in_progress' | 'completed' | 'canceled';
+export type TodoPriority = 'low' | 'medium' | 'high' | 'urgent';
+
+export interface TodoItem {
+  _id: string;
+  title: string;
+  description?: string;
+  status: TodoStatus;
+  priority: TodoPriority;
+  dueDate?: string;
+  tags: string[];
+  userId: string;
+  project?: string;
+  focusMinutes: number;
+  focusDate?: string;
+  completedAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface NoteItem {
+  _id: string;
+  title: string;
+  content: string;
+  tags: string[];
+  userId: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface TaskStats {
+  total: number;
+  completed: number;
+  pending: number;
+  overdue: number;
+  urgent: number;
+  canceled: number;
+  tasksThisMonth: number;
+}
+
+export interface PomodoroStats {
+  completed: number;
+  target: number;
+}
+
+export interface FocusDay {
+  date: string;
+  hours: number;
+}
+
+export interface HeatmapData {
+  startDate: string;
+  values: number[];
+}
+
+export interface TimelineEvent {
+  time: string;
+  title: string;
+  color: string;
+}
+
+export interface DashboardStats {
+  taskStats: TaskStats;
+  focusHours: FocusDay[];
+  urgentTasks: TodoItem[];
+  todayTasks: TodoItem[];
+  noteCount: number;
+  focusStreakDays: number;
+  weeklyFocusHours: number;
+  activity: HeatmapData;
+  timelineEvents: TimelineEvent[];
+  notifications: number;
+  yearFocusHours: number;
+  pomodoroStats: PomodoroStats;
+  newNotesThisMonth: number;
+}
+
+export interface CalendarEvent {
+  _id: string;
+  title: string;
+  startTime: string;
+  endTime: string;
+  color: string;
+  userId: string;
+  location?: string;
+  notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface IAuthAPI {
@@ -30,10 +121,62 @@ export interface IAppAPI {
   onDeepLink: (callback: (url: string) => void) => () => void;
 }
 
+export interface ITodoAPI {
+  create: (payload: Partial<TodoItem>) => Promise<{ success: boolean; data?: TodoItem; error?: string }>;
+  list: (options: {
+    userId: string;
+    status?: TodoStatus;
+    priority?: TodoPriority;
+    tags?: string[];
+    query?: string;
+    dueDateFrom?: string;
+    dueDateTo?: string;
+    limit?: number;
+  }) => Promise<{ success: boolean; data?: TodoItem[]; error?: string }>;
+  update: (todoId: string, updates: Partial<TodoItem>, userId: string) => Promise<{ success: boolean; data?: TodoItem; error?: string }>;
+  delete: (todoId: string, userId: string) => Promise<{ success: boolean; error?: string }>;
+  stats: (userId: string) => Promise<{ success: boolean; data?: TaskStats; error?: string }>;
+}
+
+export interface INoteAPI {
+  create: (payload: Partial<NoteItem>) => Promise<{ success: boolean; data?: NoteItem; error?: string }>;
+  list: (options: {
+    userId: string;
+    query?: string;
+    tags?: string[];
+    limit?: number;
+  }) => Promise<{ success: boolean; data?: NoteItem[]; error?: string }>;
+  update: (noteId: string, updates: Partial<NoteItem>, userId: string) => Promise<{ success: boolean; data?: NoteItem; error?: string }>;
+  delete: (noteId: string, userId: string) => Promise<{ success: boolean; error?: string }>;
+  count: (userId: string) => Promise<{ success: boolean; data?: number; error?: string }>;
+}
+
+export interface IDashboardAPI {
+  getStats: (
+    userId: string,
+    focusRange?: 'week' | 'month' | 'year'
+  ) => Promise<{ success: boolean; data?: DashboardStats; error?: string }>;
+}
+
+export interface ICalendarAPI {
+  create: (payload: Partial<CalendarEvent>) => Promise<{ success: boolean; data?: CalendarEvent; error?: string }>;
+  list: (userId: string, date?: string) => Promise<{ success: boolean; data?: CalendarEvent[]; error?: string }>;
+  update: (
+    eventId: string,
+    updates: Partial<CalendarEvent>,
+    userId: string
+  ) => Promise<{ success: boolean; data?: CalendarEvent; error?: string }>;
+  delete: (eventId: string, userId: string) => Promise<{ success: boolean; error?: string }>;
+}
+
 declare global {
   interface Window {
     api: {
       auth: IAuthAPI;
+      todo: ITodoAPI;
+      note: INoteAPI;
+      dashboard: IDashboardAPI;
+      calendar: ICalendarAPI;
       app: IAppAPI;
     }
   }
