@@ -189,7 +189,7 @@ export class TodoService {
 		const now = new Date();
 		const startDate = startOfDay(new Date(now.getTime() - (days - 1) * 86400000));
 
-		const rows = await Todo.aggregate<{ date: string; totalMinutes: number }>([
+		const rows = await Todo.aggregate<{ _id: string; date: string; totalMinutes: number }>([
 			{ $match: { userId: uid, focusMinutes: { $gt: 0 } } },
 			{
 				$addFields: {
@@ -222,7 +222,7 @@ export class TodoService {
 		const now = new Date();
 		const startDate = startOfDay(new Date(now.getTime() - (lookbackDays - 1) * 86400000));
 
-		const rows = await Todo.aggregate<{ date: string; totalMinutes: number }>([
+		const rows = await Todo.aggregate<{ _id: string; date: string; totalMinutes: number }>([
 			{ $match: { userId: uid, focusMinutes: { $gt: 0 } } },
 			{
 				$addFields: {
@@ -278,7 +278,7 @@ export class TodoService {
 		const startDate = startOfDay(new Date(now.getTime() - (totalDays - 1) * 86400000));
 		const uid = new mongoose.Types.ObjectId(userId);
 
-		const rows = await Todo.aggregate<{ date: string; count: number }>([
+		const rows = await Todo.aggregate<{ _id: string; date: string; count: number }>([
 			{ $match: { userId: uid, createdAt: { $gte: startDate, $lte: endOfDay(now) } } },
 			{
 				$group: {

@@ -28,6 +28,81 @@ code {
   min-height: 100vh;
 }
 
+.calendar-root .fc {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: #1A1A2E;
+}
+
+.calendar-root .fc-theme-standard .fc-scrollgrid,
+.calendar-root .fc-theme-standard td,
+.calendar-root .fc-theme-standard th {
+  border-color: #E5E7EB;
+}
+
+.calendar-root .fc .fc-col-header-cell-cushion {
+  color: #6B7280;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.calendar-root .fc .fc-daygrid-day-number {
+  color: #1A1A2E;
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.calendar-root .fc .fc-timegrid-slot-label {
+  color: #6B7280;
+  font-size: 12px;
+}
+
+.calendar-root .fc .fc-timegrid-slot {
+  height: 68px;
+}
+
+.calendar-root .fc .fc-timegrid-axis,
+.calendar-root .fc .fc-timegrid-axis-frame,
+.calendar-root .fc .fc-timegrid-slot-label,
+.calendar-root .fc .fc-timegrid-slot-label-frame {
+  border: none;
+  background: transparent;
+}
+
+.calendar-root .fc .fc-timegrid-now-indicator-line,
+.calendar-root .fc .fc-timegrid-now-indicator-arrow {
+  border-color: #EF4444;
+}
+
+.calendar-root .fc .fc-day-today {
+  background-color: rgba(237, 233, 255, 0.1);
+}
+
+.calendar-root .fc .fc-event {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.06);
+}
+
+.calendar-root .calendar-event {
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.calendar-root .calendar-event-title {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.calendar-root .calendar-event-time {
+  font-size: 10px;
+  opacity: 0.85;
+}
+
 .logo {
   margin-bottom: 20px;
   -webkit-user-drag: none;
