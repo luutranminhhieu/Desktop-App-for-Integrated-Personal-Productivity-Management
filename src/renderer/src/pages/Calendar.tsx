@@ -296,7 +296,7 @@ const Calendar = (): React.JSX.Element => {
 								type="button"
 								onClick={handleToday}
 							>
-								Hôm nay
+								Today
 							</button>
 							<div className="flex items-center">
 								<button
@@ -374,7 +374,7 @@ const Calendar = (): React.JSX.Element => {
 							<div className="absolute inset-0 flex items-center justify-center bg-white/70">
 								<div className="flex items-center gap-3 rounded-full border border-[#E5E7EB] bg-white px-4 py-2 shadow-sm">
 									<span className="h-4 w-4 rounded-full border-2 border-[#4F3CC9] border-t-transparent animate-spin"></span>
-									<span className="text-[12px] text-[#6B7280]">Đang tải lịch...</span>
+									<span className="text-[12px] text-[#6B7280]"></span>
 								</div>
 							</div>
 						)}

@@ -10,7 +10,7 @@ type MiniCalendarProps = {
   onNextMonth: () => void;
 };
 
-const weekdays = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 const toDateKey = (value: Dayjs): string => value.format('YYYY-MM-DD');
 
@@ -41,7 +41,7 @@ const MiniCalendar = ({
     <div className="mini-calendar">
       <div className="flex items-center justify-between mb-4 px-2">
         <h4 className="text-[15px] font-bold">
-          Tháng {monthDate.format('M')} {monthDate.format('YYYY')}
+          {monthDate.format('MMM')} {monthDate.format('YYYY')}
         </h4>
         <div className="flex gap-2">
           <button
