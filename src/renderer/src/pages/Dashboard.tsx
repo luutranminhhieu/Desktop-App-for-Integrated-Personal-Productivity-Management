@@ -132,7 +132,7 @@ const Dashboard = (): React.JSX.Element => {
 
 
   if (loading) {
-    return <div className="text-[14px] text-[#6B7280]">Đang tải dashboard...</div>;
+    return <div className="text-[14px] text-[#6B7280]"></div>;
   }
 
   if (error) {
@@ -140,7 +140,7 @@ const Dashboard = (): React.JSX.Element => {
   }
 
   if (!data) {
-    return <div className="text-[14px] text-[#6B7280]">Không có dữ liệu dashboard.</div>;
+    return <div className="text-[14px] text-[#6B7280]">No data.</div>;
   }
 
   const overdueCount = Math.max(0, data.taskStats.overdue);
