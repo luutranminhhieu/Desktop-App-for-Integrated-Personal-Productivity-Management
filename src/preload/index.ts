@@ -18,13 +18,6 @@ const api = {
     delete: (todoId, userId) => ipcRenderer.invoke('todo:delete', { todoId, userId }),
     stats: (userId) => ipcRenderer.invoke('todo:stats', { userId })
   },
-  note: {
-    create: (payload) => ipcRenderer.invoke('note:create', payload),
-    list: (options) => ipcRenderer.invoke('note:list', options),
-    update: (noteId, updates, userId) => ipcRenderer.invoke('note:update', { noteId, updates, userId }),
-    delete: (noteId, userId) => ipcRenderer.invoke('note:delete', { noteId, userId }),
-    count: (userId) => ipcRenderer.invoke('note:count', { userId })
-  },
   dashboard: {
     getStats: (userId, focusRange) => ipcRenderer.invoke('dashboard:getStats', { userId, focusRange })
   },

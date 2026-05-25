@@ -37,16 +37,6 @@ export interface TodoItem {
   updatedAt?: string;
 }
 
-export interface NoteItem {
-  _id: string;
-  title: string;
-  content: string;
-  tags: string[];
-  userId: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
 export interface TaskStats {
   total: number;
   completed: number;
@@ -83,7 +73,6 @@ export interface DashboardStats {
   focusHours: FocusDay[];
   urgentTasks: TodoItem[];
   todayTasks: TodoItem[];
-  noteCount: number;
   focusStreakDays: number;
   weeklyFocusHours: number;
   activity: HeatmapData;
@@ -91,7 +80,6 @@ export interface DashboardStats {
   notifications: number;
   yearFocusHours: number;
   pomodoroStats: PomodoroStats;
-  newNotesThisMonth: number;
 }
 
 export interface CalendarEvent {
@@ -138,19 +126,6 @@ export interface ITodoAPI {
   stats: (userId: string) => Promise<{ success: boolean; data?: TaskStats; error?: string }>;
 }
 
-export interface INoteAPI {
-  create: (payload: Partial<NoteItem>) => Promise<{ success: boolean; data?: NoteItem; error?: string }>;
-  list: (options: {
-    userId: string;
-    query?: string;
-    tags?: string[];
-    limit?: number;
-  }) => Promise<{ success: boolean; data?: NoteItem[]; error?: string }>;
-  update: (noteId: string, updates: Partial<NoteItem>, userId: string) => Promise<{ success: boolean; data?: NoteItem; error?: string }>;
-  delete: (noteId: string, userId: string) => Promise<{ success: boolean; error?: string }>;
-  count: (userId: string) => Promise<{ success: boolean; data?: number; error?: string }>;
-}
-
 export interface IDashboardAPI {
   getStats: (
     userId: string,
@@ -179,7 +154,6 @@ declare global {
     api: {
       auth: IAuthAPI;
       todo: ITodoAPI;
-      note: INoteAPI;
       dashboard: IDashboardAPI;
       calendar: ICalendarAPI;
       app: IAppAPI;

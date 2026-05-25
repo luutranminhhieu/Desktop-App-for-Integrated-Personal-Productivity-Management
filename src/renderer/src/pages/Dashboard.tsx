@@ -36,8 +36,6 @@ type DashboardData = {
   focusHours: FocusDay[];
   urgentTasks: TodoItem[];
   todayTasks: TodoItem[];
-  noteCount: number;
-  newNotesThisMonth: number;
   pomodoroStats: { completed: number; target: number };
   focusStreakDays: number;
   weeklyFocusHours: number;

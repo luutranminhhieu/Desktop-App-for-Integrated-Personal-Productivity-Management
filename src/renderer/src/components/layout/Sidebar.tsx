@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import UserProfile from './UserProfile';
 
-type SidebarKey = 'home' | 'calendar' | 'tasks' | 'notes' | 'focus';
+type SidebarKey = 'home' | 'calendar' | 'tasks' | 'focus';
 
 type SidebarProps = {
 	activeKey?: SidebarKey;
@@ -12,14 +12,12 @@ const navItems: Array<{ key: SidebarKey; label: string; icon: string; path: stri
 	{ key: 'home', label: 'Home', icon: 'home', path: '/' },
 	{ key: 'calendar', label: 'Calendar', icon: 'calendar_today', path: '/calendar' },
 	{ key: 'tasks', label: 'Tasks', icon: 'check_circle', path: '/tasks' },
-	{ key: 'notes', label: 'Notes', icon: 'description', path: '/notes' },
 	{ key: 'focus', label: 'Focus', icon: 'center_focus_strong', path: '/focus' }
 ];
 
 const routeToKey = (path: string): SidebarKey => {
 	if (path.startsWith('/calendar')) return 'calendar';
 	if (path.startsWith('/tasks')) return 'tasks';
-	if (path.startsWith('/notes')) return 'notes';
 	if (path.startsWith('/focus')) return 'focus';
 	return 'home';
 };
