@@ -870,17 +870,6 @@ const TodoList = (): React.JSX.Element => {
 				</section>
 			</div>
 
-			{/* ═══ FAB ═══ */}
-			<button
-				className="fixed bottom-[24px] right-[24px] w-[52px] h-[52px] bg-[#4F3CC9] text-white rounded-full shadow-lg flex items-center justify-center active:scale-95 transition-transform hover:bg-[#3A2D9E] z-50"
-				onClick={openCreateModal}
-				type="button"
-			>
-				<span className="material-symbols-outlined" style={{ fontSize: '32px' }}>
-					add
-				</span>
-			</button>
-
 			{/* ═══ Modal ═══ */}
 			<TodoForm
 				open={modalOpen}
