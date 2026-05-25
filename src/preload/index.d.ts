@@ -62,6 +62,31 @@ export interface HeatmapData {
   values: number[];
 }
 
+export type PomodoroMode = 'work' | 'short_break' | 'long_break';
+
+export interface PomodoroSettings {
+  sessionsPerDay: number;
+  workMinutes: number;
+  shortBreakMinutes: number;
+  longBreakMinutes: number;
+}
+
+export interface PomodoroStats {
+  completedSessions: number;
+  targetSessions: number;
+  totalWorkSeconds: number;
+  totalBreakSeconds: number;
+}
+
+export interface PomodoroState {
+  mode: PomodoroMode;
+  remainingSeconds: number;
+  totalSeconds: number;
+  isRunning: boolean;
+  settings: PomodoroSettings;
+  stats: PomodoroStats;
+}
+
 export interface TimelineEvent {
   time: string;
   title: string;
@@ -107,6 +132,19 @@ export interface IAuthAPI {
 
 export interface IAppAPI {
   onDeepLink: (callback: (url: string) => void) => () => void;
+}
+
+export interface IPomodoroAPI {
+  getState: () => Promise<{ success: boolean; data?: PomodoroState; error?: string }>;
+  getSettings: () => Promise<{ success: boolean; data?: PomodoroSettings; error?: string }>;
+  updateSettings: (settings: Partial<PomodoroSettings>) => Promise<{ success: boolean; data?: PomodoroSettings; error?: string }>;
+  start: () => Promise<{ success: boolean; data?: PomodoroState; error?: string }>;
+  pause: () => Promise<{ success: boolean; data?: PomodoroState; error?: string }>;
+  reset: () => Promise<{ success: boolean; data?: PomodoroState; error?: string }>;
+  skip: () => Promise<{ success: boolean; data?: PomodoroState; error?: string }>;
+  setMode: (mode: PomodoroMode) => Promise<{ success: boolean; data?: PomodoroState; error?: string }>;
+  onTick: (callback: (state: PomodoroState) => void) => () => void;
+  onSessionEnded: (callback: (payload: { mode: PomodoroMode; nextMode: PomodoroMode }) => void) => () => void;
 }
 
 export interface ITodoAPI {
@@ -156,6 +194,7 @@ declare global {
       todo: ITodoAPI;
       dashboard: IDashboardAPI;
       calendar: ICalendarAPI;
+      pomodoro: IPomodoroAPI;
       app: IAppAPI;
     }
   }

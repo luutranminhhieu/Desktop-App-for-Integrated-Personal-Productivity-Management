@@ -1,18 +1,36 @@
 import React from 'react';
 
-type SettingItem = {
-	title: string;
-	subtitle: string;
-	value: string;
+type PomodoroSettingsCardProps = {
+	settings: {
+		sessionsPerDay: number;
+		workMinutes: number;
+		shortBreakMinutes: number;
+	};
+	onAdjust: (key: 'sessionsPerDay' | 'workMinutes' | 'shortBreakMinutes', delta: number) => void;
 };
 
-const settings: SettingItem[] = [
-	{ title: 'Số phiên làm việc', subtitle: 'Tổng cộng cho hôm nay', value: '12' },
-	{ title: 'Làm việc (phút)', subtitle: 'Thời gian tập trung tối đa', value: '25' },
-	{ title: 'Nghỉ giải lao (phút)', subtitle: 'Nghỉ ngắn sau mỗi phiên', value: '05' }
-];
+const PomodoroSettingsCard = ({ settings, onAdjust }: PomodoroSettingsCardProps): React.JSX.Element => {
+	const items = [
+		{
+			key: 'sessionsPerDay',
+			title: 'Số phiên làm việc',
+			subtitle: 'Tổng cộng cho hôm nay',
+			value: settings.sessionsPerDay
+		},
+		{
+			key: 'workMinutes',
+			title: 'Làm việc (phút)',
+			subtitle: 'Thời gian tập trung tối đa',
+			value: settings.workMinutes
+		},
+		{
+			key: 'shortBreakMinutes',
+			title: 'Nghỉ giải lao (phút)',
+			subtitle: 'Nghỉ ngắn sau mỗi phiên',
+			value: settings.shortBreakMinutes
+		}
+	] as const;
 
-const PomodoroSettingsCard = (): React.JSX.Element => {
 	return (
 		<section className="w-full max-w-[480px] bg-white rounded-xl border border-[#E5E7EB] p-6">
 			<div className="flex items-center justify-between mb-6">
@@ -22,7 +40,7 @@ const PomodoroSettingsCard = (): React.JSX.Element => {
 				</h3>
 			</div>
 			<div className="space-y-4">
-				{settings.map((item, index) => (
+				{items.map((item, index) => (
 					<React.Fragment key={item.title}>
 						<div className="flex items-center justify-between">
 							<div>
@@ -33,13 +51,17 @@ const PomodoroSettingsCard = (): React.JSX.Element => {
 								<button
 									className="h-8 w-8 rounded bg-white shadow-sm flex items-center justify-center text-[#1A1A2E] hover:text-[#4F3CC9]"
 									type="button"
+									onClick={() => onAdjust(item.key, -1)}
 								>
 									-
 								</button>
-								<span className="text-[15px] font-medium text-[#1A1A2E] px-3">{item.value}</span>
+								<span className="text-[15px] font-medium text-[#1A1A2E] px-3">
+									{item.value.toString().padStart(2, '0')}
+								</span>
 								<button
 									className="h-8 w-8 rounded bg-white shadow-sm flex items-center justify-center text-[#1A1A2E] hover:text-[#4F3CC9]"
 									type="button"
+									onClick={() => onAdjust(item.key, 1)}
 								>
 									+
 								</button>

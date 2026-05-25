@@ -259,58 +259,7 @@ const Dashboard = (): React.JSX.Element => {
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-xl border border-[#E5E7EB]">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-[18px] font-semibold text-[#1A1A2E]">Lich trinh hom nay</h2>
-          </div>
-          <div className="space-y-4 max-h-[320px] overflow-y-auto pr-2">
-            <div>
-              <h3 className="text-[12px] font-semibold text-[#6B7280] uppercase mb-3">Lich trinh</h3>
-              <div className="relative space-y-4 before:absolute before:left-[3px] before:top-2 before:bottom-2 before:w-[1.5px] before:bg-[#E5E7EB]">
-                {data.timelineEvents.map((event) => (
-                  <div key={event.title} className="relative pl-6">
-                    <div
-                      className="absolute left-0 top-1.5 w-2 h-2 rounded-full z-10"
-                      style={{ backgroundColor: event.color }}
-                    ></div>
-                    <p className="text-[12px] text-[#6B7280]">{event.time}</p>
-                    <p className="text-[14px] font-semibold text-[#1A1A2E]">{event.title}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div>
-              <h3 className="text-[12px] font-semibold text-[#6B7280] uppercase mb-3">Tasks hom nay</h3>
-              <div className="space-y-3">
-                {data.todayTasks.map((task) => {
-                  const isCompleted = task.status === 'completed';
-                  const badgeClass = isCompleted
-                    ? 'bg-[#10B981]/10 text-[#10B981]'
-                    : 'bg-[#F59E0B]/10 text-[#F59E0B]';
-                  return (
-                    <div
-                      key={task._id}
-                      className="flex items-center gap-3 p-2 rounded-lg border border-[#E5E7EB]/70"
-                    >
-                      <span className={`w-2.5 h-2.5 rounded-full ${isCompleted ? 'bg-[#10B981]' : 'bg-[#F59E0B]'}`}></span>
-                      <div className="flex-1">
-                        <p className="text-[14px] text-[#1A1A2E]">{task.title}</p>
-                        <p className="text-[12px] text-[#6B7280]">{task.project || 'General'}</p>
-                      </div>
-                      <span className={`px-2 py-1 text-[11px] font-semibold rounded-full ${badgeClass}`}>
-                        {isCompleted ? 'DONE' : 'PENDING'}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-
-
+        </div>     
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">

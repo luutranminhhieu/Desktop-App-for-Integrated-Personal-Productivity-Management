@@ -29,6 +29,26 @@ const api = {
     update: (eventId, updates, userId) => ipcRenderer.invoke('calendar:update', { eventId, updates, userId }),
     delete: (eventId, userId) => ipcRenderer.invoke('calendar:delete', { eventId, userId })
   },
+  pomodoro: {
+    getState: () => ipcRenderer.invoke('pomodoro:getState'),
+    getSettings: () => ipcRenderer.invoke('pomodoro:getSettings'),
+    updateSettings: (settings) => ipcRenderer.invoke('pomodoro:updateSettings', { settings }),
+    start: () => ipcRenderer.invoke('pomodoro:start'),
+    pause: () => ipcRenderer.invoke('pomodoro:pause'),
+    reset: () => ipcRenderer.invoke('pomodoro:reset'),
+    skip: () => ipcRenderer.invoke('pomodoro:skip'),
+    setMode: (mode) => ipcRenderer.invoke('pomodoro:setMode', { mode }),
+    onTick: (callback) => {
+      const listener = (_event: Electron.IpcRendererEvent, payload): void => callback(payload)
+      ipcRenderer.on('pomodoro:tick', listener)
+      return () => ipcRenderer.removeListener('pomodoro:tick', listener)
+    },
+    onSessionEnded: (callback) => {
+      const listener = (_event: Electron.IpcRendererEvent, payload): void => callback(payload)
+      ipcRenderer.on('pomodoro:sessionEnded', listener)
+      return () => ipcRenderer.removeListener('pomodoro:sessionEnded', listener)
+    }
+  },
   app: {
     onDeepLink: (callback) => {
       const listener = (_event: Electron.IpcRendererEvent, url: string): void => callback(url)
