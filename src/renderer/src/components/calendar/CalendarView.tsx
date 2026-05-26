@@ -5,7 +5,7 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import viLocale from '@fullcalendar/core/locales/vi';
 
-import type { CalendarViewType } from './types';
+import type { CalendarViewType } from '@renderer/types';
 
 export type CalendarViewProps = {
   calendarRef: React.RefObject<FullCalendar | null>;

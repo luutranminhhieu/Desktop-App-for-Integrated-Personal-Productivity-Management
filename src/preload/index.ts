@@ -18,13 +18,6 @@ const api = {
     delete: (todoId, userId) => ipcRenderer.invoke('todo:delete', { todoId, userId }),
     stats: (userId) => ipcRenderer.invoke('todo:stats', { userId })
   },
-  note: {
-    create: (payload) => ipcRenderer.invoke('note:create', payload),
-    list: (options) => ipcRenderer.invoke('note:list', options),
-    update: (noteId, updates, userId) => ipcRenderer.invoke('note:update', { noteId, updates, userId }),
-    delete: (noteId, userId) => ipcRenderer.invoke('note:delete', { noteId, userId }),
-    count: (userId) => ipcRenderer.invoke('note:count', { userId })
-  },
   dashboard: {
     getStats: (userId, focusRange) => ipcRenderer.invoke('dashboard:getStats', { userId, focusRange })
   },
@@ -35,6 +28,26 @@ const api = {
       ipcRenderer.invoke('calendar:listRange', { userId, startDate, endDate }),
     update: (eventId, updates, userId) => ipcRenderer.invoke('calendar:update', { eventId, updates, userId }),
     delete: (eventId, userId) => ipcRenderer.invoke('calendar:delete', { eventId, userId })
+  },
+  pomodoro: {
+    getState: () => ipcRenderer.invoke('pomodoro:getState'),
+    getSettings: () => ipcRenderer.invoke('pomodoro:getSettings'),
+    updateSettings: (settings) => ipcRenderer.invoke('pomodoro:updateSettings', { settings }),
+    start: () => ipcRenderer.invoke('pomodoro:start'),
+    pause: () => ipcRenderer.invoke('pomodoro:pause'),
+    reset: () => ipcRenderer.invoke('pomodoro:reset'),
+    skip: () => ipcRenderer.invoke('pomodoro:skip'),
+    setMode: (mode) => ipcRenderer.invoke('pomodoro:setMode', { mode }),
+    onTick: (callback) => {
+      const listener = (_event: Electron.IpcRendererEvent, payload): void => callback(payload)
+      ipcRenderer.on('pomodoro:tick', listener)
+      return () => ipcRenderer.removeListener('pomodoro:tick', listener)
+    },
+    onSessionEnded: (callback) => {
+      const listener = (_event: Electron.IpcRendererEvent, payload): void => callback(payload)
+      ipcRenderer.on('pomodoro:sessionEnded', listener)
+      return () => ipcRenderer.removeListener('pomodoro:sessionEnded', listener)
+    }
   },
   app: {
     onDeepLink: (callback) => {

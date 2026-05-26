@@ -1,5 +1,5 @@
 import React from 'react';
-import { TaskStats } from './types';
+import { TaskStats } from '@renderer/types';
 
 interface TodoStatsProps {
   stats: TaskStats;

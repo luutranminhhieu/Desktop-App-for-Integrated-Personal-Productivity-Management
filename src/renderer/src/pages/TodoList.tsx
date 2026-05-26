@@ -9,7 +9,7 @@ import type {
 	StatusFilterKey,
 	TodoPriority,
 	TodoStatus
-} from '../components/todo/types';
+} from '@renderer/types';
 
 /* ════════════════════════════════════════════════════════════ */
 /*  Constants                                                  */

@@ -1,6 +1,5 @@
 import { ipcMain } from 'electron';
 import { calendarService } from '../services/calendar.service';
-import { noteService } from '../services/note.service';
 import { todoService } from '../services/todo.service';
 
 type FocusRange = 'week' | 'month' | 'year';
@@ -36,24 +35,20 @@ export function registerDashboardIPC(): void {
         focusHours,
         urgentTasks,
         todayTasks,
-        noteCount,
         streak,
         activity,
         yearFocusHours,
         pomodoroStats,
-        newNotesThisMonth,
         calendarEvents
       ] = await Promise.all([
         todoService.getTaskStats(userId),
         todoService.getFocusHours(userId, focusDays),
         todoService.getUrgentTasks(userId),
         todoService.getTodayTasks(userId),
-        noteService.getNoteCount(userId),
         todoService.getFocusStreak(userId),
         todoService.getActivityHeatmap(userId, 12),
         todoService.getFocusHoursTotal(userId, 365),
         todoService.getPomodoroStatsToday(userId),
-        noteService.getNewNotesCount(userId),
         calendarService.listEventsForDay(userId, today)
       ]);
 
@@ -73,13 +68,11 @@ export function registerDashboardIPC(): void {
           focusHours,
           urgentTasks,
           todayTasks,
-          noteCount,
           focusStreakDays: streak,
           weeklyFocusHours,
           activity,
           yearFocusHours,
           pomodoroStats,
-          newNotesThisMonth,
           timelineEvents,
           notifications
         }

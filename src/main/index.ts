@@ -4,7 +4,7 @@ import { join, resolve } from 'path';
 import { registerAuthIPC } from './ipc/auth.ipc';
 import { registerCalendarIPC } from './ipc/calendar.ipc';
 import { registerDashboardIPC } from './ipc/dashboard.ipc';
-import { registerNoteIPC } from './ipc/note.ipc';
+import { registerPomodoroIPC } from './ipc/pomodoro.ipc';
 import { registerTodoIPC } from './ipc/todo.ipc';
 import icon from '../../resources/icon.png?asset';
 
@@ -100,9 +100,9 @@ app.whenReady().then(async () => {
   // Register IPC Handlers
   registerAuthIPC();
   registerTodoIPC();
-  registerNoteIPC();
   registerCalendarIPC();
   registerDashboardIPC();
+  registerPomodoroIPC();
   
   // Set app user model id for windows
   if (process.platform === 'win32') {

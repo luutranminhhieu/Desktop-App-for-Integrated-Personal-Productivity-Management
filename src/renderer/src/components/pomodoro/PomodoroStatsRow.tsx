@@ -1,15 +1,19 @@
 import React from 'react';
 
-const stats = [
-	{ icon: 'timer', label: 'Phiên tập trung', value: '8 / 12' },
-	{ icon: 'bolt', label: 'Tổng thời gian', value: '3h 20m' },
-	{ icon: 'bedtime', label: 'Thời gian nghỉ', value: '40m' }
-];
+type PomodoroStatItem = {
+	icon: string;
+	label: string;
+	value: string;
+};
 
-const PomodoroStatsRow = (): React.JSX.Element => {
+type PomodoroStatsRowProps = {
+	items: PomodoroStatItem[];
+};
+
+const PomodoroStatsRow = ({ items }: PomodoroStatsRowProps): React.JSX.Element => {
 	return (
 		<div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-			{stats.map((item) => (
+			{items.map((item) => (
 				<div
 					key={item.label}
 					className="bg-white p-6 rounded-xl border border-[#E5E7EB] flex items-center gap-4"

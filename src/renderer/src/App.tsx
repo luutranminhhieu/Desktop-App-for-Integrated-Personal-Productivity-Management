@@ -5,7 +5,6 @@ import Dashboard from './pages/Dashboard';
 import ForgotPassword from './pages/ForgotPassword';
 import Login from './pages/Login';
 import MainLayout from './components/layout/MainLayout';
-import Notes from './pages/Notes';
 import Pomodoro from './pages/Pomodoro';
 import Profile from './pages/Profile';
 import Register from './pages/Register';
@@ -71,7 +70,6 @@ function App(): React.JSX.Element {
         <Route path="/" element={withLayout(<Dashboard />)} />
         <Route path="/calendar" element={withLayout(<Calendar />)} />
         <Route path="/tasks" element={withLayout(<TodoList />)} />
-        <Route path="/notes" element={withLayout(<Notes />)} />
         <Route path="/focus" element={withLayout(<Pomodoro />)} />
         <Route path="/profile" element={withLayout(<Profile />)} />
         <Route path="/settings" element={withLayout(<Settings />)} />

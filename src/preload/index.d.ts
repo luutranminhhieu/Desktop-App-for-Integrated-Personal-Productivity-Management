@@ -37,16 +37,6 @@ export interface TodoItem {
   updatedAt?: string;
 }
 
-export interface NoteItem {
-  _id: string;
-  title: string;
-  content: string;
-  tags: string[];
-  userId: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
 export interface TaskStats {
   total: number;
   completed: number;
@@ -72,6 +62,31 @@ export interface HeatmapData {
   values: number[];
 }
 
+export type PomodoroMode = 'work' | 'short_break' | 'long_break';
+
+export interface PomodoroSettings {
+  sessionsPerDay: number;
+  workMinutes: number;
+  shortBreakMinutes: number;
+  longBreakMinutes: number;
+}
+
+export interface PomodoroStats {
+  completedSessions: number;
+  targetSessions: number;
+  totalWorkSeconds: number;
+  totalBreakSeconds: number;
+}
+
+export interface PomodoroState {
+  mode: PomodoroMode;
+  remainingSeconds: number;
+  totalSeconds: number;
+  isRunning: boolean;
+  settings: PomodoroSettings;
+  stats: PomodoroStats;
+}
+
 export interface TimelineEvent {
   time: string;
   title: string;
@@ -83,7 +98,6 @@ export interface DashboardStats {
   focusHours: FocusDay[];
   urgentTasks: TodoItem[];
   todayTasks: TodoItem[];
-  noteCount: number;
   focusStreakDays: number;
   weeklyFocusHours: number;
   activity: HeatmapData;
@@ -91,7 +105,6 @@ export interface DashboardStats {
   notifications: number;
   yearFocusHours: number;
   pomodoroStats: PomodoroStats;
-  newNotesThisMonth: number;
 }
 
 export interface CalendarEvent {
@@ -121,6 +134,19 @@ export interface IAppAPI {
   onDeepLink: (callback: (url: string) => void) => () => void;
 }
 
+export interface IPomodoroAPI {
+  getState: () => Promise<{ success: boolean; data?: PomodoroState; error?: string }>;
+  getSettings: () => Promise<{ success: boolean; data?: PomodoroSettings; error?: string }>;
+  updateSettings: (settings: Partial<PomodoroSettings>) => Promise<{ success: boolean; data?: PomodoroSettings; error?: string }>;
+  start: () => Promise<{ success: boolean; data?: PomodoroState; error?: string }>;
+  pause: () => Promise<{ success: boolean; data?: PomodoroState; error?: string }>;
+  reset: () => Promise<{ success: boolean; data?: PomodoroState; error?: string }>;
+  skip: () => Promise<{ success: boolean; data?: PomodoroState; error?: string }>;
+  setMode: (mode: PomodoroMode) => Promise<{ success: boolean; data?: PomodoroState; error?: string }>;
+  onTick: (callback: (state: PomodoroState) => void) => () => void;
+  onSessionEnded: (callback: (payload: { mode: PomodoroMode; nextMode: PomodoroMode }) => void) => () => void;
+}
+
 export interface ITodoAPI {
   create: (payload: Partial<TodoItem>) => Promise<{ success: boolean; data?: TodoItem; error?: string }>;
   list: (options: {
@@ -136,19 +162,6 @@ export interface ITodoAPI {
   update: (todoId: string, updates: Partial<TodoItem>, userId: string) => Promise<{ success: boolean; data?: TodoItem; error?: string }>;
   delete: (todoId: string, userId: string) => Promise<{ success: boolean; error?: string }>;
   stats: (userId: string) => Promise<{ success: boolean; data?: TaskStats; error?: string }>;
-}
-
-export interface INoteAPI {
-  create: (payload: Partial<NoteItem>) => Promise<{ success: boolean; data?: NoteItem; error?: string }>;
-  list: (options: {
-    userId: string;
-    query?: string;
-    tags?: string[];
-    limit?: number;
-  }) => Promise<{ success: boolean; data?: NoteItem[]; error?: string }>;
-  update: (noteId: string, updates: Partial<NoteItem>, userId: string) => Promise<{ success: boolean; data?: NoteItem; error?: string }>;
-  delete: (noteId: string, userId: string) => Promise<{ success: boolean; error?: string }>;
-  count: (userId: string) => Promise<{ success: boolean; data?: number; error?: string }>;
 }
 
 export interface IDashboardAPI {
@@ -179,9 +192,9 @@ declare global {
     api: {
       auth: IAuthAPI;
       todo: ITodoAPI;
-      note: INoteAPI;
       dashboard: IDashboardAPI;
       calendar: ICalendarAPI;
+      pomodoro: IPomodoroAPI;
       app: IAppAPI;
     }
   }
