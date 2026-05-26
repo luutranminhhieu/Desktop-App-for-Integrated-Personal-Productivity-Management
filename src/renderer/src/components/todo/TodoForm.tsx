@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import type { TodoItem, TodoFormData, TodoModalMode, TodoPriority } from './types';
+import type { TodoItem, TodoFormData, TodoModalMode, TodoPriority } from '@renderer/types';
 
 export interface TodoFormProps {
 	open: boolean;

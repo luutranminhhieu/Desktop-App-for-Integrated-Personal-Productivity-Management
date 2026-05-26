@@ -1,5 +1,5 @@
 import React from 'react';
-import { TodoItem as TodoItemType } from './types';
+import { TodoItem as TodoItemType } from '@renderer/types';
 
 interface TodoItemProps {
   todo: TodoItemType;

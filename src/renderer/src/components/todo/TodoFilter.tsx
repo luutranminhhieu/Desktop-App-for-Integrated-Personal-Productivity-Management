@@ -1,5 +1,5 @@
 import React from 'react';
-import { FilterOptions, TodoStatus, TodoPriority } from './types';
+import { FilterOptions, TodoStatus, TodoPriority } from '@renderer/types';
 
 interface TodoFilterProps {
   filters: FilterOptions;

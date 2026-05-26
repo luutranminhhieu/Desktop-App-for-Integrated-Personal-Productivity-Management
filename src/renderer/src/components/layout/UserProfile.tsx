@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SettingsModal from '../modals/settingModal';
 
 type UserInfo = {
 	id: string;
@@ -11,7 +12,6 @@ type UserInfo = {
 const UserProfile = (): React.JSX.Element => {
 	const navigate = useNavigate();
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
-	const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 	const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
 	const [user] = useState<UserInfo | null>(() => {
@@ -34,7 +34,6 @@ const UserProfile = (): React.JSX.Element => {
 
 	const handleSignOut = (): void => {
 		setIsMenuOpen(false);
-		setIsProfileModalOpen(false);
 		setIsSettingsModalOpen(false);
 
 		localStorage.removeItem('token');
@@ -82,18 +81,6 @@ const UserProfile = (): React.JSX.Element => {
 							className="w-full px-4 py-2 text-left text-[14px] text-[#1A1A2E] hover:bg-[#F5F4FA] flex items-center gap-2"
 							onClick={() => {
 								setIsMenuOpen(false);
-								setIsProfileModalOpen(true);
-							}}
-							role="menuitem"
-							type="button"
-						>
-							<span className="material-symbols-outlined text-[18px]">person</span>
-							<span>Profile</span>
-						</button>
-						<button
-							className="w-full px-4 py-2 text-left text-[14px] text-[#1A1A2E] hover:bg-[#F5F4FA] flex items-center gap-2"
-							onClick={() => {
-								setIsMenuOpen(false);
 								setIsSettingsModalOpen(true);
 							}}
 							role="menuitem"
@@ -115,39 +102,12 @@ const UserProfile = (): React.JSX.Element => {
 				)}
 			</div>
 
-			{isProfileModalOpen && (
-				<div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/30 p-6">
-					<div className="w-full max-w-lg bg-white rounded-xl border border-[#E5E7EB] p-6 shadow-xl">
-						<div className="flex items-center justify-between mb-4">
-							<h2 className="text-[18px] font-semibold text-[#1A1A2E]">Profile</h2>
-							<button
-								className="text-[#6B7280] hover:text-[#1A1A2E]"
-								onClick={() => setIsProfileModalOpen(false)}
-							>
-								<span className="material-symbols-outlined">close</span>
-							</button>
-						</div>
-						<p className="text-[14px] text-[#6B7280]">Nội dung Profile sẽ được bổ sung sau.</p>
-					</div>
-				</div>
-			)}
-
-			{isSettingsModalOpen && (
-				<div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/30 p-6">
-					<div className="w-full max-w-lg bg-white rounded-xl border border-[#E5E7EB] p-6 shadow-xl">
-						<div className="flex items-center justify-between mb-4">
-							<h2 className="text-[18px] font-semibold text-[#1A1A2E]">Settings</h2>
-							<button
-								className="text-[#6B7280] hover:text-[#1A1A2E]"
-								onClick={() => setIsSettingsModalOpen(false)}
-							>
-								<span className="material-symbols-outlined">close</span>
-							</button>
-						</div>
-						<p className="text-[14px] text-[#6B7280]">Nội dung Settings sẽ được bổ sung sau.</p>
-					</div>
-				</div>
-			)}
+			<SettingsModal
+				isOpen={isSettingsModalOpen}
+				onClose={() => setIsSettingsModalOpen(false)}
+				user={user}
+				initials={initials}
+			/>
 		</div>
 	);
 };

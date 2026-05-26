@@ -1,5 +1,5 @@
 import React from 'react';
-import type { UnscheduledTask } from './types';
+import type { UnscheduledTask } from '@renderer/types';
 
 export type UnscheduledTasksProps = {
   tasks: UnscheduledTask[];

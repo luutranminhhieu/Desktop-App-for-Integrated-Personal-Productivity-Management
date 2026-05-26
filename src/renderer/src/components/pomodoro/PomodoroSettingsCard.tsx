@@ -67,7 +67,7 @@ const PomodoroSettingsCard = ({ settings, onAdjust }: PomodoroSettingsCardProps)
 								</button>
 							</div>
 						</div>
-						{index < settings.length - 1 && <div className="h-px bg-[#E5E7EB]" />}
+						{index < items.length - 1 && <div className="h-px bg-[#E5E7EB]" />}
 					</React.Fragment>
 				))}
 			</div>

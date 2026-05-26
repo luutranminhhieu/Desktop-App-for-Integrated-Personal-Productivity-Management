@@ -86,23 +86,6 @@ const PomodoroTimerCard = ({
 				</div>
 			</div>
 
-			<div className="w-full">
-				<label className="block text-[12px] font-medium text-[#6B7280] mb-2">
-					Đang thực hiện:
-				</label>
-				<div className="relative group cursor-pointer">
-					<div className="flex items-center justify-between bg-[#F5F4FA] px-4 py-3 rounded-lg border border-transparent hover:border-[#4F3CC9]/30 transition-all">
-						<div className="flex items-center gap-3">
-							<span className="material-symbols-outlined text-[#4F3CC9]">list_alt</span>
-							<span className="text-[14px] font-medium text-[#1A1A2E]">
-								Thiết kế UI Dashboard FocusHub
-							</span>
-						</div>
-						<span className="material-symbols-outlined text-[#6B7280]">expand_more</span>
-					</div>
-				</div>
-			</div>
-
 			<div className="flex items-center gap-8">
 				<button
 					className="h-12 w-12 rounded-full border border-[#E5E7EB] flex items-center justify-center text-[#6B7280] hover:bg-[#F6F2FE] transition-all active:scale-95"

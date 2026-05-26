@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import type { CalendarFormData, CalendarModalMode } from './types';
+import type { CalendarFormData, CalendarModalMode } from '@renderer/types';
 
 export type EventModalProps = {
   open: boolean;

@@ -9,7 +9,7 @@ import type {
 	CalendarFormData,
 	CalendarModalMode,
 	CalendarViewType
-} from '../components/calendar/types';
+} from '@renderer/types';
 
 const defaultFormData: CalendarFormData = {
 	title: '',
