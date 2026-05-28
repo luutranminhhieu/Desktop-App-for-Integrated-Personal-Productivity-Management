@@ -3,13 +3,18 @@ import type { DashboardData } from '@renderer/types';
 import FocusDayCard from '@renderer/components/dashboard/FocusDayCard';
 import TaskStatus from '@renderer/components/dashboard/TaskStatus';
 import Heatmap from '@renderer/components/dashboard/Heatmap';
+import {
+  DASHBOARD_LOCALE,
+  DEFAULT_FOCUS_GOAL,
+  DASHBOARD_STRINGS
+} from '@renderer/config/dashboardConfig';
 
 const formatDeadline = (value?: string): string => {
   if (!value) {
-    return 'Không có hạn';
+    return DASHBOARD_STRINGS.noDeadline;
   }
   const date = new Date(value);
-  return new Intl.DateTimeFormat('vi-VN', {
+  return new Intl.DateTimeFormat(DASHBOARD_LOCALE, {
     day: '2-digit',
     month: '2-digit',
     hour: '2-digit',
@@ -21,7 +26,7 @@ const Dashboard = (): React.JSX.Element => {
   const [data, setData] = useState<DashboardData | null>(null);
   const storedToken = localStorage.getItem('token') || sessionStorage.getItem('token');
   const [loading, setLoading] = useState(() => Boolean(storedToken));
-  const [error, setError] = useState(() => (storedToken ? '' : 'Thiếu token xác thực.'));
+  const [error, setError] = useState(() => (storedToken ? '' : DASHBOARD_STRINGS.authError));
   const [focusRange] = useState<'week' | 'month' | 'year'>('week');
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -36,12 +41,12 @@ const Dashboard = (): React.JSX.Element => {
         if (response.success && response.data?.userId) {
           setUserId(response.data.userId);
         } else {
-          setError(response.error || 'Không thể xác thực token.');
+          setError(response.error || DASHBOARD_STRINGS.tokenError);
           setLoading(false);
         }
       })
       .catch(() => {
-        setError('Không thể xác thực token.');
+        setError(DASHBOARD_STRINGS.tokenError);
         setLoading(false);
       });
   }, [storedToken]);
@@ -59,10 +64,10 @@ const Dashboard = (): React.JSX.Element => {
           setData(response.data as DashboardData);
           setError('');
         } else {
-          setError(response.error || 'Không thể tải dữ liệu dashboard.');
+          setError(response.error || DASHBOARD_STRINGS.fetchError);
         }
       } catch {
-        setError('Không thể tải dữ liệu dashboard.');
+        setError(DASHBOARD_STRINGS.fetchError);
       } finally {
         setLoading(false);
       }
@@ -75,25 +80,25 @@ const Dashboard = (): React.JSX.Element => {
   const todayFocusHours = data?.focusHours?.length
     ? data.focusHours[data.focusHours.length - 1].hours
     : 0;
-  const focusGoal = 6;
+  const focusGoal = Number(localStorage.getItem('focusGoal')) || DEFAULT_FOCUS_GOAL;
 
   /* ── Guard states ── */
   if (loading) {
-    return <div className="text-[14px] text-[#6B7280]"></div>;
+    return <div className="text-sm text-[var(--color-muted)]"></div>;
   }
 
   if (error) {
-    return <div className="text-[14px] text-[#EF4444]">{error}</div>;
+    return <div className="text-sm text-[var(--color-error)]">{error}</div>;
   }
 
   if (!data) {
-    return <div className="text-[14px] text-[#6B7280]">No data.</div>;
+    return <div className="text-sm text-[var(--color-muted)]">{DASHBOARD_STRINGS.noData}</div>;
   }
 
   return (
     <div>
       {/* ── Row 1: Focus‑Day Card + Task‑Status Donut ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
         <FocusDayCard
           todayFocusHours={todayFocusHours}
           focusGoal={focusGoal}
@@ -108,24 +113,24 @@ const Dashboard = (): React.JSX.Element => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         {data.urgentTasks.slice(0, 3).map((task) => {
           const isUrgent = task.priority === 'urgent';
-          const borderColor = isUrgent ? '#EF4444' : '#F59E0B';
+          const borderColor = isUrgent ? 'var(--color-error)' : 'var(--color-warning)';
           return (
             <div
               key={task._id}
-              className="bg-white p-4 rounded-xl border border-[#E5E7EB] shadow-sm"
+              className="bg-[var(--color-bg)] p-4 rounded-lg border border-[var(--color-border)] shadow-sm"
               style={{ borderLeft: `4px solid ${borderColor}` }}
             >
               <div className="flex justify-between items-start mb-3">
                 <span
                   className="px-2 py-1 text-[11px] font-semibold rounded uppercase"
-                  style={{ backgroundColor: `${borderColor}1A`, color: borderColor }}
+                  style={{ backgroundColor: isUrgent ? 'var(--color-error-light)' : 'var(--color-warning-light)', color: isUrgent ? 'var(--color-error)' : 'var(--color-warning)' }}
                 >
                   {isUrgent ? 'URGENT' : 'HIGH'}
                 </span>
-                <span className="material-symbols-outlined text-[#6B7280] text-[18px]">flag</span>
+                <span className="material-symbols-outlined text-[var(--color-muted)] text-lg">flag</span>
               </div>
-              <h3 className="text-[15px] font-medium text-[#1A1A2E] mb-1">{task.title}</h3>
-              <p className="text-[12px] text-[#6B7280]">Deadline: {formatDeadline(task.dueDate)}</p>
+              <h3 className="text-[15px] font-medium text-[var(--color-text)] mb-1">{task.title}</h3>
+              <p className="text-xs text-[var(--color-muted)]">Deadline: {formatDeadline(task.dueDate)}</p>
             </div>
           );
         })}

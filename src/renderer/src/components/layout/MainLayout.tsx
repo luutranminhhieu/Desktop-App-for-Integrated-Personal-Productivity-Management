@@ -11,9 +11,13 @@ const MainLayout = ({ children }: MainLayoutProps): React.JSX.Element => {
 	const isFocusRoute = location.pathname.startsWith('/focus');
 
 	return (
-		<div className={`min-h-screen text-[#1A1A2E] ${isFocusRoute ? 'bg-[#F0EEF8]' : 'bg-[#F5F4FA]'}`}>
+		<div
+			className={`min-h-screen flex text-[var(--color-text)] ${
+				isFocusRoute ? 'bg-[var(--color-bg-app)]' : 'bg-[var(--color-bg-app)]'
+			}`}
+		>
 			<Sidebar />
-			<main className="pt-5 pl-[244px] pr-6 pb-8 w-full">
+			<main className="pt-5 pl-60 pr-6 pb-8 w-full transition-all duration-200 flex flex-col min-h-screen">
 				{children}
 			</main>
 		</div>

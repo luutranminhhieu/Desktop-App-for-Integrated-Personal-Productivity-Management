@@ -4,6 +4,7 @@ import type FullCalendar from '@fullcalendar/react';
 import CalendarView from '../components/calendar/CalendarView';
 import EventModal from '../components/calendar/EventModal';
 import MiniCalendar from '../components/calendar/MiniCalendar';
+import { EventStatusColor } from '../constants/eventStatusColor';
 import type {
 	CalendarEventRecord,
 	CalendarFormData,
@@ -15,7 +16,7 @@ const defaultFormData: CalendarFormData = {
 	title: '',
 	startTime: '',
 	endTime: '',
-	color: '#4F3CC9',
+	color: EventStatusColor.todo,
 	location: '',
 	notes: ''
 };
@@ -50,16 +51,19 @@ const Calendar = (): React.JSX.Element => {
 	const calendarRef = useRef<FullCalendar | null>(null);
 
 	const calendarEvents = useMemo(() => {
-		return events.map((event) => ({
-			id: event._id,
-			title: event.title,
-			start: event.startTime,
-			end: event.endTime,
-			backgroundColor: event.color,
-			borderColor: event.color,
-			textColor: '#ffffff',
-			extendedProps: { location: event.location, notes: event.notes }
-		}));
+		return events.map((event) => {
+			const textColor = event.color === EventStatusColor.todo ? '#1A1A2E' : '#ffffff';
+			return {
+				id: event._id,
+				title: event.title,
+				start: event.startTime,
+				end: event.endTime,
+				backgroundColor: event.color,
+				borderColor: event.color,
+				textColor,
+				extendedProps: { location: event.location, notes: event.notes }
+			};
+		});
 	}, [events]);
 
 	const eventDates = useMemo(() => {
@@ -222,9 +226,9 @@ const Calendar = (): React.JSX.Element => {
 	}, [fetchEventsForRange, rangeStart, rangeEnd, userId]);
 
 	return (
-		<div className="min-h-screen text-[#1A1A2E]">
-			<div className="flex min-h-[720px] border border-[#E5E7EB] bg-white rounded-xl overflow-hidden">
-				<aside className="w-[240px] border-r border-[#E5E7EB] p-4 flex flex-col gap-8 bg-white">
+		<div className="flex flex-col flex-1 min-h-0 text-[var(--color-text)]">
+			<div className="flex flex-1 min-h-0 border border-[var(--color-border)] bg-[var(--color-bg)] rounded-lg overflow-hidden">
+				<aside className="w-60 border-r border-[var(--color-border)] p-4 flex flex-col gap-8 bg-[var(--color-bg)]">
 					<MiniCalendar
 						monthDate={monthDate}
 						selectedDate={selectedDate}
@@ -236,41 +240,41 @@ const Calendar = (): React.JSX.Element => {
 					<div className="flex flex-col gap-4">
 						<div className="flex items-center justify-between">
 							<h4 className="text-[15px] font-bold">Chi tiết công việc</h4>
-							<span className="text-[12px] font-bold text-[#6B7280] bg-[#F6F2FE] px-2 rounded">
+							<span className="text-xs font-bold text-[var(--color-muted)] bg-[var(--color-primary-lighter)] px-2 rounded">
 								{selectedEvent ? '1' : '0'}
 							</span>
 						</div>
 						{selectedEvent ? (
-							<div className="p-4 bg-white border border-[#E5E7EB] rounded-xl shadow-sm">
+							<div className="p-4 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg shadow-sm">
 								<div className="flex items-center gap-2 mb-3">
 									<span
 										className="w-2 h-2 rounded-full"
-										style={{ backgroundColor: selectedEvent.color || '#4F3CC9' }}
+										style={{ backgroundColor: selectedEvent.color || '#1E3A8A' }}
 									></span>
-									<h5 className="text-[15px] font-semibold text-[#1A1A2E] truncate">
+									<h5 className="text-[15px] font-semibold text-[var(--color-text)] truncate">
 										{selectedEvent.title}
 									</h5>
 								</div>
-								<p className="text-[12px] text-[#6B7280]">
+								<p className="text-xs text-[var(--color-muted)]">
 									{dayjs(selectedEvent.startTime).format('DD/MM/YYYY, HH:mm')} -
 									{dayjs(selectedEvent.endTime).format(' HH:mm')}
 								</p>
 								{selectedEvent.location && (
-									<p className="text-[12px] text-[#6B7280] mt-2">Địa điểm: {selectedEvent.location}</p>
+									<p className="text-xs text-[var(--color-muted)] mt-2">Địa điểm: {selectedEvent.location}</p>
 								)}
 								{selectedEvent.notes && (
-									<p className="text-[12px] text-[#6B7280] mt-2">Ghi chú: {selectedEvent.notes}</p>
+									<p className="text-xs text-[var(--color-muted)] mt-2">Ghi chú: {selectedEvent.notes}</p>
 								)}
 								<div className="mt-3 flex flex-wrap gap-2">
 									<button
-										className="px-3 py-1 text-[12px] font-semibold text-white bg-[#4F3CC9] rounded-lg hover:bg-[#3A2D9E]"
+										className="px-3 py-1 text-xs font-semibold text-white bg-[var(--color-primary)] rounded-md hover:bg-[var(--color-primary-hover)]"
 										onClick={() => handleEventClick(selectedEvent._id)}
 										type="button"
 									>
 										Chỉnh sửa
 									</button>
 									<button
-										className="px-3 py-1 text-[12px] font-semibold text-[#6B7280] hover:bg-[#F6F2FE] rounded-lg"
+										className="px-3 py-1 text-xs font-semibold text-[var(--color-muted)] hover:bg-[var(--color-primary-lighter)] rounded-md"
 										onClick={() => setSelectedEvent(null)}
 										type="button"
 									>
@@ -279,8 +283,8 @@ const Calendar = (): React.JSX.Element => {
 								</div>
 							</div>
 						) : (
-							<div className="p-4 bg-[#F6F2FE] border border-[#E5E7EB] rounded-xl">
-								<p className="text-[12px] text-[#6B7280]">
+							<div className="p-4 bg-[var(--color-primary-lighter)] border border-[var(--color-border)] rounded-lg">
+								<p className="text-xs text-[var(--color-muted)]">
 									Chọn một sự kiện trên lịch để xem chi tiết.
 								</p>
 							</div>
@@ -288,11 +292,11 @@ const Calendar = (): React.JSX.Element => {
 					</div>
 				</aside>
 
-				<section className="flex-1 overflow-y-auto bg-white relative">
-					<div className="sticky top-0 bg-white z-30 px-6 py-4 border-b border-[#E5E7EB] flex items-center justify-between">
+				<section className="flex flex-col flex-1 min-h-0 bg-[var(--color-bg)] relative">
+					<div className="shrink-0 bg-[var(--color-bg)] z-30 px-6 py-4 border-b border-[var(--color-border)] flex items-center justify-between">
 						<div className="flex items-center gap-4">
 							<button
-								className="px-4 py-2 border border-[#E5E7EB] rounded-lg text-[15px] font-medium hover:bg-[#F6F2FE] transition-colors"
+								className="px-4 py-2 border border-[var(--color-border)] rounded-md text-[15px] font-medium hover:bg-[var(--color-primary-lighter)] transition-colors"
 								type="button"
 								onClick={handleToday}
 							>
@@ -301,27 +305,27 @@ const Calendar = (): React.JSX.Element => {
 							<div className="flex items-center">
 								<button
 									type="button"
-									className="material-symbols-outlined text-[#6B7280] cursor-pointer p-2 hover:bg-[#F6F2FE] rounded-full"
+									className="material-symbols-outlined text-[var(--color-muted)] cursor-pointer p-2 hover:bg-[var(--color-primary-lighter)] rounded-full"
 									onClick={() => calendarRef.current?.getApi().prev()}
 								>
 									chevron_left
 								</button>
 								<button
 									type="button"
-									className="material-symbols-outlined text-[#6B7280] cursor-pointer p-2 hover:bg-[#F6F2FE] rounded-full"
+									className="material-symbols-outlined text-[var(--color-muted)] cursor-pointer p-2 hover:bg-[var(--color-primary-lighter)] rounded-full"
 									onClick={() => calendarRef.current?.getApi().next()}
 								>
 									chevron_right
 								</button>
 							</div>
-							<h2 className="text-[18px] font-semibold ml-2"></h2>
+							<h2 className="text-lg font-semibold ml-2"></h2>
 						</div>
-						<div className="flex bg-[#F6F2FE] p-1 rounded-xl">
+						<div className="flex bg-[var(--color-primary-lighter)] p-1 rounded-lg">
 							<button
-								className={`px-4 py-2 text-[12px] rounded-lg ${
+								className={`px-4 py-2 text-xs rounded-md ${
 									view === 'timeGridDay'
-										? 'bg-white text-[#4F3CC9] shadow-sm font-bold'
-										: 'text-[#6B7280] font-medium'
+										? 'bg-[var(--color-bg)] text-[var(--color-primary)] shadow-sm font-bold'
+										: 'text-[var(--color-muted)] font-medium'
 								}`}
 								type="button"
 								onClick={() => handleViewChange('timeGridDay')}
@@ -329,10 +333,10 @@ const Calendar = (): React.JSX.Element => {
 								Ngày
 							</button>
 							<button
-								className={`px-4 py-2 text-[12px] rounded-lg ${
+								className={`px-4 py-2 text-xs rounded-md ${
 									view === 'timeGridWeek'
-										? 'bg-white text-[#4F3CC9] shadow-sm font-bold'
-										: 'text-[#6B7280] font-medium'
+										? 'bg-[var(--color-bg)] text-[var(--color-primary)] shadow-sm font-bold'
+										: 'text-[var(--color-muted)] font-medium'
 								}`}
 								type="button"
 								onClick={() => handleViewChange('timeGridWeek')}
@@ -340,10 +344,10 @@ const Calendar = (): React.JSX.Element => {
 								Tuần
 							</button>
 							<button
-								className={`px-4 py-2 text-[12px] rounded-lg ${
+								className={`px-4 py-2 text-xs rounded-md ${
 									view === 'dayGridMonth'
-										? 'bg-white text-[#4F3CC9] shadow-sm font-bold'
-										: 'text-[#6B7280] font-medium'
+										? 'bg-[var(--color-bg)] text-[var(--color-primary)] shadow-sm font-bold'
+										: 'text-[var(--color-muted)] font-medium'
 								}`}
 								type="button"
 								onClick={() => handleViewChange('dayGridMonth')}
@@ -354,12 +358,12 @@ const Calendar = (): React.JSX.Element => {
 					</div>
 
 					{eventsError && (
-						<div className="px-6 py-3 text-[12px] text-[#EF4444] border-b border-[#FECACA] bg-[#FEF2F2]">
+						<div className="px-6 py-3 text-xs text-[var(--color-error)] border-b border-[var(--color-error-border)] bg-[var(--color-error-light)]">
 							{eventsError}
 						</div>
 					)}
 
-					<div className="p-4 h-[640px] relative">
+					<div className="p-4 flex-1 min-h-0 relative">
 						<CalendarView
 							calendarRef={calendarRef}
 							events={calendarEvents}
@@ -371,10 +375,10 @@ const Calendar = (): React.JSX.Element => {
 							onEventResize={handleEventUpdate}
 						/>
 						{loadingEvents && (
-							<div className="absolute inset-0 flex items-center justify-center bg-white/70">
-								<div className="flex items-center gap-3 rounded-full border border-[#E5E7EB] bg-white px-4 py-2 shadow-sm">
-									<span className="h-4 w-4 rounded-full border-2 border-[#4F3CC9] border-t-transparent animate-spin"></span>
-									<span className="text-[12px] text-[#6B7280]"></span>
+							<div className="absolute inset-0 flex items-center justify-center bg-[var(--color-bg)]/70">
+								<div className="flex items-center gap-3 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-2 shadow-sm">
+									<span className="h-4 w-4 rounded-full border-2 border-[var(--color-primary)] border-t-transparent animate-spin"></span>
+									<span className="text-xs text-[var(--color-muted)]"></span>
 								</div>
 							</div>
 						)}

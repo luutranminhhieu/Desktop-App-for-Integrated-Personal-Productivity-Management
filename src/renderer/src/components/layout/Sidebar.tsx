@@ -1,12 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import UserProfile from './UserProfile';
 
 type SidebarKey = 'dashboard' | 'calendar' | 'tasks' | 'notes' | 'focus';
-
-type SidebarProps = {
-	activeKey?: SidebarKey;
-};
 
 const navItems: Array<{ key: SidebarKey; label: string; icon: string; path: string }> = [
 	{ key: 'dashboard', label: 'Dashboard', icon: 'dashboard', path: '/' },
@@ -22,13 +18,22 @@ const routeToKey = (path: string): SidebarKey => {
 	return 'dashboard';
 };
 
-const Sidebar = ({ activeKey }: SidebarProps): React.JSX.Element => {
+export type SidebarState = {
+	collapsed: boolean;
+};
+
+const Sidebar = (): React.JSX.Element => {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const currentKey = activeKey ?? routeToKey(location.pathname);
+	const currentKey = routeToKey(location.pathname);
+	const [collapsed, setCollapsed] = useState(false);
 
 	return (
-		<aside className="fixed left-0 top-0 h-screen w-[220px] bg-white border-r border-[#E5E7EB] flex flex-col justify-between py-6 z-50">
+		<aside
+			className={`fixed left-0 top-0 h-screen bg-[var(--color-bg)] border-r border-[var(--color-border)] flex flex-col justify-between py-6 z-50 transition-all duration-200 ${
+				collapsed ? 'w-16' : 'w-56'
+			}`}
+		>
 			<div>
 				<nav className="flex flex-col">
 					{navItems.map((item) => {
@@ -38,29 +43,50 @@ const Sidebar = ({ activeKey }: SidebarProps): React.JSX.Element => {
 								key={item.key}
 								className={
 									isActive
-										? 'bg-[#EDE9FF] text-[#4F3CC9] px-6 py-3 flex items-center gap-4 border-l-4 border-[#4F3CC9] cursor-pointer'
-										: 'text-[#6B7280] hover:bg-[#F6F2FE] px-6 py-3 flex items-center gap-4 cursor-pointer transition-colors duration-200'
+										? `bg-[var(--color-primary-light)] text-[var(--color-primary)] ${collapsed ? 'px-0 justify-center' : 'px-6'} py-3 flex items-center gap-4 border-l-4 border-[var(--color-primary)] cursor-pointer`
+										: `text-[var(--color-muted)] hover:bg-[var(--color-primary-lighter)] ${collapsed ? 'px-0 justify-center' : 'px-6'} py-3 flex items-center gap-4 cursor-pointer transition-colors duration-200`
 								}
 								onClick={() => navigate(item.path)}
+								title={collapsed ? item.label : undefined}
 							>
 								<span
-									className="material-symbols-outlined"
+									className={`material-symbols-outlined ${collapsed ? 'mx-auto' : ''}`}
 									style={isActive ? { fontVariationSettings: "'FILL' 1" } : undefined}
 								>
 									{item.icon}
 								</span>
-								<span className={`text-[14px] ${isActive ? 'font-semibold' : 'font-normal'}`}>
-									{item.label}
-								</span>
+								{!collapsed && (
+									<span className={`text-sm ${isActive ? 'font-semibold' : 'font-normal'}`}>
+										{item.label}
+									</span>
+								)}
 							</div>
 						);
 					})}
 				</nav>
 			</div>
 
-			<UserProfile />
+			<div className="flex flex-col">
+				{!collapsed && <UserProfile />}
+
+				{/* Toggle collapse button */}
+				<div className={`px-4 ${collapsed ? 'flex justify-center' : ''} mt-2`}>
+					<button
+						className="p-2 rounded-md hover:bg-[var(--color-primary-lighter)] text-[var(--color-muted)] hover:text-[var(--color-primary)] transition-colors"
+						onClick={() => setCollapsed((prev) => !prev)}
+						title={collapsed ? 'Mở rộng sidebar' : 'Thu gọn sidebar'}
+						type="button"
+					>
+						<span className="material-symbols-outlined text-lg">
+							{collapsed ? 'chevron_right' : 'chevron_left'}
+						</span>
+					</button>
+				</div>
+			</div>
 		</aside>
 	);
 };
 
 export default Sidebar;
+export { Sidebar };
+export type { SidebarKey };

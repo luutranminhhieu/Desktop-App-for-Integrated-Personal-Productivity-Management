@@ -49,22 +49,22 @@ const EventModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/30 p-6">
-      <div className="w-full max-w-lg bg-white rounded-xl border border-[#E5E7EB] p-6 shadow-xl">
+    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-[var(--color-overlay)] p-6">
+      <div className="w-full max-w-lg bg-[var(--color-bg)] rounded-lg border border-[var(--color-border)] p-6 shadow-xl">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-[18px] font-semibold text-[#1A1A2E]">
+          <h2 className="text-lg font-semibold text-[var(--color-text)]">
             {mode === 'create' ? 'Tạo lịch' : 'Chỉnh sửa lịch'}
           </h2>
-          <button className="text-[#6B7280] hover:text-[#1A1A2E]" onClick={onClose} type="button">
+          <button className="text-[var(--color-muted)] hover:text-[var(--color-text)]" onClick={onClose} type="button">
             <span className="material-symbols-outlined">close</span>
           </button>
         </div>
 
         <div className="space-y-4">
           <div>
-            <label className="text-[12px] font-semibold text-[#6B7280]">Tiêu đề</label>
+            <label className="text-xs font-semibold text-[var(--color-muted)]">Tiêu đề</label>
             <input
-              className="mt-2 w-full rounded-lg border border-[#E5E7EB] px-3 py-2 text-[14px]"
+              className="mt-2 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm text-[var(--color-text)]"
               value={formData.title}
               onChange={(event) => handleChange('title', event.target.value)}
               placeholder="Nhập tiêu đề"
@@ -73,19 +73,19 @@ const EventModal = ({
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="text-[12px] font-semibold text-[#6B7280]">Bắt đầu</label>
+              <label className="text-xs font-semibold text-[var(--color-muted)]">Bắt đầu</label>
               <input
                 type="datetime-local"
-                className="mt-2 w-full rounded-lg border border-[#E5E7EB] px-3 py-2 text-[14px]"
+                className="mt-2 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm text-[var(--color-text)]"
                 value={formData.startTime}
                 onChange={(event) => handleChange('startTime', event.target.value)}
               />
             </div>
             <div>
-              <label className="text-[12px] font-semibold text-[#6B7280]">Kết thúc</label>
+              <label className="text-xs font-semibold text-[var(--color-muted)]">Kết thúc</label>
               <input
                 type="datetime-local"
-                className="mt-2 w-full rounded-lg border border-[#E5E7EB] px-3 py-2 text-[14px]"
+                className="mt-2 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm text-[var(--color-text)]"
                 value={formData.endTime}
                 onChange={(event) => handleChange('endTime', event.target.value)}
               />
@@ -94,18 +94,18 @@ const EventModal = ({
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="text-[12px] font-semibold text-[#6B7280]">Màu sắc</label>
+              <label className="text-xs font-semibold text-[var(--color-muted)]">Màu sắc</label>
               <input
                 type="color"
-                className="mt-2 h-10 w-full rounded-lg border border-[#E5E7EB]"
+                className="mt-2 h-10 w-full rounded-md border border-[var(--color-border)]"
                 value={formData.color}
                 onChange={(event) => handleChange('color', event.target.value)}
               />
             </div>
             <div>
-              <label className="text-[12px] font-semibold text-[#6B7280]">Địa điểm</label>
+              <label className="text-xs font-semibold text-[var(--color-muted)]">Địa điểm</label>
               <input
-                className="mt-2 w-full rounded-lg border border-[#E5E7EB] px-3 py-2 text-[14px]"
+                className="mt-2 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm text-[var(--color-text)]"
                 value={formData.location}
                 onChange={(event) => handleChange('location', event.target.value)}
                 placeholder="Thêm địa điểm"
@@ -114,9 +114,9 @@ const EventModal = ({
           </div>
 
           <div>
-            <label className="text-[12px] font-semibold text-[#6B7280]">Ghi chú</label>
+            <label className="text-xs font-semibold text-[var(--color-muted)]">Ghi chú</label>
             <textarea
-              className="mt-2 w-full rounded-lg border border-[#E5E7EB] px-3 py-2 text-[14px]"
+              className="mt-2 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm text-[var(--color-text)]"
               rows={3}
               value={formData.notes}
               onChange={(event) => handleChange('notes', event.target.value)}
@@ -125,12 +125,12 @@ const EventModal = ({
           </div>
         </div>
 
-        {error && <p className="mt-4 text-[12px] text-[#EF4444]">{error}</p>}
+        {error && <p className="mt-4 text-xs text-[var(--color-error)]">{error}</p>}
 
         <div className="mt-6 flex flex-wrap items-center justify-end gap-3">
           {mode === 'edit' && onDelete && (
             <button
-              className="px-4 py-2 text-[14px] font-semibold text-[#EF4444] hover:bg-[#FEF2F2] rounded-lg"
+              className="px-4 py-2 text-sm font-semibold text-[var(--color-error)] hover:bg-[var(--color-error-light)] rounded-md"
               onClick={onDelete}
               type="button"
             >
@@ -138,14 +138,14 @@ const EventModal = ({
             </button>
           )}
           <button
-            className="px-4 py-2 text-[14px] font-semibold text-[#6B7280] hover:bg-[#F6F2FE] rounded-lg"
+            className="px-4 py-2 text-sm font-semibold text-[var(--color-muted)] hover:bg-[var(--color-primary-lighter)] rounded-md"
             onClick={onClose}
             type="button"
           >
             Hủy
           </button>
           <button
-            className="px-4 py-2 text-[14px] font-semibold text-white bg-[#4F3CC9] rounded-lg hover:bg-[#3A2D9E]"
+            className="px-4 py-2 text-sm font-semibold text-white bg-[var(--color-primary)] rounded-md hover:bg-[var(--color-primary-hover)]"
             onClick={handleSubmit}
             type="button"
           >

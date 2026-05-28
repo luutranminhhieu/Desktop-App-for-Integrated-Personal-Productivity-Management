@@ -88,15 +88,15 @@ const TodoForm = ({
 	];
 
 	return (
-		<div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/30 p-6">
-			<div className="w-full max-w-lg bg-white rounded-xl border border-[#E5E7EB] p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+		<div className="fixed inset-0 z-[120] flex items-center justify-center bg-[var(--color-overlay)] p-6">
+			<div className="w-full max-w-lg bg-[var(--color-bg)] rounded-lg border border-[var(--color-border)] p-6 shadow-xl max-h-[90vh] overflow-y-auto">
 				{/* Header */}
 				<div className="flex items-center justify-between mb-4">
-					<h2 className="text-[18px] font-semibold text-[#1A1A2E]">
+					<h2 className="text-lg font-semibold text-[var(--color-text)]">
 						{mode === 'create' ? 'Tạo task mới' : 'Chỉnh sửa task'}
 					</h2>
 					<button
-						className="text-[#6B7280] hover:text-[#1A1A2E] transition-colors"
+						className="text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors"
 						onClick={onClose}
 						type="button"
 					>
@@ -108,12 +108,12 @@ const TodoForm = ({
 				<div className="space-y-4">
 					{/* Title */}
 					<div>
-						<label className="text-[12px] font-semibold text-[#6B7280]">
-							Tiêu đề <span className="text-[#EF4444]">*</span>
+						<label className="text-xs font-semibold text-[var(--color-muted)]">
+							Tiêu đề <span className="text-[var(--color-error)]">*</span>
 						</label>
 						<input
-							className={`mt-2 w-full rounded-lg border px-3 py-2 text-[14px] focus:outline-none focus:ring-2 focus:ring-[#4F3CC9] focus:border-transparent ${
-								error ? 'border-[#EF4444]' : 'border-[#E5E7EB]'
+							className={`mt-2 w-full rounded-md border px-3 py-2 text-sm bg-[var(--color-bg)] text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent ${
+								error ? 'border-[var(--color-error)]' : 'border-[var(--color-border)]'
 							}`}
 							value={formData.title}
 							onChange={(e) => handleChange('title', e.target.value)}
@@ -123,9 +123,9 @@ const TodoForm = ({
 
 					{/* Description */}
 					<div>
-						<label className="text-[12px] font-semibold text-[#6B7280]">Mô tả</label>
+						<label className="text-xs font-semibold text-[var(--color-muted)]">Mô tả</label>
 						<textarea
-							className="mt-2 w-full rounded-lg border border-[#E5E7EB] px-3 py-2 text-[14px] focus:outline-none focus:ring-2 focus:ring-[#4F3CC9] focus:border-transparent"
+							className="mt-2 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
 							rows={3}
 							value={formData.description ?? ''}
 							onChange={(e) => handleChange('description', e.target.value)}
@@ -136,11 +136,11 @@ const TodoForm = ({
 					{/* Priority & Due date row */}
 					<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 						<div>
-							<label className="text-[12px] font-semibold text-[#6B7280]">
+							<label className="text-xs font-semibold text-[var(--color-muted)]">
 								Mức độ ưu tiên
 							</label>
 							<select
-								className="mt-2 w-full rounded-lg border border-[#E5E7EB] px-3 py-2 text-[14px] focus:outline-none focus:ring-2 focus:ring-[#4F3CC9] focus:border-transparent"
+								className="mt-2 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
 								value={formData.priority}
 								onChange={(e) =>
 									handleChange('priority', e.target.value)
@@ -154,12 +154,12 @@ const TodoForm = ({
 							</select>
 						</div>
 						<div>
-							<label className="text-[12px] font-semibold text-[#6B7280]">
+							<label className="text-xs font-semibold text-[var(--color-muted)]">
 								Hạn chót
 							</label>
 							<input
 								type="datetime-local"
-								className="mt-2 w-full rounded-lg border border-[#E5E7EB] px-3 py-2 text-[14px] focus:outline-none focus:ring-2 focus:ring-[#4F3CC9] focus:border-transparent"
+								className="mt-2 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
 								value={formData.dueDate ?? ''}
 								onChange={(e) => handleChange('dueDate', e.target.value)}
 							/>
@@ -168,9 +168,9 @@ const TodoForm = ({
 
 					{/* Project */}
 					<div>
-						<label className="text-[12px] font-semibold text-[#6B7280]">Dự án</label>
+						<label className="text-xs font-semibold text-[var(--color-muted)]">Dự án</label>
 						<input
-							className="mt-2 w-full rounded-lg border border-[#E5E7EB] px-3 py-2 text-[14px] focus:outline-none focus:ring-2 focus:ring-[#4F3CC9] focus:border-transparent"
+							className="mt-2 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
 							value={formData.project ?? ''}
 							onChange={(e) => handleChange('project', e.target.value)}
 							placeholder="Nhập tên dự án"
@@ -179,13 +179,13 @@ const TodoForm = ({
 
 					{/* Tags */}
 					<div>
-						<label className="text-[12px] font-semibold text-[#6B7280]">
+						<label className="text-xs font-semibold text-[var(--color-muted)]">
 							Thẻ (tags)
 						</label>
 						<div className="flex gap-2 mt-2">
 							<input
 								type="text"
-								className="flex-1 rounded-lg border border-[#E5E7EB] px-3 py-2 text-[14px] focus:outline-none focus:ring-2 focus:ring-[#4F3CC9] focus:border-transparent"
+								className="flex-1 rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
 								value={newTag}
 								onChange={(e) => setNewTag(e.target.value)}
 								onKeyDown={(e) => {
@@ -199,7 +199,7 @@ const TodoForm = ({
 							<button
 								type="button"
 								onClick={addTag}
-								className="px-4 py-2 bg-[#4F3CC9] text-white rounded-lg hover:bg-[#3A2D9E] transition-colors text-[14px]"
+								className="px-4 py-2 bg-[var(--color-primary)] text-white rounded-md hover:bg-[var(--color-primary-hover)] transition-colors text-sm"
 							>
 								Thêm
 							</button>
@@ -209,13 +209,13 @@ const TodoForm = ({
 								{formData.tags.map((tag) => (
 									<span
 										key={tag}
-										className="px-3 py-1 bg-[#F6F2FE] text-[#4F3CC9] rounded-lg flex items-center gap-1 text-[12px]"
+										className="px-3 py-1 bg-[var(--color-primary-lighter)] text-[var(--color-primary)] rounded-md flex items-center gap-1 text-xs"
 									>
 										#{tag}
 										<button
 											type="button"
 											onClick={() => removeTag(tag)}
-											className="text-[#6B7280] hover:text-[#4F3CC9] ml-1"
+											className="text-[var(--color-muted)] hover:text-[var(--color-primary)] ml-1"
 										>
 											<span
 												className="material-symbols-outlined"
@@ -232,13 +232,13 @@ const TodoForm = ({
 				</div>
 
 				{/* Error message */}
-				{error && <p className="mt-4 text-[12px] text-[#EF4444]">{error}</p>}
+				{error && <p className="mt-4 text-xs text-[var(--color-error)]">{error}</p>}
 
 				{/* Actions */}
 				<div className="mt-6 flex flex-wrap items-center justify-end gap-3">
 					{mode === 'edit' && onDelete && (
 						<button
-							className="px-4 py-2 text-[14px] font-semibold text-[#EF4444] hover:bg-[#FEF2F2] rounded-lg transition-colors"
+							className="px-4 py-2 text-sm font-semibold text-[var(--color-error)] hover:bg-[var(--color-error-light)] rounded-md transition-colors"
 							onClick={onDelete}
 							type="button"
 						>
@@ -246,14 +246,14 @@ const TodoForm = ({
 						</button>
 					)}
 					<button
-						className="px-4 py-2 text-[14px] font-semibold text-[#6B7280] hover:bg-[#F6F2FE] rounded-lg transition-colors"
+						className="px-4 py-2 text-sm font-semibold text-[var(--color-muted)] hover:bg-[var(--color-primary-lighter)] rounded-md transition-colors"
 						onClick={onClose}
 						type="button"
 					>
 						Hủy
 					</button>
 					<button
-						className="px-4 py-2 text-[14px] font-semibold text-white bg-[#4F3CC9] rounded-lg hover:bg-[#3A2D9E] transition-colors"
+						className="px-4 py-2 text-sm font-semibold text-white bg-[var(--color-primary)] rounded-md hover:bg-[var(--color-primary-hover)] transition-colors"
 						onClick={handleSubmit}
 						type="button"
 					>

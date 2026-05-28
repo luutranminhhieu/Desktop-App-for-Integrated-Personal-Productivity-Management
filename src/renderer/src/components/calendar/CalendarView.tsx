@@ -66,9 +66,13 @@ const CalendarView = ({
           onEventResize(info.event.id, info.event.start, info.event.end);
         }}
         eventContent={(info) => {
-          const color = info.event.backgroundColor || info.event.borderColor || '#4F3CC9';
+          const color = info.event.backgroundColor || info.event.borderColor || '#1E3A8A';
+          const textColor = info.event.textColor || '#ffffff';
           return (
-            <div className="calendar-event" style={{ backgroundColor: color, borderLeft: `3px solid ${color}` }}>
+            <div
+              className="calendar-event"
+              style={{ backgroundColor: color, borderLeft: `3px solid ${color}`, color: textColor }}
+            >
               <div className="calendar-event-title">{info.event.title}</div>
               {info.timeText && <div className="calendar-event-time">{info.timeText}</div>}
             </div>
