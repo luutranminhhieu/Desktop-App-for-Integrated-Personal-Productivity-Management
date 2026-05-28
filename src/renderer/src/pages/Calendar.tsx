@@ -4,6 +4,7 @@ import type FullCalendar from '@fullcalendar/react';
 import CalendarView from '../components/calendar/CalendarView';
 import EventModal from '../components/calendar/EventModal';
 import MiniCalendar from '../components/calendar/MiniCalendar';
+import { EventStatusColor } from '../constants/eventStatusColor';
 import type {
 	CalendarEventRecord,
 	CalendarFormData,
@@ -15,7 +16,7 @@ const defaultFormData: CalendarFormData = {
 	title: '',
 	startTime: '',
 	endTime: '',
-	color: '#1E3A8A',
+	color: EventStatusColor.todo,
 	location: '',
 	notes: ''
 };
@@ -50,16 +51,19 @@ const Calendar = (): React.JSX.Element => {
 	const calendarRef = useRef<FullCalendar | null>(null);
 
 	const calendarEvents = useMemo(() => {
-		return events.map((event) => ({
-			id: event._id,
-			title: event.title,
-			start: event.startTime,
-			end: event.endTime,
-			backgroundColor: event.color,
-			borderColor: event.color,
-			textColor: '#ffffff',
-			extendedProps: { location: event.location, notes: event.notes }
-		}));
+		return events.map((event) => {
+			const textColor = event.color === EventStatusColor.todo ? '#1A1A2E' : '#ffffff';
+			return {
+				id: event._id,
+				title: event.title,
+				start: event.startTime,
+				end: event.endTime,
+				backgroundColor: event.color,
+				borderColor: event.color,
+				textColor,
+				extendedProps: { location: event.location, notes: event.notes }
+			};
+		});
 	}, [events]);
 
 	const eventDates = useMemo(() => {
@@ -222,8 +226,8 @@ const Calendar = (): React.JSX.Element => {
 	}, [fetchEventsForRange, rangeStart, rangeEnd, userId]);
 
 	return (
-		<div className="min-h-screen text-[var(--color-text)]">
-			<div className="flex min-h-[720px] border border-[var(--color-border)] bg-[var(--color-bg)] rounded-lg overflow-hidden">
+		<div className="flex flex-col flex-1 min-h-0 text-[var(--color-text)]">
+			<div className="flex flex-1 min-h-0 border border-[var(--color-border)] bg-[var(--color-bg)] rounded-lg overflow-hidden">
 				<aside className="w-60 border-r border-[var(--color-border)] p-4 flex flex-col gap-8 bg-[var(--color-bg)]">
 					<MiniCalendar
 						monthDate={monthDate}
@@ -288,8 +292,8 @@ const Calendar = (): React.JSX.Element => {
 					</div>
 				</aside>
 
-				<section className="flex-1 overflow-y-auto bg-[var(--color-bg)] relative">
-					<div className="sticky top-0 bg-[var(--color-bg)] z-30 px-6 py-4 border-b border-[var(--color-border)] flex items-center justify-between">
+				<section className="flex flex-col flex-1 min-h-0 bg-[var(--color-bg)] relative">
+					<div className="shrink-0 bg-[var(--color-bg)] z-30 px-6 py-4 border-b border-[var(--color-border)] flex items-center justify-between">
 						<div className="flex items-center gap-4">
 							<button
 								className="px-4 py-2 border border-[var(--color-border)] rounded-md text-[15px] font-medium hover:bg-[var(--color-primary-lighter)] transition-colors"
@@ -359,7 +363,7 @@ const Calendar = (): React.JSX.Element => {
 						</div>
 					)}
 
-					<div className="p-4 flex-1 relative" style={{ height: 'calc(100% - 73px)' }}>
+					<div className="p-4 flex-1 min-h-0 relative">
 						<CalendarView
 							calendarRef={calendarRef}
 							events={calendarEvents}

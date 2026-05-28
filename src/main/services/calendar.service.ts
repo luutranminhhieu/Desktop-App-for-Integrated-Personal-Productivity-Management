@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { CalendarEvent, ICalendarEvent } from '../models/CalendarEvent';
+import { EventStatusColor } from '../constants/eventStatusColor';
 
 const DEFAULT_LIST_LIMIT = 200;
 
@@ -29,11 +30,11 @@ export class CalendarService {
 
     const status = payload.status || 'confirmed';
     const statusColors: Record<string, string> = {
-      pending: '#F59E0B',
-      confirmed: '#3B82F6',
-      tentative: '#10B981',
-      canceled: '#EF4444',
-      completed: '#6B7280'
+      pending: EventStatusColor.todo,
+      confirmed: EventStatusColor.inProgress,
+      tentative: EventStatusColor.paused,
+      canceled: EventStatusColor.canceled,
+      completed: EventStatusColor.done
     };
 
     if (!payload.color || payload.color === '#4F3CC9') {
@@ -71,11 +72,11 @@ export class CalendarService {
 
   public async updateEvent(eventId: string, updates: Partial<ICalendarEvent>, userId: string): Promise<ICalendarEvent> {
     const statusColors: Record<string, string> = {
-      pending: '#F59E0B',
-      confirmed: '#3B82F6',
-      tentative: '#10B981',
-      canceled: '#EF4444',
-      completed: '#6B7280'
+      pending: EventStatusColor.todo,
+      confirmed: EventStatusColor.inProgress,
+      tentative: EventStatusColor.paused,
+      canceled: EventStatusColor.canceled,
+      completed: EventStatusColor.done
     };
 
     if (updates.status && (!updates.color || updates.color === '#4F3CC9')) {
