@@ -12,7 +12,7 @@ const Login = (): JSX.Element => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     if (token) {
       navigate('/');
     }
@@ -26,11 +26,17 @@ const Login = (): JSX.Element => {
     try {
       const response = await window.api.auth.login(email, password);
       if (response.success && response.data) {
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
         if (remember) {
+          localStorage.setItem('token', response.data.token);
+          localStorage.setItem('user', JSON.stringify(response.data.user));
           localStorage.setItem('rememberLogin', 'true');
+          sessionStorage.removeItem('token');
+          sessionStorage.removeItem('user');
         } else {
+          sessionStorage.setItem('token', response.data.token);
+          sessionStorage.setItem('user', JSON.stringify(response.data.user));
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
           localStorage.removeItem('rememberLogin');
         }
         navigate('/');
@@ -52,11 +58,17 @@ const Login = (): JSX.Element => {
     try {
       const response = await window.api.auth.googleSignIn();
       if (response.success && response.data) {
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user', JSON.stringify(response.data.user));
         if (remember) {
+          localStorage.setItem('token', response.data.token);
+          localStorage.setItem('user', JSON.stringify(response.data.user));
           localStorage.setItem('rememberLogin', 'true');
+          sessionStorage.removeItem('token');
+          sessionStorage.removeItem('user');
         } else {
+          sessionStorage.setItem('token', response.data.token);
+          sessionStorage.setItem('user', JSON.stringify(response.data.user));
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
           localStorage.removeItem('rememberLogin');
         }
         navigate('/');

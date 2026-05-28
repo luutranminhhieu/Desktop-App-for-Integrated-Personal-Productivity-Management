@@ -19,7 +19,7 @@ const formatDeadline = (value?: string): string => {
 
 const Dashboard = (): React.JSX.Element => {
   const [data, setData] = useState<DashboardData | null>(null);
-  const storedToken = localStorage.getItem('token');
+  const storedToken = localStorage.getItem('token') || sessionStorage.getItem('token');
   const [loading, setLoading] = useState(() => Boolean(storedToken));
   const [error, setError] = useState(() => (storedToken ? '' : 'Thiếu token xác thực.'));
   const [focusRange] = useState<'week' | 'month' | 'year'>('week');

@@ -13,7 +13,7 @@ import Settings from './pages/Settings';
 import TodoList from './pages/TodoList';
 
 function ProtectedRoute({ children }: { children: React.JSX.Element }): JSX.Element {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
   if (!token) {
     return <Navigate to="/login" replace />;
   }

@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron';
 import { calendarService } from '../services/calendar.service';
 import { todoService } from '../services/todo.service';
+import { logger } from '../utils/logger';
 
 type FocusRange = 'week' | 'month' | 'year';
 
@@ -78,6 +79,7 @@ export function registerDashboardIPC(): void {
         }
       };
     } catch (error) {
+      logger.error('Error in dashboard:getStats', error);
       return { success: false, error: (error as Error).message };
     }
   });

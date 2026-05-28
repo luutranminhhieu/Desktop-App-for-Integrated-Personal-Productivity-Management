@@ -14,7 +14,7 @@ const Register = (): React.ReactElement => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     if (token) {
       navigate('/');
     }
@@ -41,6 +41,8 @@ const Register = (): React.ReactElement => {
       if (response.success && response.data) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
         navigate('/');
       } else {
         setError(response.error || 'Register failed. Please try again.');
