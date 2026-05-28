@@ -1,7 +1,6 @@
 import React from 'react';
 import type { FocusDayCardProps } from '@renderer/types';
-
-const CIRCUMFERENCE = 2 * Math.PI * 48; // ≈ 301.59
+import { FOCUS_RING_CONFIG, DASHBOARD_STRINGS } from '@renderer/config/dashboardConfig';
 
 const formatHours = (hours: number): string => {
   const totalMinutes = Math.round(hours * 60);
@@ -17,43 +16,53 @@ const FocusDayCard: React.FC<FocusDayCardProps> = ({
   pomodoroTarget
 }) => {
   const percent = focusGoal > 0 ? Math.min(1, todayFocusHours / focusGoal) : 0;
-  const offset = Math.round(CIRCUMFERENCE * (1 - percent) * 100) / 100;
+  const offset = Math.round(FOCUS_RING_CONFIG.CIRCUMFERENCE * (1 - percent) * 100) / 100;
 
   return (
     <div className="bg-[var(--color-bg)] p-6 rounded-lg border border-[var(--color-border)] flex flex-col items-center">
       <div className="w-full flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold text-[var(--color-text)]">Tập trung</h2>
+        <h2 className="text-lg font-semibold text-[var(--color-text)]">{DASHBOARD_STRINGS.focusTitle}</h2>
         <span className="material-symbols-outlined text-[var(--color-muted)] cursor-pointer">more_vert</span>
       </div>
       <div className="relative w-28 h-28 mb-4 flex items-center justify-center">
-        <svg className="focus-ring" width="110" height="110">
-          <circle cx="55" cy="55" r="48" fill="transparent" stroke="var(--color-primary-light)" strokeWidth="9"></circle>
+        <svg
+          className="focus-ring w-full h-full max-w-[110px] max-h-[110px]"
+          viewBox={`0 0 ${FOCUS_RING_CONFIG.SVG_SIZE} ${FOCUS_RING_CONFIG.SVG_SIZE}`}
+        >
           <circle
-            cx="55"
-            cy="55"
-            r="48"
+            cx={FOCUS_RING_CONFIG.CENTER}
+            cy={FOCUS_RING_CONFIG.CENTER}
+            r={FOCUS_RING_CONFIG.RADIUS}
+            fill="transparent"
+            stroke="var(--color-primary-light)"
+            strokeWidth={FOCUS_RING_CONFIG.STROKE_WIDTH}
+          ></circle>
+          <circle
+            cx={FOCUS_RING_CONFIG.CENTER}
+            cy={FOCUS_RING_CONFIG.CENTER}
+            r={FOCUS_RING_CONFIG.RADIUS}
             fill="transparent"
             stroke="var(--color-primary)"
-            strokeDasharray={CIRCUMFERENCE}
+            strokeDasharray={FOCUS_RING_CONFIG.CIRCUMFERENCE}
             strokeDashoffset={offset}
             strokeLinecap="round"
-            strokeWidth="9"
+            strokeWidth={FOCUS_RING_CONFIG.STROKE_WIDTH}
           ></circle>
         </svg>
         <div className="absolute flex flex-col items-center">
           <span className="text-lg font-semibold text-[var(--color-text)]">{formatHours(todayFocusHours)}</span>
-          <span className="text-[11px] text-[var(--color-muted)] uppercase">GIỜ</span>
+          <span className="text-[11px] text-[var(--color-muted)] uppercase">{DASHBOARD_STRINGS.focusHoursLabel}</span>
         </div>
       </div>
       <div className="w-full grid grid-cols-2 gap-3 mt-1">
         <div className="text-center p-3 bg-[var(--color-surface)] rounded-lg">
-          <p className="text-xs text-[var(--color-muted)] mb-1">Pomodoro</p>
+          <p className="text-xs text-[var(--color-muted)] mb-1">{DASHBOARD_STRINGS.pomodoroLabel}</p>
           <p className="text-[15px] font-medium text-[var(--color-text)]">
             {pomodoroCompleted}/{pomodoroTarget}
           </p>
         </div>
         <div className="text-center p-3 bg-[var(--color-surface)] rounded-lg">
-          <p className="text-xs text-[var(--color-muted)] mb-1">Mục tiêu</p>
+          <p className="text-xs text-[var(--color-muted)] mb-1">{DASHBOARD_STRINGS.goalLabel}</p>
           <p className="text-[15px] font-medium text-[var(--color-text)]">{focusGoal}h</p>
         </div>
       </div>

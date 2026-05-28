@@ -3,13 +3,18 @@ import type { DashboardData } from '@renderer/types';
 import FocusDayCard from '@renderer/components/dashboard/FocusDayCard';
 import TaskStatus from '@renderer/components/dashboard/TaskStatus';
 import Heatmap from '@renderer/components/dashboard/Heatmap';
+import {
+  DASHBOARD_LOCALE,
+  DEFAULT_FOCUS_GOAL,
+  DASHBOARD_STRINGS
+} from '@renderer/config/dashboardConfig';
 
 const formatDeadline = (value?: string): string => {
   if (!value) {
-    return 'Không có hạn';
+    return DASHBOARD_STRINGS.noDeadline;
   }
   const date = new Date(value);
-  return new Intl.DateTimeFormat('vi-VN', {
+  return new Intl.DateTimeFormat(DASHBOARD_LOCALE, {
     day: '2-digit',
     month: '2-digit',
     hour: '2-digit',
@@ -21,7 +26,7 @@ const Dashboard = (): React.JSX.Element => {
   const [data, setData] = useState<DashboardData | null>(null);
   const storedToken = localStorage.getItem('token') || sessionStorage.getItem('token');
   const [loading, setLoading] = useState(() => Boolean(storedToken));
-  const [error, setError] = useState(() => (storedToken ? '' : 'Thiếu token xác thực.'));
+  const [error, setError] = useState(() => (storedToken ? '' : DASHBOARD_STRINGS.authError));
   const [focusRange] = useState<'week' | 'month' | 'year'>('week');
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -36,12 +41,12 @@ const Dashboard = (): React.JSX.Element => {
         if (response.success && response.data?.userId) {
           setUserId(response.data.userId);
         } else {
-          setError(response.error || 'Không thể xác thực token.');
+          setError(response.error || DASHBOARD_STRINGS.tokenError);
           setLoading(false);
         }
       })
       .catch(() => {
-        setError('Không thể xác thực token.');
+        setError(DASHBOARD_STRINGS.tokenError);
         setLoading(false);
       });
   }, [storedToken]);
@@ -59,10 +64,10 @@ const Dashboard = (): React.JSX.Element => {
           setData(response.data as DashboardData);
           setError('');
         } else {
-          setError(response.error || 'Không thể tải dữ liệu dashboard.');
+          setError(response.error || DASHBOARD_STRINGS.fetchError);
         }
       } catch {
-        setError('Không thể tải dữ liệu dashboard.');
+        setError(DASHBOARD_STRINGS.fetchError);
       } finally {
         setLoading(false);
       }
@@ -75,7 +80,7 @@ const Dashboard = (): React.JSX.Element => {
   const todayFocusHours = data?.focusHours?.length
     ? data.focusHours[data.focusHours.length - 1].hours
     : 0;
-  const focusGoal = 6;
+  const focusGoal = Number(localStorage.getItem('focusGoal')) || DEFAULT_FOCUS_GOAL;
 
   /* ── Guard states ── */
   if (loading) {
@@ -87,13 +92,13 @@ const Dashboard = (): React.JSX.Element => {
   }
 
   if (!data) {
-    return <div className="text-sm text-[var(--color-muted)]">No data.</div>;
+    return <div className="text-sm text-[var(--color-muted)]">{DASHBOARD_STRINGS.noData}</div>;
   }
 
   return (
     <div>
       {/* ── Row 1: Focus‑Day Card + Task‑Status Donut ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
         <FocusDayCard
           todayFocusHours={todayFocusHours}
           focusGoal={focusGoal}
