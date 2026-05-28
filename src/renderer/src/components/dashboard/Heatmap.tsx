@@ -61,8 +61,8 @@ const Heatmap: React.FC<HeatmapProps> = ({ startDate, values }) => {
   const svgHeight = ROWS * (CELL + GAP) + 24; // 24 = top padding for month labels
 
   return (
-    <div className="bg-white p-6 rounded-xl border border-[#E5E7EB]">
-      <h2 className="text-[18px] font-semibold text-[#1A1A2E] mb-4">Hoạt động trong năm</h2>
+    <div className="bg-[var(--color-bg)] p-6 rounded-lg border border-[var(--color-border)]">
+      <h2 className="text-lg font-semibold text-[var(--color-text)] mb-4">Hoạt động trong năm</h2>
       <div className="overflow-x-auto">
         <svg width={svgWidth} height={svgHeight} className="block">
           {/* Month labels */}
@@ -72,7 +72,7 @@ const Heatmap: React.FC<HeatmapProps> = ({ startDate, values }) => {
               x={30 + m.col * (CELL + GAP)}
               y={12}
               fontSize="10"
-              fill="#6B7280"
+              fill="var(--color-muted)"
             >
               {m.label}
             </text>
@@ -86,7 +86,7 @@ const Heatmap: React.FC<HeatmapProps> = ({ startDate, values }) => {
                 x={0}
                 y={24 + i * (CELL + GAP) + CELL - 2}
                 fontSize="10"
-                fill="#6B7280"
+                fill="var(--color-muted)"
               >
                 {label}
               </text>
@@ -113,7 +113,7 @@ const Heatmap: React.FC<HeatmapProps> = ({ startDate, values }) => {
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-1 mt-3 text-[11px] text-[#6B7280]">
+      <div className="flex items-center gap-1 mt-3 text-[11px] text-[var(--color-muted)]">
         <span>Ít</span>
         {['#EBEDF0', '#C6E48B', '#7BC96F', '#239A3B', '#196127'].map((color) => (
           <span

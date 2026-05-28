@@ -84,9 +84,9 @@ const Login = (): JSX.Element => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-[#1A1A2E]">
+    <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
       <main className="flex min-h-screen w-full">
-        <section className="hidden md:flex w-[40%] bg-indigo-brand-gradient flex-col justify-between p-[48px] relative overflow-hidden">
+        <section className="hidden md:flex w-[40%] bg-navy-brand-gradient flex-col justify-between p-12 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-full h-full opacity-10 pointer-events-none">
             <svg className="w-full h-full" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="400" cy="0" r="300" stroke="white" strokeWidth="2" />
@@ -102,51 +102,51 @@ const Login = (): JSX.Element => {
               >
                 bolt
               </span>
-              <span className="text-[24px] font-black tracking-tight text-white">Promos</span>
+              <span className="text-2xl font-black tracking-tight text-white">Promos</span>
             </div>
 
           <footer className="relative z-10 pt-4 border-t border-white/10">
-            <p className="text-[12px] text-white/40">Promos © 2026 Copyright</p>
+            <p className="text-xs text-white/40">Promos © 2026 Copyright</p>
           </footer>
         </section>
 
-        <section className="flex-1 flex items-center justify-center p-6 bg-white relative overflow-hidden">
+        <section className="flex-1 flex items-center justify-center p-6 bg-[var(--color-bg)] relative overflow-hidden">
 
           <div className="w-full max-w-[400px]">
             <div className="md:hidden flex items-center gap-2 mb-8">
-              <div className="w-8 h-8 bg-[#4F3CC9] rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-[var(--color-primary)] rounded-lg flex items-center justify-center">
                 <span
-                  className="material-symbols-outlined text-white text-[20px]"
+                  className="material-symbols-outlined text-white text-xl"
                   style={{ fontVariationSettings: "'FILL' 1" }}
                 >
                   bolt
                 </span>
               </div>
-              <span className="text-[18px] font-black text-[#4F3CC9]">Promos</span>
+              <span className="text-lg font-black text-[var(--color-primary)]">Promos</span>
             </div>
 
             <div className="mb-8">
-              <h1 className="text-[24px] font-semibold text-[#1A1A2E] mb-2">Welcome</h1>
-              <p className="text-[14px] font-text-[#6B7280]">Sign in to continue with Promos</p>
+              <h1 className="text-2xl font-semibold text-[var(--color-text)] mb-2">Welcome</h1>
+              <p className="text-sm text-[var(--color-muted)]">Sign in to continue with Promos</p>
             </div>
 
             {error && (
-              <div className="mb-4 text-[12px] text-[#EF4444] flex items-center gap-2">
-                <span className="material-symbols-outlined text-[16px]">error</span>
+              <div className="mb-4 text-xs text-[var(--color-error)] flex items-center gap-2">
+                <span className="material-symbols-outlined text-base">error</span>
                 {error}
               </div>
             )}
 
             <form onSubmit={handleLogin} className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <label className="text-[12px] font-medium text-[#6B7280]" htmlFor="email">
+                <label className="text-xs font-medium text-[var(--color-muted)]" htmlFor="email">
                   Email
                 </label>
                 <input
                   id="email"
                   type="email"
                   required
-                  className="w-full h-[44px] px-4 rounded-lg border border-[#E5E7EB] focus:border-[#4F3CC9] focus:ring-4 focus:ring-[#4F3CC9]/15 transition-all outline-none text-[14px] bg-white"
+                  className="w-full h-11 px-4 rounded-md border border-[var(--color-border)] focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary)]/15 transition-all outline-none text-sm bg-[var(--color-bg)] text-[var(--color-text)]"
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -154,7 +154,7 @@ const Login = (): JSX.Element => {
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-[12px] font-medium text-[#6B7280]" htmlFor="password">
+                <label className="text-xs font-medium text-[var(--color-muted)]" htmlFor="password">
                   Password
                 </label>
                 <div className="relative">
@@ -162,33 +162,33 @@ const Login = (): JSX.Element => {
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     required
-                    className="w-full h-[44px] pl-4 pr-12 rounded-lg border border-[#E5E7EB] focus:border-[#4F3CC9] focus:ring-4 focus:ring-[#4F3CC9]/15 transition-all outline-none text-[14px] bg-white"
+                    className="w-full h-11 pl-4 pr-12 rounded-md border border-[var(--color-border)] focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary)]/15 transition-all outline-none text-sm bg-[var(--color-bg)] text-[var(--color-text)]"
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
                   <button
                     type="button"
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#6B7280] hover:text-[#4F3CC9] transition-colors"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--color-muted)] hover:text-[var(--color-primary)] transition-colors"
                     onClick={() => setShowPassword((value) => !value)}
                     aria-label="Toggle password"
                   >
-                    <span className="material-symbols-outlined text-[20px]">visibility</span>
+                    <span className="material-symbols-outlined text-xl">visibility</span>
                   </button>
                 </div>
               </div>
 
               <div className="flex items-center justify-between text-[13px]">
-                <label className="flex items-center gap-2 text-[#6B7280]">
+                <label className="flex items-center gap-2 text-[var(--color-muted)]">
                   <input
                     type="checkbox"
-                    className="w-4 h-4 rounded border-[#E5E7EB] text-[#4F3CC9] focus:ring-[#4F3CC9]/20"
+                    className="w-4 h-4 rounded border-[var(--color-border)] accent-[var(--color-primary)]"
                     checked={remember}
                     onChange={(e) => setRemember(e.target.checked)}
                   />
                   Remember login
                 </label>
-                <Link to="/forgot-password" className="text-[#4F3CC9] hover:underline">
+                <Link to="/forgot-password" className="text-[var(--color-primary)] hover:underline">
                   Forgot password?
                 </Link>
               </div>
@@ -196,23 +196,23 @@ const Login = (): JSX.Element => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full h-[44px] bg-[#4F3CC9] hover:bg-[#3A2D9E] text-white font-semibold rounded-lg transition-all active:scale-[0.98] disabled:opacity-60"
+                className="w-full h-11 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-semibold rounded-md transition-all active:scale-[0.98] disabled:opacity-60"
               >
                 {loading ? 'Waiting for login' : 'Sign in'}
               </button>
             </form>
 
             <div className="mb-8 flex items-center gap-4 ">
-              <div className="flex-1 h-px bg-[#E5E7EB] "></div>
-              <p className="text-[12px] font-medium text-[#6B7280] whitespace-nowrap">
+              <div className="flex-1 h-px bg-[var(--color-border)] "></div>
+              <p className="text-xs font-medium text-[var(--color-muted)] whitespace-nowrap">
                 Other option
               </p>
-              <div className="flex-1 h-px bg-[#E5E7EB]"></div>
+              <div className="flex-1 h-px bg-[var(--color-border)]"></div>
             </div>
 
             <button
               type="button"
-              className="w-full h-[44px] border border-[#E5E7EB] rounded-lg bg-white flex items-center justify-center gap-3 text-[14px] text-[#1A1A2E] hover:bg-[#F5F4FA] transition-all active:scale-[0.98]"
+              className="w-full h-11 border border-[var(--color-border)] rounded-md bg-[var(--color-bg)] flex items-center justify-center gap-3 text-sm text-[var(--color-text)] hover:bg-[var(--color-primary-lighter)] transition-all active:scale-[0.98]"
               onClick={handleGoogleSignIn}
               disabled={googleLoading}
             >
@@ -237,9 +237,9 @@ const Login = (): JSX.Element => {
               {googleLoading ? 'Connecting to Google...' : 'Sign in with google'}
             </button>
 
-            <div className="mt-6 text-center text-[14px] text-[#6B7280]">
+            <div className="mt-6 text-center text-sm text-[var(--color-muted)]">
               No account yet?{' '}
-              <Link to="/register" className="text-[#4F3CC9] font-semibold hover:underline">
+              <Link to="/register" className="text-[var(--color-primary)] font-semibold hover:underline">
                 Register now
               </Link>
             </div>

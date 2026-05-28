@@ -34,8 +34,8 @@ const filterButtons: {
 ];
 
 const categories: { label: string; color: string }[] = [
-	{ label: 'Cá nhân', color: '#7C3AED' },
-	{ label: 'Công việc', color: '#4F3CC9' },
+	{ label: 'Cá nhân', color: '#1E3A8A' },
+	{ label: 'Công việc', color: '#2563EB' },
 	{ label: 'Học tập', color: '#F59E0B' }
 ];
 
@@ -143,15 +143,15 @@ function formatDoneAt(completedAt: string): string {
 
 const PriorityBadge = ({ priority }: { priority: TodoPriority }): React.JSX.Element => {
 	const styles: Record<TodoPriority, { bg: string; text: string; label: string }> = {
-		urgent: { bg: '#ffdad6', text: '#EF4444', label: 'URGENT' },
-		high: { bg: '#EDE9FF', text: '#4F3CC9', label: 'HIGH' },
-		medium: { bg: '#ebe6f2', text: '#6B7280', label: 'NORMAL' },
-		low: { bg: '#ebe6f2', text: '#6B7280', label: 'LOW' }
+		urgent: { bg: 'var(--color-error-light)', text: 'var(--color-error)', label: 'URGENT' },
+		high: { bg: 'var(--color-primary-light)', text: 'var(--color-primary)', label: 'HIGH' },
+		medium: { bg: 'var(--color-surface)', text: 'var(--color-muted)', label: 'NORMAL' },
+		low: { bg: 'var(--color-surface)', text: 'var(--color-muted)', label: 'LOW' }
 	};
 	const s = styles[priority];
 	return (
 		<span
-			className="px-[8px] py-[2px] rounded text-[11px] font-semibold leading-none tracking-[0.02em]"
+			className="px-2 py-0.5 rounded text-[11px] font-semibold leading-none tracking-wide"
 			style={{ backgroundColor: s.bg, color: s.text }}
 		>
 			{s.label}
@@ -170,7 +170,7 @@ const TaskCheckbox = ({
 		return (
 			<button
 				onClick={onClick}
-				className="w-[16px] h-[16px] bg-[#10B981] flex items-center justify-center rounded-full text-white shrink-0 cursor-pointer hover:bg-[#059669] transition-colors"
+				className="w-4 h-4 bg-[var(--color-success)] flex items-center justify-center rounded-full text-white shrink-0 cursor-pointer hover:opacity-80 transition-colors"
 				type="button"
 			>
 				<span className="material-symbols-outlined font-bold" style={{ fontSize: '12px' }}>
@@ -181,10 +181,10 @@ const TaskCheckbox = ({
 	}
 	if (status === 'canceled') {
 		return (
-			<div className="w-[16px] h-[16px] border-2 border-[#E5E7EB] flex items-center justify-center rounded-full text-[#6B7280] shrink-0">
+			<div className="w-4 h-4 border-2 border-[var(--color-border)] flex items-center justify-center rounded-full text-[var(--color-muted)] shrink-0">
 				<span
 					className="block"
-					style={{ width: '8px', height: '2px', backgroundColor: '#6B7280' }}
+					style={{ width: '8px', height: '2px', backgroundColor: 'var(--color-muted)' }}
 				/>
 			</div>
 		);
@@ -192,7 +192,7 @@ const TaskCheckbox = ({
 	return (
 		<button
 			onClick={onClick}
-			className="w-[16px] h-[16px] border-2 border-[#E5E7EB] rounded-full cursor-pointer hover:border-[#4F3CC9] transition-colors shrink-0"
+			className="w-4 h-4 border-2 border-[var(--color-border)] rounded-full cursor-pointer hover:border-[var(--color-primary)] transition-colors shrink-0"
 			type="button"
 		/>
 	);
@@ -215,9 +215,9 @@ const TaskRow = ({ todo, onToggle, onEdit }: TaskRowProps): React.JSX.Element =>
 		new Date(todo.dueDate) < new Date();
 
 	const rowClasses = [
-		'task-row flex items-center gap-[16px] px-[16px] py-[12px] border-b border-[#E5E7EB] transition-colors',
-		isDone ? 'bg-[#f6f2fe]' : '',
-		isMuted ? 'opacity-60' : 'hover:bg-white'
+		'task-row flex items-center gap-4 px-4 py-3 border-b border-[var(--color-border)] transition-colors',
+		isDone ? 'bg-[var(--color-primary-lighter)]' : '',
+		isMuted ? 'opacity-60' : 'hover:bg-[var(--color-bg)]'
 	]
 		.filter(Boolean)
 		.join(' ');
@@ -228,19 +228,19 @@ const TaskRow = ({ todo, onToggle, onEdit }: TaskRowProps): React.JSX.Element =>
 
 			<div className="flex-1 min-w-0">
 				<p
-					className={`text-[14px] leading-[1.5] ${
-						isMuted ? 'text-[#6B7280]' : 'text-[#1A1A2E]'
+					className={`text-sm leading-relaxed ${
+						isMuted ? 'text-[var(--color-muted)]' : 'text-[var(--color-text)]'
 					} ${isDone ? 'line-through' : ''}`}
 				>
 					{todo.title}
 				</p>
-				<div className="flex items-center gap-[16px] mt-[4px] flex-wrap">
+				<div className="flex items-center gap-4 mt-1 flex-wrap">
 					{/* Priority badge (only for active tasks) */}
 					{!isDone && !isCanceled && <PriorityBadge priority={todo.priority} />}
 
 					{/* Expired indicator */}
 					{isOverdue && todo.dueDate && (
-						<span className="flex items-center gap-[4px] text-[#EF4444] text-[12px] font-medium leading-[1.4]">
+						<span className="flex items-center gap-1 text-[var(--color-error)] text-xs font-medium leading-snug">
 							<span
 								className="material-symbols-outlined"
 								style={{ fontSize: '14px' }}
@@ -253,38 +253,38 @@ const TaskRow = ({ todo, onToggle, onEdit }: TaskRowProps): React.JSX.Element =>
 
 					{/* Time for non-overdue active tasks */}
 					{!isOverdue && !isDone && !isCanceled && todo.dueDate && (
-						<span className="text-[#6B7280] text-[12px] font-medium leading-[1.4]">
+						<span className="text-[var(--color-muted)] text-xs font-medium leading-snug">
 							{formatTime(todo.dueDate)}
 						</span>
 					)}
 
 					{/* Done timestamp */}
 					{isDone && todo.completedAt && (
-						<span className="text-[#6B7280] text-[12px] font-medium leading-[1.4]">
+						<span className="text-[var(--color-muted)] text-xs font-medium leading-snug">
 							{formatDoneAt(todo.completedAt)}
 						</span>
 					)}
 
 					{/* Canceled label */}
 					{isCanceled && (
-						<span className="text-[#6B7280] text-[12px] font-medium leading-[1.4] italic">
+						<span className="text-[var(--color-muted)] text-xs font-medium leading-snug italic">
 							Skipped
 						</span>
 					)}
 
 					{/* Tags (compact) */}
 					{todo.tags.length > 0 && (
-						<div className="flex gap-[4px]">
+						<div className="flex gap-1">
 							{todo.tags.slice(0, 2).map((tag) => (
 								<span
 									key={tag}
-									className="px-[6px] py-[1px] text-[10px] bg-[#F6F2FE] text-[#4F3CC9] rounded"
+									className="px-1.5 py-px text-[10px] bg-[var(--color-primary-lighter)] text-[var(--color-primary)] rounded"
 								>
 									#{tag}
 								</span>
 							))}
 							{todo.tags.length > 2 && (
-								<span className="px-[6px] py-[1px] text-[10px] bg-[#F6F2FE] text-[#4F3CC9] rounded">
+								<span className="px-1.5 py-px text-[10px] bg-[var(--color-primary-lighter)] text-[var(--color-primary)] rounded">
 									+{todo.tags.length - 2}
 								</span>
 							)}
@@ -294,7 +294,7 @@ const TaskRow = ({ todo, onToggle, onEdit }: TaskRowProps): React.JSX.Element =>
 			</div>
 
 			<button
-				className="task-actions opacity-0 text-[#6B7280] hover:text-[#4F3CC9] transition-opacity p-[4px]"
+				className="task-actions opacity-0 text-[var(--color-muted)] hover:text-[var(--color-primary)] transition-opacity p-1"
 				onClick={() => onEdit(todo)}
 				type="button"
 			>
@@ -323,35 +323,35 @@ const TaskGroup = ({
 	onEdit,
 	onAddTask
 }: TaskGroupProps): React.JSX.Element => (
-	<div className="space-y-[16px]">
-		<header className="flex items-center justify-between border-b border-[#E5E7EB] pb-[8px]">
-			<h2 className="text-[18px] font-semibold leading-[1.3] text-[#1A1A2E]">
+	<div className="space-y-4">
+		<header className="flex items-center justify-between border-b border-[var(--color-border)] pb-2">
+			<h2 className="text-lg font-semibold leading-tight text-[var(--color-text)]">
 				{title}{' '}
-				<span className="text-[#6B7280] font-normal ml-[8px]">
+				<span className="text-[var(--color-muted)] font-normal ml-2">
 					— {count} tasks
 				</span>
 			</h2>
 			{showSort && (
-				<button className="text-[#6B7280] hover:text-[#4F3CC9] transition-colors" type="button">
+				<button className="text-[var(--color-muted)] hover:text-[var(--color-primary)] transition-colors" type="button">
 					<span className="material-symbols-outlined">sort</span>
 				</button>
 			)}
 		</header>
 
 		{todos.length > 0 ? (
-			<div className="bg-white rounded-xl border border-[#E5E7EB] overflow-hidden">
+			<div className="bg-[var(--color-bg)] rounded-lg border border-[var(--color-border)] overflow-hidden">
 				{todos.map((todo) => (
 					<TaskRow key={todo._id} todo={todo} onToggle={onToggle} onEdit={onEdit} />
 				))}
 			</div>
 		) : (
-			<div className="bg-white rounded-xl border border-[#E5E7EB] p-8 text-center">
-				<p className="text-[14px] text-[#6B7280]">Không có task nào trong nhóm này</p>
+			<div className="bg-[var(--color-bg)] rounded-lg border border-[var(--color-border)] p-8 text-center">
+				<p className="text-sm text-[var(--color-muted)]">Không có task nào trong nhóm này</p>
 			</div>
 		)}
 
 		<button
-			className="w-full py-[8px] border-2 border-dashed border-[#E5E7EB] rounded-lg text-[#4F3CC9] text-[15px] font-medium leading-[1.4] hover:border-[#4F3CC9] hover:bg-[#EDE9FF] transition-all flex items-center justify-center gap-[8px]"
+			className="w-full py-2 border-2 border-dashed border-[var(--color-border)] rounded-md text-[var(--color-primary)] text-[15px] font-medium leading-snug hover:border-[var(--color-primary)] hover:bg-[var(--color-primary-light)] transition-all flex items-center justify-center gap-2"
 			onClick={onAddTask}
 			type="button"
 		>
@@ -370,34 +370,34 @@ const StatsSection = ({ stats }: { stats: TaskStats }): React.JSX.Element => {
 	const pendingRate = stats.total > 0 ? Math.round((stats.pending / stats.total) * 100) : 0;
 
 	return (
-		<div className="mt-[48px]">
-			<h3 className="text-[18px] font-semibold leading-[1.3] text-[#1A1A2E] mb-[16px]">
+		<div className="mt-12">
+			<h3 className="text-lg font-semibold leading-tight text-[var(--color-text)] mb-4">
 				Tổng quan tháng này
 			</h3>
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-[24px]">
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 				{/* Completion card */}
-				<div className="bg-white p-[24px] rounded-xl border border-[#E5E7EB] shadow-sm space-y-[16px]">
+				<div className="bg-[var(--color-bg)] p-6 rounded-lg border border-[var(--color-border)] shadow-sm space-y-4">
 					<div className="flex justify-between items-start">
 						<div>
-							<span className="px-[8px] py-[2px] rounded text-[11px] font-semibold leading-none tracking-[0.02em] bg-[#EDE9FF] text-[#4F3CC9]">
+							<span className="px-2 py-0.5 rounded text-[11px] font-semibold leading-none tracking-wide bg-[var(--color-primary-light)] text-[var(--color-primary)]">
 								HOÀN THÀNH
 							</span>
-							<h4 className="text-[15px] font-medium leading-[1.4] text-[#1A1A2E] mt-[8px]">
+							<h4 className="text-[15px] font-medium leading-snug text-[var(--color-text)] mt-2">
 								Tỷ lệ hoàn thành
 							</h4>
 						</div>
-						<span className="text-[18px] font-bold leading-[1.3] text-[#4F3CC9]">
+						<span className="text-lg font-bold leading-tight text-[var(--color-primary)]">
 							{completionRate}%
 						</span>
 					</div>
-					<div className="space-y-[8px]">
-						<div className="w-full bg-[#f6f2fe] h-[8px] rounded-full overflow-hidden">
+					<div className="space-y-2">
+						<div className="w-full bg-[var(--color-primary-lighter)] h-2 rounded-full overflow-hidden">
 							<div
-								className="h-full rounded-full transition-all duration-500 bg-[#4F3CC9]"
+								className="h-full rounded-full transition-all duration-500 bg-[var(--color-primary)]"
 								style={{ width: `${completionRate}%` }}
 							/>
 						</div>
-						<div className="flex justify-between text-[12px] font-medium leading-[1.4] text-[#6B7280]">
+						<div className="flex justify-between text-xs font-medium leading-snug text-[var(--color-muted)]">
 							<span>{stats.completed}/{stats.total} tasks</span>
 							<span>{stats.tasksThisMonth} tháng này</span>
 						</div>
@@ -405,28 +405,28 @@ const StatsSection = ({ stats }: { stats: TaskStats }): React.JSX.Element => {
 				</div>
 
 				{/* Pending card */}
-				<div className="bg-white p-[24px] rounded-xl border border-[#E5E7EB] shadow-sm space-y-[16px]">
+				<div className="bg-[var(--color-bg)] p-6 rounded-lg border border-[var(--color-border)] shadow-sm space-y-4">
 					<div className="flex justify-between items-start">
 						<div>
-							<span className="px-[8px] py-[2px] rounded text-[11px] font-semibold leading-none tracking-[0.02em] bg-[#FEF3C7] text-[#D97706]">
+							<span className="px-2 py-0.5 rounded text-[11px] font-semibold leading-none tracking-wide bg-[var(--color-warning-light)] text-[var(--color-warning-text)]">
 								CẦN LÀM
 							</span>
-							<h4 className="text-[15px] font-medium leading-[1.4] text-[#1A1A2E] mt-[8px]">
+							<h4 className="text-[15px] font-medium leading-snug text-[var(--color-text)] mt-2">
 								Task đang chờ
 							</h4>
 						</div>
-						<span className="text-[18px] font-bold leading-[1.3] text-[#D97706]">
+						<span className="text-lg font-bold leading-tight text-[var(--color-warning-text)]">
 							{pendingRate}%
 						</span>
 					</div>
-					<div className="space-y-[8px]">
-						<div className="w-full bg-[#FEF3C7] h-[8px] rounded-full overflow-hidden">
+					<div className="space-y-2">
+						<div className="w-full bg-[var(--color-warning-light)] h-2 rounded-full overflow-hidden">
 							<div
-								className="h-full rounded-full transition-all duration-500 bg-[#F59E0B]"
+								className="h-full rounded-full transition-all duration-500 bg-[var(--color-warning)]"
 								style={{ width: `${pendingRate}%` }}
 							/>
 						</div>
-						<div className="flex justify-between text-[12px] font-medium leading-[1.4] text-[#6B7280]">
+						<div className="flex justify-between text-xs font-medium leading-snug text-[var(--color-muted)]">
 							<span>{stats.pending} pending · {stats.overdue} quá hạn</span>
 							<span>{stats.urgent} khẩn cấp</span>
 						</div>
@@ -689,14 +689,14 @@ const TodoList = (): React.JSX.Element => {
 	return (
 		<div className="max-w-[1200px] mx-auto">
 			{/* ═══ Tab System ═══ */}
-			<div className="flex items-center gap-[32px] mb-[24px] border-b border-[#E5E7EB]">
+			<div className="flex items-center gap-8 mb-6 border-b border-[var(--color-border)]">
 				{tabs.map((tab) => (
 					<button
 						key={tab.key}
-						className={`pb-[12px] border-b-2 text-[15px] font-medium leading-[1.4] transition-colors ${
+						className={`pb-3 border-b-2 text-[15px] font-medium leading-snug transition-colors ${
 							activeTab === tab.key
-								? 'border-[#4F3CC9] text-[#1A1A2E]'
-								: 'border-transparent text-[#6B7280] hover:text-[#1A1A2E]'
+								? 'border-[var(--color-primary)] text-[var(--color-text)]'
+								: 'border-transparent text-[var(--color-muted)] hover:text-[var(--color-text)]'
 						}`}
 						onClick={() => setActiveTab(tab.key)}
 						type="button"
@@ -708,10 +708,10 @@ const TodoList = (): React.JSX.Element => {
 
 			{/* ═══ Error bar ═══ */}
 			{error && (
-				<div className="mb-[16px] px-[16px] py-[12px] text-[12px] text-[#EF4444] border border-[#FECACA] bg-[#FEF2F2] rounded-lg flex items-center justify-between">
+				<div className="mb-4 px-4 py-3 text-xs text-[var(--color-error)] border border-[var(--color-error-border)] bg-[var(--color-error-light)] rounded-md flex items-center justify-between">
 					<span>{error}</span>
 					<button
-						className="text-[#EF4444] hover:text-[#DC2626] ml-4"
+						className="text-[var(--color-error)] hover:opacity-80 ml-4"
 						onClick={() => setError('')}
 						type="button"
 					>
@@ -723,17 +723,17 @@ const TodoList = (): React.JSX.Element => {
 			)}
 
 			{/* ═══ Two-column layout ═══ */}
-			<div className="flex flex-col lg:flex-row gap-[24px]">
+			<div className="flex flex-col lg:flex-row gap-6">
 				{/* ─── Left Panel: Filters (280px) ─── */}
-				<aside className="w-full lg:w-[280px] shrink-0 space-y-[32px]">
+				<aside className="w-full lg:w-72 shrink-0 space-y-8">
 					{/* Timeframe dropdown */}
-					<div className="space-y-[8px]">
-						<label className="text-[12px] font-medium leading-[1.4] text-[#6B7280] uppercase tracking-wider">
+					<div className="space-y-2">
+						<label className="text-xs font-medium leading-snug text-[var(--color-muted)] uppercase tracking-wider">
 							Timeframe
 						</label>
 						<div className="relative">
 							<select
-								className="w-full h-[44px] px-[16px] bg-white border border-[#E5E7EB] rounded-lg appearance-none text-[14px] leading-[1.5] focus:border-[#4F3CC9] outline-none cursor-pointer"
+								className="w-full h-11 px-4 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-md appearance-none text-sm leading-relaxed focus:border-[var(--color-primary)] outline-none cursor-pointer text-[var(--color-text)]"
 								value={timeframe}
 								onChange={(e) => setTimeframe(e.target.value)}
 							>
@@ -742,39 +742,39 @@ const TodoList = (): React.JSX.Element => {
 								<option value="this_week">Tuần này</option>
 								<option value="this_month">Tháng này</option>
 							</select>
-							<span className="material-symbols-outlined absolute right-[12px] top-1/2 -translate-y-1/2 pointer-events-none text-[#6B7280]">
+							<span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--color-muted)]">
 								expand_more
 							</span>
 						</div>
 					</div>
 
 					{/* Status filter buttons */}
-					<nav className="space-y-[8px]">
-						<label className="text-[12px] font-medium leading-[1.4] text-[#6B7280] uppercase tracking-wider">
+					<nav className="space-y-2">
+						<label className="text-xs font-medium leading-snug text-[var(--color-muted)] uppercase tracking-wider">
 							Filters
 						</label>
-						<div className="space-y-[4px]">
+						<div className="space-y-1">
 							{filterButtons.map((item) => {
 								const isActive = item.key === activeFilter;
 								const count = stats ? stats[item.statsKey] : 0;
 								return (
 									<button
 										key={item.key}
-										className={`w-full flex items-center justify-between px-[16px] py-[8px] rounded-lg text-[15px] font-medium leading-[1.4] transition-colors ${
+										className={`w-full flex items-center justify-between px-4 py-2 rounded-md text-[15px] font-medium leading-snug transition-colors ${
 											isActive
-												? 'bg-[#EDE9FF] text-[#4F3CC9]'
-												: 'text-[#6B7280] hover:bg-[#f6f2fe]'
+												? 'bg-[var(--color-primary-light)] text-[var(--color-primary)]'
+												: 'text-[var(--color-muted)] hover:bg-[var(--color-primary-lighter)]'
 										}`}
 										onClick={() => setActiveFilter(item.key)}
 										type="button"
 									>
-										<div className="flex items-center gap-[12px]">
+										<div className="flex items-center gap-3">
 											<span className="material-symbols-outlined">
 												{item.icon}
 											</span>
 											{item.label}
 										</div>
-										<span className="text-[12px] font-medium leading-[1.4]">
+										<span className="text-xs font-medium leading-snug">
 											{count}
 										</span>
 									</button>
@@ -784,19 +784,19 @@ const TodoList = (): React.JSX.Element => {
 					</nav>
 
 					{/* Categories */}
-					<nav className="space-y-[8px]">
-						<label className="text-[12px] font-medium leading-[1.4] text-[#6B7280] uppercase tracking-wider">
+					<nav className="space-y-2">
+						<label className="text-xs font-medium leading-snug text-[var(--color-muted)] uppercase tracking-wider">
 							Categories
 						</label>
-						<div className="space-y-[4px]">
+						<div className="space-y-1">
 							{categories.map((cat) => (
 								<button
 									key={cat.label}
-									className="w-full flex items-center gap-[12px] px-[16px] py-[8px] rounded-lg text-[#6B7280] hover:bg-[#f6f2fe] transition-colors text-[15px] font-medium leading-[1.4]"
+									className="w-full flex items-center gap-3 px-4 py-2 rounded-md text-[var(--color-muted)] hover:bg-[var(--color-primary-lighter)] transition-colors text-[15px] font-medium leading-snug"
 									type="button"
 								>
 									<div
-										className="w-[8px] h-[8px] rounded-full shrink-0"
+										className="w-2 h-2 rounded-full shrink-0"
 										style={{ backgroundColor: cat.color }}
 									/>
 									{cat.label}
@@ -807,13 +807,13 @@ const TodoList = (): React.JSX.Element => {
 				</aside>
 
 				{/* ─── Right Panel: Task List ─── */}
-				<section className="flex-1 space-y-[32px]">
+				<section className="flex-1 space-y-8">
 					{/* Loading state */}
 					{loading && (
 						<div className="flex items-center justify-center py-16">
-							<div className="flex items-center gap-3 rounded-full border border-[#E5E7EB] bg-white px-4 py-2 shadow-sm">
-								<span className="h-4 w-4 rounded-full border-2 border-[#4F3CC9] border-t-transparent animate-spin" />
-								<span className="text-[12px] text-[#6B7280]">
+							<div className="flex items-center gap-3 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-2 shadow-sm">
+								<span className="h-4 w-4 rounded-full border-2 border-[var(--color-primary)] border-t-transparent animate-spin" />
+								<span className="text-xs text-[var(--color-muted)]">
 									Đang tải danh sách task...
 								</span>
 							</div>
@@ -822,23 +822,23 @@ const TodoList = (): React.JSX.Element => {
 
 					{/* Empty state */}
 					{!loading && todos.length === 0 && !error && (
-						<div className="bg-white rounded-xl border border-[#E5E7EB] p-12 text-center">
+						<div className="bg-[var(--color-bg)] rounded-lg border border-[var(--color-border)] p-12 text-center">
 							<span
-								className="material-symbols-outlined text-[#E5E7EB] mb-4 block"
+								className="material-symbols-outlined text-[var(--color-border)] mb-4 block"
 								style={{ fontSize: '64px' }}
 							>
 								task_alt
 							</span>
-							<h3 className="text-[18px] font-semibold text-[#6B7280] mb-2">
+							<h3 className="text-lg font-semibold text-[var(--color-muted)] mb-2">
 								Không có task nào
 							</h3>
-							<p className="text-[14px] text-[#9CA3AF] mb-6">
+							<p className="text-sm text-[var(--color-muted)] mb-6">
 								{activeFilter !== 'all'
 									? 'Thử thay đổi bộ lọc để thấy kết quả khác'
 									: 'Bắt đầu bằng việc tạo task mới'}
 							</p>
 							<button
-								className="px-6 py-2 bg-[#4F3CC9] text-white rounded-lg hover:bg-[#3A2D9E] transition-colors text-[14px] font-medium"
+								className="px-6 py-2 bg-[var(--color-primary)] text-white rounded-md hover:bg-[var(--color-primary-hover)] transition-colors text-sm font-medium"
 								onClick={openCreateModal}
 								type="button"
 							>

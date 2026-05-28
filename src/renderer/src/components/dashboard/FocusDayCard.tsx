@@ -20,20 +20,20 @@ const FocusDayCard: React.FC<FocusDayCardProps> = ({
   const offset = Math.round(CIRCUMFERENCE * (1 - percent) * 100) / 100;
 
   return (
-    <div className="bg-white p-6 rounded-xl border border-[#E5E7EB] flex flex-col items-center">
+    <div className="bg-[var(--color-bg)] p-6 rounded-lg border border-[var(--color-border)] flex flex-col items-center">
       <div className="w-full flex justify-between items-center mb-4">
-        <h2 className="text-[18px] font-semibold text-[#1A1A2E]">Tập trung</h2>
-        <span className="material-symbols-outlined text-[#6B7280] cursor-pointer">more_vert</span>
+        <h2 className="text-lg font-semibold text-[var(--color-text)]">Tập trung</h2>
+        <span className="material-symbols-outlined text-[var(--color-muted)] cursor-pointer">more_vert</span>
       </div>
-      <div className="relative w-[110px] h-[110px] mb-4 flex items-center justify-center">
+      <div className="relative w-28 h-28 mb-4 flex items-center justify-center">
         <svg className="focus-ring" width="110" height="110">
-          <circle cx="55" cy="55" r="48" fill="transparent" stroke="#EDE9FF" strokeWidth="9"></circle>
+          <circle cx="55" cy="55" r="48" fill="transparent" stroke="var(--color-primary-light)" strokeWidth="9"></circle>
           <circle
             cx="55"
             cy="55"
             r="48"
             fill="transparent"
-            stroke="#4F3CC9"
+            stroke="var(--color-primary)"
             strokeDasharray={CIRCUMFERENCE}
             strokeDashoffset={offset}
             strokeLinecap="round"
@@ -41,20 +41,20 @@ const FocusDayCard: React.FC<FocusDayCardProps> = ({
           ></circle>
         </svg>
         <div className="absolute flex flex-col items-center">
-          <span className="text-[18px] font-semibold text-[#1A1A2E]">{formatHours(todayFocusHours)}</span>
-          <span className="text-[11px] text-[#6B7280] uppercase">GIỜ</span>
+          <span className="text-lg font-semibold text-[var(--color-text)]">{formatHours(todayFocusHours)}</span>
+          <span className="text-[11px] text-[var(--color-muted)] uppercase">GIỜ</span>
         </div>
       </div>
       <div className="w-full grid grid-cols-2 gap-3 mt-1">
-        <div className="text-center p-3 bg-[#F5F4FA] rounded-lg">
-          <p className="text-[12px] text-[#6B7280] mb-1">Pomodoro</p>
-          <p className="text-[15px] font-medium text-[#1A1A2E]">
+        <div className="text-center p-3 bg-[var(--color-surface)] rounded-lg">
+          <p className="text-xs text-[var(--color-muted)] mb-1">Pomodoro</p>
+          <p className="text-[15px] font-medium text-[var(--color-text)]">
             {pomodoroCompleted}/{pomodoroTarget}
           </p>
         </div>
-        <div className="text-center p-3 bg-[#F5F4FA] rounded-lg">
-          <p className="text-[12px] text-[#6B7280] mb-1">Mục tiêu</p>
-          <p className="text-[15px] font-medium text-[#1A1A2E]">{focusGoal}h</p>
+        <div className="text-center p-3 bg-[var(--color-surface)] rounded-lg">
+          <p className="text-xs text-[var(--color-muted)] mb-1">Mục tiêu</p>
+          <p className="text-[15px] font-medium text-[var(--color-text)]">{focusGoal}h</p>
         </div>
       </div>
     </div>

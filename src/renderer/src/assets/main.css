@@ -3,8 +3,8 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: #F5F4FA;
-  color: #1A1A2E;
+  background-color: var(--color-bg-app);
+  color: var(--color-text);
   user-select: none;
 }
 
@@ -31,29 +31,29 @@ code {
 .calendar-root .fc {
   font-family: 'Inter', sans-serif;
   font-size: 13px;
-  color: #1A1A2E;
+  color: var(--color-text);
 }
 
 .calendar-root .fc-theme-standard .fc-scrollgrid,
 .calendar-root .fc-theme-standard td,
 .calendar-root .fc-theme-standard th {
-  border-color: #E5E7EB;
+  border-color: var(--color-border);
 }
 
 .calendar-root .fc .fc-col-header-cell-cushion {
-  color: #6B7280;
+  color: var(--color-muted);
   font-weight: 600;
   font-size: 12px;
 }
 
 .calendar-root .fc .fc-daygrid-day-number {
-  color: #1A1A2E;
+  color: var(--color-text);
   font-weight: 500;
   font-size: 12px;
 }
 
 .calendar-root .fc .fc-timegrid-slot-label {
-  color: #6B7280;
+  color: var(--color-muted);
   font-size: 12px;
 }
 
@@ -71,11 +71,11 @@ code {
 
 .calendar-root .fc .fc-timegrid-now-indicator-line,
 .calendar-root .fc .fc-timegrid-now-indicator-arrow {
-  border-color: #EF4444;
+  border-color: var(--color-error);
 }
 
 .calendar-root .fc .fc-day-today {
-  background-color: rgba(237, 233, 255, 0.1);
+  background-color: color-mix(in srgb, var(--color-primary-light) 10%, transparent);
 }
 
 .calendar-root .fc .fc-event {

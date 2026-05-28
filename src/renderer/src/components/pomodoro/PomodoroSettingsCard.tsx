@@ -32,10 +32,10 @@ const PomodoroSettingsCard = ({ settings, onAdjust }: PomodoroSettingsCardProps)
 	] as const;
 
 	return (
-		<section className="w-full max-w-[480px] bg-white rounded-xl border border-[#E5E7EB] p-6">
+		<section className="w-full max-w-[480px] bg-[var(--color-bg)] rounded-lg border border-[var(--color-border)] p-6">
 			<div className="flex items-center justify-between mb-6">
-				<h3 className="text-[18px] font-semibold text-[#1A1A2E] flex items-center gap-2">
-					<span className="material-symbols-outlined text-[#4F3CC9]">tune</span>
+				<h3 className="text-lg font-semibold text-[var(--color-text)] flex items-center gap-2">
+					<span className="material-symbols-outlined text-[var(--color-primary)]">tune</span>
 					Thiết lập phiên
 				</h3>
 			</div>
@@ -44,22 +44,22 @@ const PomodoroSettingsCard = ({ settings, onAdjust }: PomodoroSettingsCardProps)
 					<React.Fragment key={item.title}>
 						<div className="flex items-center justify-between">
 							<div>
-								<p className="text-[15px] font-medium text-[#1A1A2E]">{item.title}</p>
-								<p className="text-[12px] font-medium text-[#6B7280]">{item.subtitle}</p>
+								<p className="text-[15px] font-medium text-[var(--color-text)]">{item.title}</p>
+								<p className="text-xs font-medium text-[var(--color-muted)]">{item.subtitle}</p>
 							</div>
-							<div className="flex items-center gap-3 bg-[#F5F4FA] rounded-lg p-1">
+							<div className="flex items-center gap-3 bg-[var(--color-surface)] rounded-lg p-1">
 								<button
-									className="h-8 w-8 rounded bg-white shadow-sm flex items-center justify-center text-[#1A1A2E] hover:text-[#4F3CC9]"
+									className="h-8 w-8 rounded bg-[var(--color-bg)] shadow-sm flex items-center justify-center text-[var(--color-text)] hover:text-[var(--color-primary)]"
 									type="button"
 									onClick={() => onAdjust(item.key, -1)}
 								>
 									-
 								</button>
-								<span className="text-[15px] font-medium text-[#1A1A2E] px-3">
+								<span className="text-[15px] font-medium text-[var(--color-text)] px-3">
 									{item.value.toString().padStart(2, '0')}
 								</span>
 								<button
-									className="h-8 w-8 rounded bg-white shadow-sm flex items-center justify-center text-[#1A1A2E] hover:text-[#4F3CC9]"
+									className="h-8 w-8 rounded bg-[var(--color-bg)] shadow-sm flex items-center justify-center text-[var(--color-text)] hover:text-[var(--color-primary)]"
 									type="button"
 									onClick={() => onAdjust(item.key, 1)}
 								>
@@ -67,7 +67,7 @@ const PomodoroSettingsCard = ({ settings, onAdjust }: PomodoroSettingsCardProps)
 								</button>
 							</div>
 						</div>
-						{index < items.length - 1 && <div className="h-px bg-[#E5E7EB]" />}
+						{index < items.length - 1 && <div className="h-px bg-[var(--color-border)]" />}
 					</React.Fragment>
 				))}
 			</div>

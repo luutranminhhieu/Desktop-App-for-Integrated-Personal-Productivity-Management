@@ -79,15 +79,15 @@ const Dashboard = (): React.JSX.Element => {
 
   /* ── Guard states ── */
   if (loading) {
-    return <div className="text-[14px] text-[#6B7280]"></div>;
+    return <div className="text-sm text-[var(--color-muted)]"></div>;
   }
 
   if (error) {
-    return <div className="text-[14px] text-[#EF4444]">{error}</div>;
+    return <div className="text-sm text-[var(--color-error)]">{error}</div>;
   }
 
   if (!data) {
-    return <div className="text-[14px] text-[#6B7280]">No data.</div>;
+    return <div className="text-sm text-[var(--color-muted)]">No data.</div>;
   }
 
   return (
@@ -108,24 +108,24 @@ const Dashboard = (): React.JSX.Element => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         {data.urgentTasks.slice(0, 3).map((task) => {
           const isUrgent = task.priority === 'urgent';
-          const borderColor = isUrgent ? '#EF4444' : '#F59E0B';
+          const borderColor = isUrgent ? 'var(--color-error)' : 'var(--color-warning)';
           return (
             <div
               key={task._id}
-              className="bg-white p-4 rounded-xl border border-[#E5E7EB] shadow-sm"
+              className="bg-[var(--color-bg)] p-4 rounded-lg border border-[var(--color-border)] shadow-sm"
               style={{ borderLeft: `4px solid ${borderColor}` }}
             >
               <div className="flex justify-between items-start mb-3">
                 <span
                   className="px-2 py-1 text-[11px] font-semibold rounded uppercase"
-                  style={{ backgroundColor: `${borderColor}1A`, color: borderColor }}
+                  style={{ backgroundColor: isUrgent ? 'var(--color-error-light)' : 'var(--color-warning-light)', color: isUrgent ? 'var(--color-error)' : 'var(--color-warning)' }}
                 >
                   {isUrgent ? 'URGENT' : 'HIGH'}
                 </span>
-                <span className="material-symbols-outlined text-[#6B7280] text-[18px]">flag</span>
+                <span className="material-symbols-outlined text-[var(--color-muted)] text-lg">flag</span>
               </div>
-              <h3 className="text-[15px] font-medium text-[#1A1A2E] mb-1">{task.title}</h3>
-              <p className="text-[12px] text-[#6B7280]">Deadline: {formatDeadline(task.dueDate)}</p>
+              <h3 className="text-[15px] font-medium text-[var(--color-text)] mb-1">{task.title}</h3>
+              <p className="text-xs text-[var(--color-muted)]">Deadline: {formatDeadline(task.dueDate)}</p>
             </div>
           );
         })}

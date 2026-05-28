@@ -19,9 +19,9 @@ const TaskStatus: React.FC<TaskStatusProps> = ({ taskStats }) => {
 
   const segments: Segment[] = [
     { key: 'done', label: 'Đã xong', color: '#10B981', value: completedCount },
-    { key: 'pending', label: 'Đang làm', color: '#4F3CC9', value: pendingCount },
+    { key: 'pending', label: 'Đang làm', color: '#1E3A8A', value: pendingCount },
     { key: 'overdue', label: 'Quá hạn', color: '#EF4444', value: overdueCount },
-    { key: 'canceled', label: 'Hủy', color: '#E5E7EB', value: canceledCount }
+    { key: 'canceled', label: 'Hủy', color: '#9ca3af', value: canceledCount }
   ];
 
   const pct = (v: number): number => Math.round((v / total) * 100);
@@ -41,12 +41,12 @@ const TaskStatus: React.FC<TaskStatusProps> = ({ taskStats }) => {
     });
 
   return (
-    <div className="bg-white p-6 rounded-xl border border-[#E5E7EB] flex flex-col">
-      <h2 className="text-[18px] font-semibold text-[#1A1A2E] mb-8">Trạng thái Task</h2>
+    <div className="bg-[var(--color-bg)] p-6 rounded-lg border border-[var(--color-border)] flex flex-col">
+      <h2 className="text-lg font-semibold text-[var(--color-text)] mb-8">Trạng thái Task</h2>
       <div className="flex-1 flex flex-col justify-center items-center">
         <div className="relative w-40 h-40 mb-6">
           <svg className="focus-ring" width="160" height="160">
-            <circle cx="80" cy="80" r="70" fill="transparent" stroke="#f0ecf8" strokeWidth="15"></circle>
+            <circle cx="80" cy="80" r="70" fill="transparent" stroke="var(--color-primary-light)" strokeWidth="15"></circle>
             {chartSegments.map((seg) => (
               <circle
                 key={seg.key}
@@ -64,15 +64,15 @@ const TaskStatus: React.FC<TaskStatusProps> = ({ taskStats }) => {
             ))}
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-[24px] font-semibold text-[#1A1A2E]">{taskStats.total}</span>
-            <span className="text-[12px] text-[#6B7280]">Tổng số</span>
+            <span className="text-2xl font-semibold text-[var(--color-text)]">{taskStats.total}</span>
+            <span className="text-xs text-[var(--color-muted)]">Tổng số</span>
           </div>
         </div>
         <div className="w-full grid grid-cols-2 gap-3">
           {segments.map((s) => (
             <div key={s.key} className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: s.color }}></span>
-              <span className="text-[14px] text-[#6B7280]">
+              <span className="text-sm text-[var(--color-muted)]">
                 {s.label} ({pct(s.value)}%)
               </span>
             </div>

@@ -47,16 +47,16 @@ const MiniCalendar = ({
           <button
             type="button"
             onClick={onPrevMonth}
-            className="p-1 rounded-full hover:bg-[#F6F2FE] transition-colors"
+            className="p-1 rounded-full hover:bg-[var(--color-primary-lighter)] transition-colors"
           >
-            <span className="material-symbols-outlined text-[#6B7280] hover:text-[#4F3CC9]">chevron_left</span>
+            <span className="material-symbols-outlined text-[var(--color-muted)] hover:text-[var(--color-primary)]">chevron_left</span>
           </button>
           <button
             type="button"
             onClick={onNextMonth}
-            className="p-1 rounded-full hover:bg-[#F6F2FE] transition-colors"
+            className="p-1 rounded-full hover:bg-[var(--color-primary-lighter)] transition-colors"
           >
-            <span className="material-symbols-outlined text-[#6B7280] hover:text-[#4F3CC9]">chevron_right</span>
+            <span className="material-symbols-outlined text-[var(--color-muted)] hover:text-[var(--color-primary)]">chevron_right</span>
           </button>
         </div>
       </div>
@@ -64,7 +64,7 @@ const MiniCalendar = ({
         {weekdays.map((day) => (
           <div
             key={day}
-            className={`text-[12px] font-medium text-[#6B7280] opacity-60 ${day === 'CN' ? 'text-[#EF4444]' : ''}`}
+            className="text-xs font-medium text-[var(--color-muted)] opacity-60"
           >
             {day}
           </div>
@@ -78,12 +78,12 @@ const MiniCalendar = ({
               key={dateKey}
               type="button"
               onClick={() => onSelectDate(date)}
-              className={`py-1 text-[14px] ${
-                isCurrentMonth ? 'text-[#1A1A2E]' : 'text-[#6B7280] opacity-30'
+              className={`py-1 text-sm ${
+                isCurrentMonth ? 'text-[var(--color-text)]' : 'text-[var(--color-muted)] opacity-30'
               } ${
                 isSelected
-                  ? 'bg-[#4F3CC9] text-white rounded-full'
-                  : 'rounded-full hover:bg-[#F6F2FE]'
+                  ? 'bg-[var(--color-primary)] text-white rounded-full'
+                  : 'rounded-full hover:bg-[var(--color-primary-lighter)]'
               }`}
             >
               <span className="relative inline-block">
@@ -91,7 +91,7 @@ const MiniCalendar = ({
                 {hasEvent && (
                   <span
                     className={`absolute -bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full ${
-                      isSelected ? 'bg-white' : 'bg-[#4F3CC9]'
+                      isSelected ? 'bg-white' : 'bg-[var(--color-primary)]'
                     }`}
                   ></span>
                 )}

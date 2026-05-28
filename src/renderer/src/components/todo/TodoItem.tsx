@@ -16,10 +16,10 @@ const priorityColors = {
 };
 
 const statusColors = {
-  pending: 'bg-[#F59E0B]/10 text-[#F59E0B]',
-  in_progress: 'bg-[#4F3CC9]/10 text-[#4F3CC9]',
-  completed: 'bg-[#10B981]/10 text-[#10B981]',
-  canceled: 'bg-[#6B7280]/10 text-[#6B7280]'
+  pending: 'bg-[var(--color-warning)]/10 text-[var(--color-warning)]',
+  in_progress: 'bg-[var(--color-primary)]/10 text-[var(--color-primary)]',
+  completed: 'bg-[var(--color-success)]/10 text-[var(--color-success)]',
+  canceled: 'bg-[var(--color-muted)]/10 text-[var(--color-muted)]'
 };
 
 const formatDueDate = (dueDate?: string): string => {
@@ -36,16 +36,16 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onEdit, onDelete })
   const isOverdue = todo.dueDate && new Date(todo.dueDate) < new Date() && todo.status !== 'completed';
   
   return (
-    <div className={`p-4 rounded-xl border ${
-      isOverdue ? 'border-[#EF4444] bg-[#FEF2F2]' : 'border-[#E5E7EB]'
-    } bg-white`}>
+    <div className={`p-4 rounded-lg border ${
+      isOverdue ? 'border-[var(--color-error)] bg-[var(--color-error-light)]' : 'border-[var(--color-border)]'
+    } bg-[var(--color-bg)]`}>
       <div className="flex items-start gap-3">
         <button
           onClick={() => onToggle(todo._id)}
           className={`mt-1 w-5 h-5 rounded border-2 flex-shrink-0 ${
             todo.status === 'completed' 
-              ? 'bg-[#10B981] border-[#10B981]' 
-              : 'border-[#D1D5DB] hover:border-[#4F3CC9]'
+              ? 'bg-[var(--color-success)] border-[var(--color-success)]' 
+              : 'border-[var(--color-border)] hover:border-[var(--color-primary)]'
           }`}
         >
           {todo.status === 'completed' && (
@@ -58,7 +58,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onEdit, onDelete })
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <h3 className={`text-[15px] font-medium ${
-              todo.status === 'completed' ? 'line-through text-[#6B7280]' : 'text-[#1A1A2E]'
+              todo.status === 'completed' ? 'line-through text-[var(--color-muted)]' : 'text-[var(--color-text)]'
             }`}>
               {todo.title}
             </h3>
@@ -85,15 +85,15 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onEdit, onDelete })
           </div>
           
           {todo.description && (
-            <p className="text-[13px] text-[#6B7280] mt-2 ml-7">
+            <p className="text-[13px] text-[var(--color-muted)] mt-2 ml-7">
               {todo.description}
             </p>
           )}
           
           <div className="flex items-center gap-4 mt-2 ml-7">
             {todo.dueDate && (
-              <span className={`text-[12px] ${
-                isOverdue ? 'text-[#EF4444]' : 'text-[#6B7280]'
+              <span className={`text-xs ${
+                isOverdue ? 'text-[var(--color-error)]' : 'text-[var(--color-muted)]'
               }`}>
                 📅 {formatDueDate(todo.dueDate)}
                 {isOverdue && <span className="ml-1 font-bold">(QUÁ HẠN)</span>}
@@ -101,7 +101,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onEdit, onDelete })
             )}
             
             {todo.project && (
-              <span className="text-[12px] text-[#4F3CC9]">
+              <span className="text-xs text-[var(--color-primary)]">
                 📁 {todo.project}
               </span>
             )}
@@ -109,12 +109,12 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onEdit, onDelete })
             {todo.tags.length > 0 && (
               <div className="flex gap-1">
                 {todo.tags.slice(0, 2).map((tag, index) => (
-                  <span key={index} className="px-2 py-1 text-[11px] bg-[#F6F2FE] text-[#4F3CC9] rounded">
+                  <span key={index} className="px-2 py-1 text-[11px] bg-[var(--color-primary-lighter)] text-[var(--color-primary)] rounded">
                     #{tag}
                   </span>
                 ))}
                 {todo.tags.length > 2 && (
-                  <span className="px-2 py-1 text-[11px] bg-[#F6F2FE] text-[#4F3CC9] rounded">
+                  <span className="px-2 py-1 text-[11px] bg-[var(--color-primary-lighter)] text-[var(--color-primary)] rounded">
                     +{todo.tags.length - 2}
                   </span>
                 )}
@@ -126,20 +126,20 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onEdit, onDelete })
         <div className="flex items-center gap-1">
           <button
             onClick={() => onEdit(todo)}
-            className="p-1.5 hover:bg-[#F6F2FE] rounded transition-colors"
+            className="p-1.5 hover:bg-[var(--color-primary-lighter)] rounded transition-colors"
             title="Chỉnh sửa"
           >
-            <svg className="w-4 h-4 text-[#6B7280]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
             </svg>
           </button>
           
           <button
             onClick={() => onDelete(todo._id)}
-            className="p-1.5 hover:bg-[#FEE2E2] rounded transition-colors"
+            className="p-1.5 hover:bg-[var(--color-error-light)] rounded transition-colors"
             title="Xóa"
           >
-            <svg className="w-4 h-4 text-[#EF4444]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-[var(--color-error)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
           </button>

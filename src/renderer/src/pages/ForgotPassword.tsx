@@ -49,30 +49,30 @@ const ForgotPassword = (): JSX.Element => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F4FA] flex items-center justify-center p-4 relative overflow-hidden text-[#1A1A2E]">
+    <div className="min-h-screen bg-[var(--color-bg-app)] flex items-center justify-center p-4 relative overflow-hidden text-[var(--color-text)]">
       <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[10%] -left-[5%] w-[40%] h-[40%] bg-[#EDE9FF] rounded-full mix-blend-multiply blur-3xl opacity-30"></div>
-        <div className="absolute top-[60%] -right-[5%] w-[30%] h-[30%] bg-[#F6F2FE] rounded-full mix-blend-multiply blur-3xl opacity-40"></div>
+        <div className="absolute -top-[10%] -left-[5%] w-[40%] h-[40%] bg-[var(--color-primary-light)] rounded-full mix-blend-multiply blur-3xl opacity-30"></div>
+        <div className="absolute top-[60%] -right-[5%] w-[30%] h-[30%] bg-[var(--color-primary-lighter)] rounded-full mix-blend-multiply blur-3xl opacity-40"></div>
       </div>
 
-      <main className="w-full max-w-[420px] bg-white rounded-xl p-[40px] shadow-soft border border-[#E5E7EB]">
+      <main className="w-full max-w-[420px] bg-[var(--color-bg)] rounded-lg p-10 shadow-soft border border-[var(--color-border)]">
         {!submitted ? (
           <div className="flex flex-col gap-2 items-center text-center">
-            <div className="flex items-center justify-center w-[80px] h-[80px] rounded-full bg-[#EDE9FF]">
-              <span className="material-symbols-outlined text-[48px] text-[#4F3CC9]">
+            <div className="flex items-center justify-center w-20 h-20 rounded-full bg-[var(--color-primary-light)]">
+              <span className="material-symbols-outlined text-5xl text-[var(--color-primary)]">
                 mail
               </span>
             </div>
-            <h1 className="text-[24px] font-semibold text-[#1A1A2E]">
+            <h1 className="text-2xl font-semibold text-[var(--color-text)]">
               Forgot your password?
             </h1>
-            <p className="text-[14px] text-[#6B7280]">
+            <p className="text-sm text-[var(--color-muted)]">
               Enter your email. We will send you a reset password link.
             </p>
 
             {error && (
-              <div className="text-[12px] text-[#EF4444] flex items-center gap-2">
-                <span className="material-symbols-outlined text-[16px]">error</span>
+              <div className="text-xs text-[var(--color-error)] flex items-center gap-2">
+                <span className="material-symbols-outlined text-base">error</span>
                 {error}
               </div>
             )}
@@ -80,7 +80,7 @@ const ForgotPassword = (): JSX.Element => {
             <form className="w-full space-y-6" onSubmit={handleSubmit}>
               <div className="text-left">
                 <label
-                  className="block text-[12px] font-medium text-[#6B7280] mb-2"
+                  className="block text-xs font-medium text-[var(--color-muted)] mb-2"
                   htmlFor="email"
                 >
                   Your email address
@@ -89,7 +89,7 @@ const ForgotPassword = (): JSX.Element => {
                   id="email"
                   name="email"
                   type="email"
-                  className="w-full h-[44px] px-4 rounded-lg border border-[#E5E7EB] focus:border-[#4F3CC9] input-glow transition-all outline-none text-[14px]"
+                  className="w-full h-11 px-4 rounded-md border border-[var(--color-border)] focus:border-[var(--color-primary)] input-glow transition-all outline-none text-sm bg-[var(--color-bg)] text-[var(--color-text)]"
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -98,15 +98,15 @@ const ForgotPassword = (): JSX.Element => {
               </div>
               <button
                 type="submit"
-                className="w-full mt-2 h-[44px] bg-[#4F3CC9] hover:bg-[#3A2D9E] text-white font-medium rounded-lg transition-colors active:scale-[0.98] disabled:opacity-60"
+                className="w-full mt-2 h-11 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-medium rounded-md transition-colors active:scale-[0.98] disabled:opacity-60"
                 disabled={loading}
               >
                 {loading ? 'Sending...' : 'Confirm your email'}
               </button>
             </form>
 
-            <Link to='/login' className=" mt-2 flex items-center gap-2 text-[14px] text-[#6B7280] hover:text-[#4F3CC9] transition-colors">
-              <span className="material-symbols-outlined text-[18px]">
+            <Link to='/login' className=" mt-2 flex items-center gap-2 text-sm text-[var(--color-muted)] hover:text-[var(--color-primary)] transition-colors">
+              <span className="material-symbols-outlined text-lg">
                 arrow_back
               </span>
               <span className="underline underline-offset-4">
@@ -116,20 +116,20 @@ const ForgotPassword = (): JSX.Element => {
           </div>
         ) : (
           <div className="flex flex-col items-center text-center">
-            <div className="mb-6 flex items-center justify-center w-[80px] h-[80px] rounded-full bg-[#F6F2FE]">
+            <div className="mb-6 flex items-center justify-center w-20 h-20 rounded-full bg-[var(--color-primary-lighter)]">
               <span
-                className="material-symbols-outlined text-[48px] text-[#10B981]"
+                className="material-symbols-outlined text-5xl text-[var(--color-success)]"
                 style={{ fontVariationSettings: "'FILL' 1" }}
               >
                 check_circle
               </span>
             </div>
-            <h1 className="text-[24px] font-semibold text-[#1A1A2E] mb-2">
+            <h1 className="text-2xl font-semibold text-[var(--color-text)] mb-2">
               Check you email
             </h1>
-            <p className="text-[14px] text-[#6B7280] mb-8">
+            <p className="text-sm text-[var(--color-muted)] mb-8">
               We have send the mail to you{" "}
-              <span className="font-semibold text-[#1A1A2E]">
+              <span className="font-semibold text-[var(--color-text)]">
                 {email || "example@email.com"}
               </span>
               . Please check your email (even spam).
@@ -137,7 +137,7 @@ const ForgotPassword = (): JSX.Element => {
 
             <div className="w-full space-y-4">
               <button
-                className="w-full h-[44px] border border-[#E5E7EB] text-[#1A1A2E] font-medium rounded-lg hover:bg-[#F6F2FE] transition-colors active:scale-[0.98]"
+                className="w-full h-11 border border-[var(--color-border)] text-[var(--color-text)] font-medium rounded-md hover:bg-[var(--color-primary-lighter)] transition-colors active:scale-[0.98]"
                 type="button"
                 onClick={handleResend}
                 disabled={loading}
@@ -145,7 +145,7 @@ const ForgotPassword = (): JSX.Element => {
                 {loading ? 'Sending...' : 'Send again'}
               </button>
               <button
-                className="block w-full text-center text-[14px] text-[#6B7280] hover:text-[#4F3CC9]"
+                className="block w-full text-center text-sm text-[var(--color-muted)] hover:text-[var(--color-primary)]"
                 type="button"
                 onClick={() => setSubmitted(false)}
               >

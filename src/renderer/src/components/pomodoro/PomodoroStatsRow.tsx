@@ -16,14 +16,14 @@ const PomodoroStatsRow = ({ items }: PomodoroStatsRowProps): React.JSX.Element =
 			{items.map((item) => (
 				<div
 					key={item.label}
-					className="bg-white p-6 rounded-xl border border-[#E5E7EB] flex items-center gap-4"
+					className="bg-[var(--color-bg)] p-6 rounded-lg border border-[var(--color-border)] flex items-center gap-4"
 				>
-					<div className="h-12 w-12 rounded-lg bg-[#EDE9FF] flex items-center justify-center text-[#4F3CC9]">
+					<div className="h-12 w-12 rounded-lg bg-[var(--color-primary-light)] flex items-center justify-center text-[var(--color-primary)]">
 						<span className="material-symbols-outlined">{item.icon}</span>
 					</div>
 					<div>
-						<p className="text-[12px] font-medium text-[#6B7280]">{item.label}</p>
-						<h2 className="text-[18px] font-semibold text-[#1A1A2E]">{item.value}</h2>
+						<p className="text-xs font-medium text-[var(--color-muted)]">{item.label}</p>
+						<h2 className="text-lg font-semibold text-[var(--color-text)]">{item.value}</h2>
 					</div>
 				</div>
 			))}
