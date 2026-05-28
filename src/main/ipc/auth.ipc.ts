@@ -1,5 +1,6 @@
 import { ipcMain } from 'electron';
 import { authService } from '../services/auth.service';
+import { logger } from '../utils/logger';
 
 export function registerAuthIPC(): void {
   ipcMain.handle('auth:login', async (_, { email, password }) => {
@@ -7,6 +8,7 @@ export function registerAuthIPC(): void {
       const result = await authService.login(email, password);
       return { success: true, data: result };
     } catch (error) {
+      logger.error('Error in auth:login', error);
       return { success: false, error: (error as Error).message };
     }
   });
@@ -16,6 +18,7 @@ export function registerAuthIPC(): void {
       const result = await authService.register(email, password, name);
       return { success: true, data: result };
     } catch (error) {
+      logger.error('Error in auth:register', error);
       return { success: false, error: (error as Error).message };
     }
   });
@@ -25,6 +28,7 @@ export function registerAuthIPC(): void {
       const result = authService.verifyToken(token);
       return { success: true, data: result };
     } catch (error) {
+      logger.error('Error in auth:verifyToken', error);
       return { success: false, error: (error as Error).message };
     }
   });
@@ -34,6 +38,7 @@ export function registerAuthIPC(): void {
       const result = await authService.googleSignIn();
       return { success: true, data: result };
     } catch (error) {
+      logger.error('Error in auth:googleSignIn', error);
       return { success: false, error: (error as Error).message };
     }
   });
@@ -43,6 +48,7 @@ export function registerAuthIPC(): void {
       await authService.requestPasswordReset(email);
       return { success: true };
     } catch (error) {
+      logger.error('Error in auth:requestPasswordReset', error);
       return { success: false, error: (error as Error).message };
     }
   });
@@ -52,6 +58,7 @@ export function registerAuthIPC(): void {
       await authService.resendPasswordReset(email);
       return { success: true };
     } catch (error) {
+      logger.error('Error in auth:resendPasswordReset', error);
       return { success: false, error: (error as Error).message };
     }
   });
@@ -61,6 +68,7 @@ export function registerAuthIPC(): void {
       await authService.resetPassword(token, newPassword);
       return { success: true };
     } catch (error) {
+      logger.error('Error in auth:resetPassword', error);
       return { success: false, error: (error as Error).message };
     }
   });

@@ -15,7 +15,7 @@ const UserProfile = (): React.JSX.Element => {
 	const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
 	const [user] = useState<UserInfo | null>(() => {
-		const stored = localStorage.getItem('user');
+		const stored = localStorage.getItem('user') || sessionStorage.getItem('user');
 		if (!stored) return null;
 		try {
 			return JSON.parse(stored) as UserInfo;
@@ -39,6 +39,8 @@ const UserProfile = (): React.JSX.Element => {
 		localStorage.removeItem('token');
 		localStorage.removeItem('user');
 		localStorage.removeItem('rememberLogin');
+		sessionStorage.removeItem('token');
+		sessionStorage.removeItem('user');
 
 		navigate('/login', { replace: true });
 	};

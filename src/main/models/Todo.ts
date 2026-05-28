@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-export type TodoStatus = 'pending' | 'in_progress' | 'completed' | 'canceled';
+export type TodoStatus = 'backlog' | 'pending' | 'in_progress' | 'completed' | 'canceled';
 export type TodoPriority = 'low' | 'medium' | 'high' | 'urgent';
 
 export interface ITodo extends Document {
@@ -15,6 +15,7 @@ export interface ITodo extends Document {
 	focusMinutes: number;
 	focusDate?: Date;
 	completedAt?: Date;
+	categoryId?: string | null;
 }
 
 const TodoSchema = new Schema<ITodo>(
@@ -23,7 +24,7 @@ const TodoSchema = new Schema<ITodo>(
 		description: { type: String, default: '' },
 		status: {
 			type: String,
-			enum: ['pending', 'in_progress', 'completed', 'canceled'],
+			enum: ['backlog', 'pending', 'in_progress', 'completed', 'canceled'],
 			default: 'pending'
 		},
 		priority: {
@@ -37,7 +38,8 @@ const TodoSchema = new Schema<ITodo>(
 		project: { type: String, default: '' },
 		focusMinutes: { type: Number, default: 0, min: 0 },
 		focusDate: { type: Date },
-		completedAt: { type: Date }
+		completedAt: { type: Date },
+		categoryId: { type: String, default: null }
 	},
 	{ timestamps: true }
 );

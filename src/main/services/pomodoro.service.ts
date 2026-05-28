@@ -196,12 +196,19 @@ class PomodoroService {
 		let totalWorkSeconds = 0;
 		let totalBreakSeconds = 0;
 
+		const today = new Date();
+		const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+		const end = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
+
 		for (const session of this.history) {
-			if (session.mode === 'work') {
-				completedSessions += 1;
-				totalWorkSeconds += session.durationSeconds;
-			} else {
-				totalBreakSeconds += session.durationSeconds;
+			const completedTime = new Date(session.completedAt).getTime();
+			if (completedTime >= start.getTime() && completedTime <= end.getTime()) {
+				if (session.mode === 'work') {
+					completedSessions += 1;
+					totalWorkSeconds += session.durationSeconds;
+				} else {
+					totalBreakSeconds += session.durationSeconds;
+				}
 			}
 		}
 

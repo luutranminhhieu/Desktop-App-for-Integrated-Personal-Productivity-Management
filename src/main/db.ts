@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import { logger } from './utils/logger';
 
 dotenv.config();
 
@@ -9,10 +10,23 @@ export const connectDB = async (): Promise<void> => {
     if (!mongoURI) {
       throw new Error('MONGO_URI is not defined in environment variables');
     }
+
+    mongoose.connection.on('connected', () => {
+      logger.info('Mongoose connected to MongoDB.');
+    });
+
+    mongoose.connection.on('error', (err) => {
+      logger.error('Mongoose connection error:', err);
+    });
+
+    mongoose.connection.on('disconnected', () => {
+      logger.warn('Mongoose disconnected from MongoDB. Attempting to reconnect...');
+    });
+
     await mongoose.connect(mongoURI);
-    console.log('Connected to MongoDB');
+    logger.info('Connected to MongoDB');
   } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
+    logger.error('Error connecting to MongoDB:', error);
     process.exit(1);
   }
 };
@@ -20,9 +34,9 @@ export const connectDB = async (): Promise<void> => {
 export const disconnectDB = async (): Promise<void> => {
   try {
     await mongoose.disconnect();
-    console.log('Disconnected from MongoDB');
+    logger.info('Disconnected from MongoDB');
   } catch (error) {
-    console.error('Error disconnecting from MongoDB:', error);
+    logger.error('Error disconnecting from MongoDB:', error);
     process.exit(1);
   }
 };

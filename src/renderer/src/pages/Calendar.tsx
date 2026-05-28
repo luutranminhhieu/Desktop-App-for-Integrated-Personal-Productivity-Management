@@ -25,7 +25,7 @@ const toDateKey = (value: Dayjs): string => value.format('YYYY-MM-DD');
 
 const Calendar = (): React.JSX.Element => {
 	const [userId] = useState<string | null>(() => {
-		const stored = localStorage.getItem('user');
+		const stored = localStorage.getItem('user') || sessionStorage.getItem('user');
 		if (!stored) return null;
 		try {
 			const parsed = JSON.parse(stored) as { id?: string };

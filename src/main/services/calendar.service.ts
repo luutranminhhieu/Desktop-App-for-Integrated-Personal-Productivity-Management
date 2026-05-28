@@ -27,6 +27,19 @@ export class CalendarService {
       throw new Error('Start and end time are required.');
     }
 
+    const status = payload.status || 'confirmed';
+    const statusColors: Record<string, string> = {
+      pending: '#F59E0B',
+      confirmed: '#3B82F6',
+      tentative: '#10B981',
+      canceled: '#EF4444',
+      completed: '#6B7280'
+    };
+
+    if (!payload.color || payload.color === '#4F3CC9') {
+      payload.color = statusColors[status] || '#3B82F6';
+    }
+
     return CalendarEvent.create(payload);
   }
 
@@ -57,6 +70,18 @@ export class CalendarService {
   }
 
   public async updateEvent(eventId: string, updates: Partial<ICalendarEvent>, userId: string): Promise<ICalendarEvent> {
+    const statusColors: Record<string, string> = {
+      pending: '#F59E0B',
+      confirmed: '#3B82F6',
+      tentative: '#10B981',
+      canceled: '#EF4444',
+      completed: '#6B7280'
+    };
+
+    if (updates.status && (!updates.color || updates.color === '#4F3CC9')) {
+      updates.color = statusColors[updates.status];
+    }
+
     const event = await CalendarEvent.findOneAndUpdate(
       { _id: eventId, userId: new mongoose.Types.ObjectId(userId) },
       updates,

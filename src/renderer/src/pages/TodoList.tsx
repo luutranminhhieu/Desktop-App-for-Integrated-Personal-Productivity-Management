@@ -444,7 +444,7 @@ const StatsSection = ({ stats }: { stats: TaskStats }): React.JSX.Element => {
 const TodoList = (): React.JSX.Element => {
 	/* ── Auth ── */
 	const [userId] = useState<string | null>(() => {
-		const stored = localStorage.getItem('user');
+		const stored = localStorage.getItem('user') || sessionStorage.getItem('user');
 		if (!stored) return null;
 		try {
 			const parsed = JSON.parse(stored) as { id?: string };
