@@ -1,8 +1,6 @@
-import mongoose from 'mongoose';
-import { CalendarEvent, ICalendarEvent } from '../models/CalendarEvent';
 import { EventStatusColor } from '../constants/eventStatusColor';
-
-const DEFAULT_LIST_LIMIT = 200;
+import { todoService } from './todo.service';
+import type { ITodo, TodoStatus } from '../models/Todo';
 
 function startOfDay(value: Date): Date {
   const date = new Date(value);
@@ -16,91 +14,56 @@ function endOfDay(value: Date): Date {
   return date;
 }
 
+function buildEventTimes(dueDate: Date): { startTime: Date; endTime: Date } {
+  const startTime = startOfDay(dueDate);
+  const endTime = new Date(startTime.getTime() + 30 * 60 * 1000);
+  return { startTime, endTime };
+}
+
+function statusToColor(status: TodoStatus): string {
+  const colors: Record<TodoStatus, string> = {
+    backlog: EventStatusColor.paused,
+    pending: EventStatusColor.todo,
+    in_progress: EventStatusColor.inProgress,
+    completed: EventStatusColor.done,
+    canceled: EventStatusColor.canceled
+  };
+  return colors[status] ?? EventStatusColor.todo;
+}
+
+function mapTodoToCalendarEvent(todo: ITodo) {
+  if (!todo.dueDate) return null;
+  const { startTime, endTime } = buildEventTimes(new Date(todo.dueDate));
+  return {
+    _id: String(todo._id),
+    title: todo.title,
+    startTime: startTime.toISOString(),
+    endTime: endTime.toISOString(),
+    color: statusToColor(todo.status),
+    userId: String(todo.userId),
+    location: '',
+    notes: todo.description ?? ''
+  };
+}
+
 export class CalendarService {
-  public async createEvent(payload: Partial<ICalendarEvent>): Promise<ICalendarEvent> {
-    if (!payload.title) {
-      throw new Error('Title is required.');
-    }
-    if (!payload.userId) {
-      throw new Error('User is required.');
-    }
-    if (!payload.startTime || !payload.endTime) {
-      throw new Error('Start and end time are required.');
-    }
-
-    const status = payload.status || 'confirmed';
-    const statusColors: Record<string, string> = {
-      pending: EventStatusColor.todo,
-      confirmed: EventStatusColor.inProgress,
-      tentative: EventStatusColor.paused,
-      canceled: EventStatusColor.canceled,
-      completed: EventStatusColor.done
-    };
-
-    if (!payload.color || payload.color === '#4F3CC9') {
-      payload.color = statusColors[status] || '#3B82F6';
-    }
-
-    return CalendarEvent.create(payload);
-  }
-
-  public async listEvents(userId: string, limit = DEFAULT_LIST_LIMIT): Promise<ICalendarEvent[]> {
-    return CalendarEvent.find({ userId: new mongoose.Types.ObjectId(userId) })
-      .sort({ startTime: 1 })
-      .limit(limit);
-  }
-
-  public async listEventsForDay(userId: string, date: Date): Promise<ICalendarEvent[]> {
+  public async listEventsForDay(userId: string, date: Date) {
     const start = startOfDay(date);
     const end = endOfDay(date);
-    return CalendarEvent.find({
-      userId: new mongoose.Types.ObjectId(userId),
-      startTime: { $gte: start, $lte: end }
-    }).sort({ startTime: 1 });
+    const todos = await todoService.listTodos({ userId, dueDateFrom: start, dueDateTo: end });
+    return todos
+      .map(mapTodoToCalendarEvent)
+      .filter((item): item is NonNullable<typeof item> => Boolean(item));
   }
 
-  public async listEventsInRange(userId: string, startDate: Date, endDate: Date): Promise<ICalendarEvent[]> {
+  public async listEventsInRange(userId: string, startDate: Date, endDate: Date) {
     if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
       throw new Error('Invalid date range.');
     }
-
-    return CalendarEvent.find({
-      userId: new mongoose.Types.ObjectId(userId),
-      startTime: { $gte: startDate, $lt: endDate }
-    }).sort({ startTime: 1 });
-  }
-
-  public async updateEvent(eventId: string, updates: Partial<ICalendarEvent>, userId: string): Promise<ICalendarEvent> {
-    const statusColors: Record<string, string> = {
-      pending: EventStatusColor.todo,
-      confirmed: EventStatusColor.inProgress,
-      tentative: EventStatusColor.paused,
-      canceled: EventStatusColor.canceled,
-      completed: EventStatusColor.done
-    };
-
-    if (updates.status && (!updates.color || updates.color === '#4F3CC9')) {
-      updates.color = statusColors[updates.status];
-    }
-
-    const event = await CalendarEvent.findOneAndUpdate(
-      { _id: eventId, userId: new mongoose.Types.ObjectId(userId) },
-      updates,
-      { new: true }
-    );
-
-    if (!event) {
-      throw new Error('Calendar event not found.');
-    }
-
-    return event;
-  }
-
-  public async deleteEvent(eventId: string, userId: string): Promise<void> {
-    const result = await CalendarEvent.findOneAndDelete({ _id: eventId, userId: new mongoose.Types.ObjectId(userId) });
-    if (!result) {
-      throw new Error('Calendar event not found.');
-    }
+    const todos = await todoService.listTodos({ userId, dueDateFrom: startDate, dueDateTo: endDate });
+    return todos
+      .map(mapTodoToCalendarEvent)
+      .filter((item): item is NonNullable<typeof item> => Boolean(item));
   }
 }
 

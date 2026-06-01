@@ -21,10 +21,7 @@ export type CalendarViewProps = {
   }>;
   view: CalendarViewType;
   onDatesChange: (start: Date, end: Date) => void;
-  onSelectRange: (start: Date, end: Date) => void;
   onEventClick: (eventId: string) => void;
-  onEventDrop: (eventId: string, start: Date, end: Date) => void;
-  onEventResize: (eventId: string, start: Date, end: Date) => void;
 };
 
 const CalendarView = ({
@@ -32,10 +29,7 @@ const CalendarView = ({
   events,
   view,
   onDatesChange,
-  onSelectRange,
-  onEventClick,
-  onEventDrop,
-  onEventResize
+  onEventClick
 }: CalendarViewProps): React.JSX.Element => {
   return (
     <div className="h-full calendar-root">
@@ -48,23 +42,14 @@ const CalendarView = ({
         locale={viLocale}
         slotDuration="01:00:00"
         slotLabelInterval="01:00"
-        editable
-        selectable
-        selectMirror
+        editable={false}
+        selectable={false}
+        selectMirror={false}
         nowIndicator
         dayMaxEvents
         events={events}
         datesSet={(info) => onDatesChange(info.start, info.end)}
-        select={(info) => onSelectRange(info.start, info.end)}
         eventClick={(info) => onEventClick(info.event.id)}
-        eventDrop={(info) => {
-          if (!info.event.start || !info.event.end) return;
-          onEventDrop(info.event.id, info.event.start, info.event.end);
-        }}
-        eventResize={(info) => {
-          if (!info.event.start || !info.event.end) return;
-          onEventResize(info.event.id, info.event.start, info.event.end);
-        }}
         eventContent={(info) => {
           const color = info.event.backgroundColor || info.event.borderColor || '#1E3A8A';
           const textColor = info.event.textColor || '#ffffff';
