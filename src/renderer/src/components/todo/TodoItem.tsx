@@ -17,7 +17,6 @@ const priorityColors = {
 
 const statusColors = {
   pending: 'bg-[var(--color-warning)]/10 text-[var(--color-warning)]',
-  in_progress: 'bg-[var(--color-primary)]/10 text-[var(--color-primary)]',
   completed: 'bg-[var(--color-success)]/10 text-[var(--color-success)]',
   canceled: 'bg-[var(--color-muted)]/10 text-[var(--color-muted)]'
 };
@@ -78,7 +77,6 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onEdit, onDelete })
                 className={`px-2 py-1 text-[11px] font-semibold rounded ${statusColors[todo.status]}`}
               >
                 {todo.status === 'completed' ? 'XONG' : 
-                 todo.status === 'in_progress' ? 'ĐANG LÀM' :
                  todo.status === 'canceled' ? 'HỦY' : 'CHỜ'}
               </span>
             </div>

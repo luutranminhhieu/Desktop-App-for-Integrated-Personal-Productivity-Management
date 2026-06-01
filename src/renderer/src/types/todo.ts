@@ -1,5 +1,5 @@
 /* ── Status & Priority enums (mirroring preload/index.d.ts) ── */
-export type TodoStatus = 'backlog' | 'pending' | 'in_progress' | 'completed' | 'canceled';
+export type TodoStatus = 'pending' | 'completed' | 'canceled';
 export type TodoPriority = 'low' | 'medium' | 'high' | 'urgent';
 
 /* ── TodoItem shape returned by API ── */
@@ -11,6 +11,7 @@ export interface TodoItem {
 	priority: TodoPriority;
 	startDate?: string;
 	dueDate?: string;
+	columnId?: number;
 	tags: string[];
 	userId: string;
 	project?: string;
@@ -49,6 +50,7 @@ export interface TodoFormData {
 	priority: TodoPriority;
 	startDate?: string;
 	dueDate?: string;
+	columnId?: number;
 	tags: string[];
 	project?: string;
 }

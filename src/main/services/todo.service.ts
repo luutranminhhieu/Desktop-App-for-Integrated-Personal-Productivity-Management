@@ -152,7 +152,7 @@ export class TodoService {
 		const [total, completed, pending, urgent, overdue, canceled, tasksThisMonth] = await Promise.all([
 			Todo.countDocuments({ userId: uid }),
 			Todo.countDocuments({ userId: uid, status: 'completed' }),
-			Todo.countDocuments({ userId: uid, status: { $in: ['pending', 'in_progress'] } }),
+			Todo.countDocuments({ userId: uid, status: 'pending' }),
 			Todo.countDocuments({ userId: uid, priority: { $in: ['urgent', 'high'] } }),
 			Todo.countDocuments({
 				userId: uid,

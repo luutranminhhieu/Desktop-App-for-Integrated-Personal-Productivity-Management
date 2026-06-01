@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-export type TodoStatus = 'backlog' | 'pending' | 'in_progress' | 'completed' | 'canceled';
+export type TodoStatus = 'pending' | 'completed' | 'canceled';
 export type TodoPriority = 'low' | 'medium' | 'high' | 'urgent';
 
 export interface ITodo extends Document {
@@ -10,6 +10,7 @@ export interface ITodo extends Document {
 	priority: TodoPriority;
 	startDate?: Date;
 	dueDate?: Date;
+	columnId?: number;
 	tags: string[];
 	userId: mongoose.Types.ObjectId;
 	project?: string;
@@ -25,7 +26,7 @@ const TodoSchema = new Schema<ITodo>(
 		description: { type: String, default: '' },
 		status: {
 			type: String,
-			enum: ['backlog', 'pending', 'in_progress', 'completed', 'canceled'],
+			enum: ['pending', 'completed', 'canceled'],
 			default: 'pending'
 		},
 		priority: {
@@ -35,6 +36,7 @@ const TodoSchema = new Schema<ITodo>(
 		},
 		startDate: { type: Date },
 		dueDate: { type: Date },
+		columnId: { type: Number, default: 1 },
 		tags: { type: [String], default: [] },
 		userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
 		project: { type: String, default: '' },

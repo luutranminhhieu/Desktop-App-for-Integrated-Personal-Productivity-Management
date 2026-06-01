@@ -22,9 +22,7 @@ function buildEventTimes(dueDate: Date): { startTime: Date; endTime: Date } {
 
 function statusToColor(status: TodoStatus): string {
   const colors: Record<TodoStatus, string> = {
-    backlog: EventStatusColor.paused,
     pending: EventStatusColor.todo,
-    in_progress: EventStatusColor.inProgress,
     completed: EventStatusColor.done,
     canceled: EventStatusColor.canceled
   };

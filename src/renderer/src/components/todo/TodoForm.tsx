@@ -16,6 +16,7 @@ const defaultFormData: TodoFormData = {
 	priority: 'medium',
 	startDate: '',
 	dueDate: '',
+	columnId: 1,
 	tags: [],
 	project: ''
 };
@@ -27,6 +28,7 @@ function toFormData(todo: TodoItem): TodoFormData {
 		priority: todo.priority,
 		startDate: todo.startDate ? new Date(todo.startDate).toISOString().slice(0, 16) : '',
 		dueDate: todo.dueDate ? new Date(todo.dueDate).toISOString().slice(0, 16) : '',
+		columnId: todo.columnId ?? 1,
 		tags: [...todo.tags],
 		project: todo.project ?? ''
 	};
