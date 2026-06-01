@@ -1,5 +1,5 @@
 /* ── Status & Priority enums (mirroring preload/index.d.ts) ── */
-export type TodoStatus = 'pending' | 'in_progress' | 'completed' | 'canceled';
+export type TodoStatus = 'backlog' | 'pending' | 'in_progress' | 'completed' | 'canceled';
 export type TodoPriority = 'low' | 'medium' | 'high' | 'urgent';
 
 /* ── TodoItem shape returned by API ── */

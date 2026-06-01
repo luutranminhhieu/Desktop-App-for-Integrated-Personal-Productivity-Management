@@ -17,7 +17,7 @@ export interface TokenPayload {
   exp?: number;
 }
 
-export type TodoStatus = 'pending' | 'in_progress' | 'completed' | 'canceled';
+export type TodoStatus = 'backlog' | 'pending' | 'in_progress' | 'completed' | 'canceled';
 export type TodoPriority = 'low' | 'medium' | 'high' | 'urgent';
 
 export interface TodoItem {

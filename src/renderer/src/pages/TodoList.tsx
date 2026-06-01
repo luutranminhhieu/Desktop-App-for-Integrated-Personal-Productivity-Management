@@ -4,39 +4,21 @@ import type {
 	TodoItem,
 	TodoFormData,
 	TodoModalMode,
-	TaskStats,
-	TabKey,
-	StatusFilterKey,
 	TodoPriority,
 	TodoStatus
 } from '@renderer/types';
 
-/* ════════════════════════════════════════════════════════════ */
-/*  Constants                                                  */
-/* ════════════════════════════════════════════════════════════ */
-
-const tabs: { key: TabKey; label: string }[] = [
-	{ key: 'daily', label: 'Daily/Weekly' },
-	{ key: 'monthly', label: 'Monthly Goals' },
-	{ key: 'yearly', label: 'Yearly Goals' }
-];
-
-const filterButtons: {
-	key: StatusFilterKey;
+const filterOptions: {
+	key: 'all' | TodoStatus;
 	label: string;
 	icon: string;
-	statsKey: keyof TaskStats;
 }[] = [
-	{ key: 'all', label: 'Tất cả', icon: 'all_inbox', statsKey: 'total' },
-	{ key: 'pending', label: 'Đang làm', icon: 'pending', statsKey: 'pending' },
-	{ key: 'completed', label: 'Hoàn thành', icon: 'check_circle', statsKey: 'completed' },
-	{ key: 'canceled', label: 'Bị bỏ qua', icon: 'block', statsKey: 'canceled' }
-];
-
-const categories: { label: string; color: string }[] = [
-	{ label: 'Cá nhân', color: '#1E3A8A' },
-	{ label: 'Công việc', color: '#2563EB' },
-	{ label: 'Học tập', color: '#F59E0B' }
+	{ key: 'all', label: 'Tất cả', icon: 'all_inbox' },
+	{ key: 'pending', label: 'To-do', icon: 'schedule' },
+	{ key: 'in_progress', label: 'In Progress', icon: 'play_circle' },
+	{ key: 'backlog', label: 'Paused', icon: 'pause_circle' },
+	{ key: 'canceled', label: 'Cancel', icon: 'cancel' },
+	{ key: 'completed', label: 'Done', icon: 'check_circle' }
 ];
 
 /* ════════════════════════════════════════════════════════════ */
@@ -55,38 +37,7 @@ function endOfDay(d: Date): Date {
 	return r;
 }
 
-function getTimeframeRange(
-	tf: string
-): { from: string; to: string } | null {
-	const now = new Date();
-	if (tf === 'today') {
-		return {
-			from: startOfDay(now).toISOString(),
-			to: endOfDay(now).toISOString()
-		};
-	}
-	if (tf === 'this_week') {
-		const dayOfWeek = now.getDay();
-		const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-		const monday = new Date(now);
-		monday.setDate(now.getDate() + mondayOffset);
-		const sunday = new Date(monday);
-		sunday.setDate(monday.getDate() + 6);
-		return {
-			from: startOfDay(monday).toISOString(),
-			to: endOfDay(sunday).toISOString()
-		};
-	}
-	if (tf === 'this_month') {
-		const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-		const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-		return {
-			from: startOfDay(monthStart).toISOString(),
-			to: endOfDay(monthEnd).toISOString()
-		};
-	}
-	return null; // 'all' — no date constraint
-}
+
 
 /** Returns a date-bucket label for grouping */
 function getDateGroup(dueDate: string | undefined, now: Date): string {
@@ -361,81 +312,6 @@ const TaskGroup = ({
 	</div>
 );
 
-/* ════════════════════════════════════════════════════════════ */
-/*  Stats Section (replaces Goal Cards)                        */
-/* ════════════════════════════════════════════════════════════ */
-
-const StatsSection = ({ stats }: { stats: TaskStats }): React.JSX.Element => {
-	const completionRate = stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
-	const pendingRate = stats.total > 0 ? Math.round((stats.pending / stats.total) * 100) : 0;
-
-	return (
-		<div className="mt-12">
-			<h3 className="text-lg font-semibold leading-tight text-[var(--color-text)] mb-4">
-				Tổng quan tháng này
-			</h3>
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-				{/* Completion card */}
-				<div className="bg-[var(--color-bg)] p-6 rounded-lg border border-[var(--color-border)] shadow-sm space-y-4">
-					<div className="flex justify-between items-start">
-						<div>
-							<span className="px-2 py-0.5 rounded text-[11px] font-semibold leading-none tracking-wide bg-[var(--color-primary-light)] text-[var(--color-primary)]">
-								HOÀN THÀNH
-							</span>
-							<h4 className="text-[15px] font-medium leading-snug text-[var(--color-text)] mt-2">
-								Tỷ lệ hoàn thành
-							</h4>
-						</div>
-						<span className="text-lg font-bold leading-tight text-[var(--color-primary)]">
-							{completionRate}%
-						</span>
-					</div>
-					<div className="space-y-2">
-						<div className="w-full bg-[var(--color-primary-lighter)] h-2 rounded-full overflow-hidden">
-							<div
-								className="h-full rounded-full transition-all duration-500 bg-[var(--color-primary)]"
-								style={{ width: `${completionRate}%` }}
-							/>
-						</div>
-						<div className="flex justify-between text-xs font-medium leading-snug text-[var(--color-muted)]">
-							<span>{stats.completed}/{stats.total} tasks</span>
-							<span>{stats.tasksThisMonth} tháng này</span>
-						</div>
-					</div>
-				</div>
-
-				{/* Pending card */}
-				<div className="bg-[var(--color-bg)] p-6 rounded-lg border border-[var(--color-border)] shadow-sm space-y-4">
-					<div className="flex justify-between items-start">
-						<div>
-							<span className="px-2 py-0.5 rounded text-[11px] font-semibold leading-none tracking-wide bg-[var(--color-warning-light)] text-[var(--color-warning-text)]">
-								CẦN LÀM
-							</span>
-							<h4 className="text-[15px] font-medium leading-snug text-[var(--color-text)] mt-2">
-								Task đang chờ
-							</h4>
-						</div>
-						<span className="text-lg font-bold leading-tight text-[var(--color-warning-text)]">
-							{pendingRate}%
-						</span>
-					</div>
-					<div className="space-y-2">
-						<div className="w-full bg-[var(--color-warning-light)] h-2 rounded-full overflow-hidden">
-							<div
-								className="h-full rounded-full transition-all duration-500 bg-[var(--color-warning)]"
-								style={{ width: `${pendingRate}%` }}
-							/>
-						</div>
-						<div className="flex justify-between text-xs font-medium leading-snug text-[var(--color-muted)]">
-							<span>{stats.pending} pending · {stats.overdue} quá hạn</span>
-							<span>{stats.urgent} khẩn cấp</span>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
-};
 
 /* ════════════════════════════════════════════════════════════ */
 /*  Main TodoList Page                                         */
@@ -456,14 +332,21 @@ const TodoList = (): React.JSX.Element => {
 
 	/* ── Data state ── */
 	const [todos, setTodos] = useState<TodoItem[]>([]);
-	const [stats, setStats] = useState<TaskStats | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
 
 	/* ── UI state ── */
-	const [activeTab, setActiveTab] = useState<TabKey>('daily');
-	const [activeFilter, setActiveFilter] = useState<StatusFilterKey>('all');
-	const [timeframe, setTimeframe] = useState('all');
+	const [activeFilter, setActiveFilter] = useState<'all' | TodoStatus>('all');
+	const [dueDateFrom, setDueDateFrom] = useState<string | null>(null);
+	const [dueDateTo, setDueDateTo] = useState<string | null>(null);
+
+	// Temp date states for popup fields
+	const [tempDateFrom, setTempDateFrom] = useState<string>('');
+	const [tempDateTo, setTempDateTo] = useState<string>('');
+
+	// Popover states
+	const [isDateRangeOpen, setIsDateRangeOpen] = useState(false);
+	const [isStatusFilterOpen, setIsStatusFilterOpen] = useState(false);
 
 	/* ── Modal state ── */
 	const [modalOpen, setModalOpen] = useState(false);
@@ -480,19 +363,15 @@ const TodoList = (): React.JSX.Element => {
 
 		// Status filter
 		if (activeFilter !== 'all') {
-			if (activeFilter === 'pending') {
-				// "Đang làm" includes both pending and in_progress
-				// Backend supports single status, so we fetch all and filter client-side
-			} else {
-				options.status = activeFilter;
-			}
+			options.status = activeFilter;
 		}
 
-		// Timeframe → date range
-		const range = getTimeframeRange(timeframe);
-		if (range) {
-			options.dueDateFrom = range.from;
-			options.dueDateTo = range.to;
+		// Date range
+		if (dueDateFrom) {
+			options.dueDateFrom = new Date(dueDateFrom).toISOString();
+		}
+		if (dueDateTo) {
+			options.dueDateTo = new Date(dueDateTo).toISOString();
 		}
 
 		try {
@@ -505,35 +384,14 @@ const TodoList = (): React.JSX.Element => {
 				return;
 			}
 
-			let items = response.data as TodoItem[];
-
-			// Client-side filter for "pending" (includes in_progress)
-			if (activeFilter === 'pending') {
-				items = items.filter(
-					(t) => t.status === 'pending' || t.status === 'in_progress'
-				);
-			}
-
+			const items = response.data as TodoItem[];
 			setTodos(items);
 		} catch {
 			setError('Không thể tải danh sách task.');
 		} finally {
 			setLoading(false);
 		}
-	}, [userId, activeFilter, timeframe]);
-
-	/* ── Fetch stats ── */
-	const fetchStats = useCallback(async (): Promise<void> => {
-		if (!userId) return;
-		try {
-			const response = await window.api.todo.stats(userId);
-			if (response.success && response.data) {
-				setStats(response.data as TaskStats);
-			}
-		} catch {
-			// Stats failure is non-critical
-		}
-	}, [userId]);
+	}, [userId, activeFilter, dueDateFrom, dueDateTo]);
 
 	/* ── Load data on mount & when filters change ── */
 	useEffect(() => {
@@ -543,8 +401,7 @@ const TodoList = (): React.JSX.Element => {
 			return;
 		}
 		void fetchTodos();
-		void fetchStats();
-	}, [userId, fetchTodos, fetchStats]);
+	}, [userId, fetchTodos]);
 
 	/* ── Group todos by date ── */
 	const groupedTodos = useMemo(() => {
@@ -565,8 +422,8 @@ const TodoList = (): React.JSX.Element => {
 
 	/* ── Reload helper ── */
 	const reloadData = useCallback(async (): Promise<void> => {
-		await Promise.all([fetchTodos(), fetchStats()]);
-	}, [fetchTodos, fetchStats]);
+		await fetchTodos();
+	}, [fetchTodos]);
 
 	/* ── CRUD handlers ── */
 	const handleCreate = async (data: TodoFormData): Promise<void> => {
@@ -688,23 +545,6 @@ const TodoList = (): React.JSX.Element => {
 
 	return (
 		<div className="max-w-[1200px] mx-auto">
-			{/* ═══ Tab System ═══ */}
-			<div className="flex items-center gap-8 mb-6 border-b border-[var(--color-border)]">
-				{tabs.map((tab) => (
-					<button
-						key={tab.key}
-						className={`pb-3 border-b-2 text-[15px] font-medium leading-snug transition-colors ${
-							activeTab === tab.key
-								? 'border-[var(--color-primary)] text-[var(--color-text)]'
-								: 'border-transparent text-[var(--color-muted)] hover:text-[var(--color-text)]'
-						}`}
-						onClick={() => setActiveTab(tab.key)}
-						type="button"
-					>
-						{tab.label}
-					</button>
-				))}
-			</div>
 
 			{/* ═══ Error bar ═══ */}
 			{error && (
@@ -722,92 +562,165 @@ const TodoList = (): React.JSX.Element => {
 				</div>
 			)}
 
-			{/* ═══ Two-column layout ═══ */}
-			<div className="flex flex-col lg:flex-row gap-6">
-				{/* ─── Left Panel: Filters (280px) ─── */}
-				<aside className="w-full lg:w-72 shrink-0 space-y-8">
-					{/* Timeframe dropdown */}
-					<div className="space-y-2">
-						<label className="text-xs font-medium leading-snug text-[var(--color-muted)] uppercase tracking-wider">
-							Timeframe
-						</label>
-						<div className="relative">
-							<select
-								className="w-full h-11 px-4 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-md appearance-none text-sm leading-relaxed focus:border-[var(--color-primary)] outline-none cursor-pointer text-[var(--color-text)]"
-								value={timeframe}
-								onChange={(e) => setTimeframe(e.target.value)}
-							>
-								<option value="all">Tất cả</option>
-								<option value="today">Hôm nay</option>
-								<option value="this_week">Tuần này</option>
-								<option value="this_month">Tháng này</option>
-							</select>
-							<span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--color-muted)]">
-								expand_more
+			{/* ═══ Action Toolbar ═══ */}
+			<div className="flex flex-wrap justify-between items-center bg-[var(--color-bg)] p-4 rounded-lg border border-[var(--color-border)] shadow-sm gap-4 mb-6">
+				<div className="flex items-center gap-3">
+					{/* Date Range Selector Button & Popover */}
+					<div className="relative">
+						<button
+							className={`flex items-center gap-2 h-10 px-4 rounded-md border text-sm font-medium transition-all ${
+								dueDateFrom || dueDateTo
+									? 'bg-[var(--color-primary-light)] border-[var(--color-primary)] text-[var(--color-primary)]'
+									: 'bg-[var(--color-bg)] border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--color-primary)]'
+							}`}
+							onClick={() => {
+								setIsDateRangeOpen(!isDateRangeOpen);
+								setIsStatusFilterOpen(false);
+								// Sync temp inputs with actual values
+								setTempDateFrom(dueDateFrom || '');
+								setTempDateTo(dueDateTo || '');
+							}}
+							type="button"
+						>
+							<span className="material-symbols-outlined text-[18px]">calendar_today</span>
+							<span>
+								{dueDateFrom || dueDateTo
+									? `${dueDateFrom ? new Date(dueDateFrom).toLocaleDateString('vi-VN') : '...'} - ${
+											dueDateTo ? new Date(dueDateTo).toLocaleDateString('vi-VN') : '...'
+									  }`
+									: 'Khoảng ngày'}
 							</span>
-						</div>
-					</div>
+						</button>
 
-					{/* Status filter buttons */}
-					<nav className="space-y-2">
-						<label className="text-xs font-medium leading-snug text-[var(--color-muted)] uppercase tracking-wider">
-							Filters
-						</label>
-						<div className="space-y-1">
-							{filterButtons.map((item) => {
-								const isActive = item.key === activeFilter;
-								const count = stats ? stats[item.statsKey] : 0;
-								return (
+						{isDateRangeOpen && (
+							<div className="absolute top-full left-0 mt-2 z-50 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg shadow-xl p-4 w-72 space-y-4">
+								<div className="flex justify-between items-center border-b border-[var(--color-border)] pb-2 mb-2">
+									<span className="text-sm font-semibold text-[var(--color-text)]">Chọn khoảng ngày</span>
+								</div>
+								<div className="space-y-3">
+									<div className="space-y-1">
+										<label className="text-xs font-medium text-[var(--color-muted)]">Từ ngày</label>
+										<input
+											type="date"
+											value={tempDateFrom}
+											onChange={(e) => setTempDateFrom(e.target.value)}
+											className="w-full h-9 px-3 bg-[var(--color-bg)] border border-[var(--color-border)] rounded text-sm text-[var(--color-text)] focus:border-[var(--color-primary)] outline-none"
+										/>
+									</div>
+									<div className="space-y-1">
+										<label className="text-xs font-medium text-[var(--color-muted)]">Đến ngày</label>
+										<input
+											type="date"
+											value={tempDateTo}
+											onChange={(e) => setTempDateTo(e.target.value)}
+											className="w-full h-9 px-3 bg-[var(--color-bg)] border border-[var(--color-border)] rounded text-sm text-[var(--color-text)] focus:border-[var(--color-primary)] outline-none"
+										/>
+									</div>
+								</div>
+								<div className="flex gap-2 justify-end pt-2 border-t border-[var(--color-border)]">
 									<button
-										key={item.key}
-										className={`w-full flex items-center justify-between px-4 py-2 rounded-md text-[15px] font-medium leading-snug transition-colors ${
-											isActive
-												? 'bg-[var(--color-primary-light)] text-[var(--color-primary)]'
-												: 'text-[var(--color-muted)] hover:bg-[var(--color-primary-lighter)]'
-										}`}
-										onClick={() => setActiveFilter(item.key)}
+										className="px-3 py-1.5 text-xs font-medium text-[var(--color-muted)] hover:text-[var(--color-text)] rounded border border-[var(--color-border)] hover:bg-[var(--color-primary-lighter)] transition-colors"
+										onClick={() => {
+											setTempDateFrom('');
+											setTempDateTo('');
+											setDueDateFrom(null);
+											setDueDateTo(null);
+											setIsDateRangeOpen(false);
+										}}
 										type="button"
 									>
-										<div className="flex items-center gap-3">
-											<span className="material-symbols-outlined">
-												{item.icon}
-											</span>
-											{item.label}
-										</div>
-										<span className="text-xs font-medium leading-snug">
-											{count}
-										</span>
+										Xóa
 									</button>
-								);
-							})}
-						</div>
-					</nav>
+									<button
+										className="px-3 py-1.5 text-xs font-medium text-white bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] rounded transition-colors"
+										onClick={() => {
+											setDueDateFrom(tempDateFrom || null);
+											setDueDateTo(tempDateTo || null);
+											setIsDateRangeOpen(false);
+										}}
+										type="button"
+									>
+										Áp dụng
+									</button>
+								</div>
+							</div>
+						)}
+					</div>
 
-					{/* Categories */}
-					<nav className="space-y-2">
-						<label className="text-xs font-medium leading-snug text-[var(--color-muted)] uppercase tracking-wider">
-							Categories
-						</label>
-						<div className="space-y-1">
-							{categories.map((cat) => (
-								<button
-									key={cat.label}
-									className="w-full flex items-center gap-3 px-4 py-2 rounded-md text-[var(--color-muted)] hover:bg-[var(--color-primary-lighter)] transition-colors text-[15px] font-medium leading-snug"
-									type="button"
-								>
-									<div
-										className="w-2 h-2 rounded-full shrink-0"
-										style={{ backgroundColor: cat.color }}
-									/>
-									{cat.label}
-								</button>
-							))}
-						</div>
-					</nav>
-				</aside>
+					{/* Status Filter Button & Popover */}
+					<div className="relative">
+						<button
+							className={`flex items-center gap-2 h-10 px-4 rounded-md border text-sm font-medium transition-all ${
+								activeFilter !== 'all'
+									? 'bg-[var(--color-primary-light)] border-[var(--color-primary)] text-[var(--color-primary)]'
+									: 'bg-[var(--color-bg)] border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--color-primary)]'
+							}`}
+							onClick={() => {
+								setIsStatusFilterOpen(!isStatusFilterOpen);
+								setIsDateRangeOpen(false);
+							}}
+							type="button"
+						>
+							<span className="material-symbols-outlined text-[18px]">filter_alt</span>
+							<span>
+								{activeFilter === 'all'
+									? 'Tất cả trạng thái'
+									: activeFilter === 'pending'
+									? 'To-do'
+									: activeFilter === 'in_progress'
+									? 'In Progress'
+									: activeFilter === 'backlog'
+									? 'Paused'
+									: activeFilter === 'canceled'
+									? 'Cancel'
+									: 'Done'}
+							</span>
+						</button>
 
-				{/* ─── Right Panel: Task List ─── */}
-				<section className="flex-1 space-y-8">
+						{isStatusFilterOpen && (
+							<div className="absolute top-full left-0 mt-2 z-50 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg shadow-xl py-1.5 w-52 overflow-hidden">
+								{filterOptions.map((opt) => (
+									<button
+										key={opt.key}
+										className={`w-full flex items-center justify-between px-4 py-2 text-sm transition-colors text-left ${
+											activeFilter === opt.key
+												? 'bg-[var(--color-primary-light)] text-[var(--color-primary)] font-semibold'
+												: 'text-[var(--color-text)] hover:bg-[var(--color-primary-lighter)]'
+										}`}
+										onClick={() => {
+											setActiveFilter(opt.key);
+											setIsStatusFilterOpen(false);
+										}}
+										type="button"
+									>
+										<div className="flex items-center gap-2">
+											<span className="material-symbols-outlined text-[18px]">{opt.icon}</span>
+											<span>{opt.label}</span>
+										</div>
+										{activeFilter === opt.key && (
+											<span className="material-symbols-outlined text-[18px]">check</span>
+										)}
+									</button>
+								))}
+							</div>
+						)}
+					</div>
+				</div>
+
+				{/* Create Task Button */}
+				<button
+					className="h-10 px-5 bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] transition-colors rounded-md text-sm font-semibold flex items-center gap-2 shadow-sm"
+					onClick={openCreateModal}
+					type="button"
+				>
+					<span className="material-symbols-outlined text-[18px]">add</span>
+					Tạo task mới
+				</button>
+			</div>
+
+			{/* ═══ Main Content Panel ═══ */}
+			<div className="space-y-6">
+				<section className="space-y-8">
 					{/* Loading state */}
 					{loading && (
 						<div className="flex items-center justify-center py-16">
@@ -837,16 +750,6 @@ const TodoList = (): React.JSX.Element => {
 									? 'Thử thay đổi bộ lọc để thấy kết quả khác'
 									: 'Bắt đầu bằng việc tạo task mới'}
 							</p>
-							<button
-								className="px-6 py-2 bg-[var(--color-primary)] text-white rounded-md hover:bg-[var(--color-primary-hover)] transition-colors text-sm font-medium"
-								onClick={openCreateModal}
-								type="button"
-							>
-								<span className="material-symbols-outlined mr-1" style={{ fontSize: '18px', verticalAlign: 'middle' }}>
-									add
-								</span>
-								Tạo task mới
-							</button>
 						</div>
 					)}
 
@@ -865,8 +768,7 @@ const TodoList = (): React.JSX.Element => {
 							/>
 						))}
 
-					{/* Stats section (replaces Goal Cards) */}
-					{!loading && stats && <StatsSection stats={stats} />}
+
 				</section>
 			</div>
 

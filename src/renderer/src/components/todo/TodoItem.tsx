@@ -100,11 +100,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onEdit, onDelete })
               </span>
             )}
             
-            {todo.project && (
-              <span className="text-xs text-[var(--color-primary)]">
-                📁 {todo.project}
-              </span>
-            )}
+
             
             {todo.tags.length > 0 && (
               <div className="flex gap-1">

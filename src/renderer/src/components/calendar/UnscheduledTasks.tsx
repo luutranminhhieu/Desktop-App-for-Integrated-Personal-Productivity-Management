@@ -49,7 +49,7 @@ const UnscheduledTasks = ({ tasks, loading }: UnscheduledTasksProps): React.JSX.
                   </span>
                 </div>
                 <p className="text-sm truncate text-[var(--color-text)]">{task.title}</p>
-                {task.project && <p className="text-xs text-[var(--color-muted)] truncate">{task.project}</p>}
+
               </div>
             );
           })}

@@ -39,13 +39,11 @@ const TodoForm = ({
 	onDelete
 }: TodoFormProps): React.JSX.Element | null => {
 	const [formData, setFormData] = useState<TodoFormData>(defaultFormData);
-	const [newTag, setNewTag] = useState('');
 	const [error, setError] = useState('');
 
 	useEffect(() => {
 		if (open) {
 			setFormData(todo ? toFormData(todo) : defaultFormData);
-			setNewTag('');
 			setError('');
 		}
 	}, [open, todo]);
@@ -57,20 +55,7 @@ const TodoForm = ({
 		if (key === 'title') setError('');
 	};
 
-	const addTag = (): void => {
-		const tag = newTag.trim();
-		if (tag && !formData.tags.includes(tag)) {
-			setFormData((prev) => ({ ...prev, tags: [...prev.tags, tag] }));
-			setNewTag('');
-		}
-	};
 
-	const removeTag = (tagToRemove: string): void => {
-		setFormData((prev) => ({
-			...prev,
-			tags: prev.tags.filter((t) => t !== tagToRemove)
-		}));
-	};
 
 	const handleSubmit = (): void => {
 		if (!formData.title.trim()) {
@@ -166,69 +151,6 @@ const TodoForm = ({
 						</div>
 					</div>
 
-					{/* Project */}
-					<div>
-						<label className="text-xs font-semibold text-[var(--color-muted)]">Dự án</label>
-						<input
-							className="mt-2 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
-							value={formData.project ?? ''}
-							onChange={(e) => handleChange('project', e.target.value)}
-							placeholder="Nhập tên dự án"
-						/>
-					</div>
-
-					{/* Tags */}
-					<div>
-						<label className="text-xs font-semibold text-[var(--color-muted)]">
-							Thẻ (tags)
-						</label>
-						<div className="flex gap-2 mt-2">
-							<input
-								type="text"
-								className="flex-1 rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
-								value={newTag}
-								onChange={(e) => setNewTag(e.target.value)}
-								onKeyDown={(e) => {
-									if (e.key === 'Enter') {
-										e.preventDefault();
-										addTag();
-									}
-								}}
-								placeholder="Thêm thẻ"
-							/>
-							<button
-								type="button"
-								onClick={addTag}
-								className="px-4 py-2 bg-[var(--color-primary)] text-white rounded-md hover:bg-[var(--color-primary-hover)] transition-colors text-sm"
-							>
-								Thêm
-							</button>
-						</div>
-						{formData.tags.length > 0 && (
-							<div className="flex flex-wrap gap-2 mt-2">
-								{formData.tags.map((tag) => (
-									<span
-										key={tag}
-										className="px-3 py-1 bg-[var(--color-primary-lighter)] text-[var(--color-primary)] rounded-md flex items-center gap-1 text-xs"
-									>
-										#{tag}
-										<button
-											type="button"
-											onClick={() => removeTag(tag)}
-											className="text-[var(--color-muted)] hover:text-[var(--color-primary)] ml-1"
-										>
-											<span
-												className="material-symbols-outlined"
-												style={{ fontSize: '14px' }}
-											>
-												close
-											</span>
-										</button>
-									</span>
-								))}
-							</div>
-						)}
-					</div>
 				</div>
 
 				{/* Error message */}
