@@ -436,6 +436,9 @@ const TodoList = (): React.JSX.Element => {
 			tags: data.tags,
 			userId
 		};
+		if (data.startDate) {
+			payload.startDate = new Date(data.startDate).toISOString();
+		}
 		if (data.dueDate) {
 			payload.dueDate = new Date(data.dueDate).toISOString();
 		}
@@ -461,6 +464,11 @@ const TodoList = (): React.JSX.Element => {
 			project: data.project,
 			tags: data.tags
 		};
+		if (data.startDate) {
+			updates.startDate = new Date(data.startDate).toISOString();
+		} else {
+			updates.startDate = null;
+		}
 		if (data.dueDate) {
 			updates.dueDate = new Date(data.dueDate).toISOString();
 		} else {

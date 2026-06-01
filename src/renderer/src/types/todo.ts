@@ -9,6 +9,7 @@ export interface TodoItem {
 	description?: string;
 	status: TodoStatus;
 	priority: TodoPriority;
+	startDate?: string;
 	dueDate?: string;
 	tags: string[];
 	userId: string;
@@ -46,6 +47,7 @@ export interface TodoFormData {
 	title: string;
 	description?: string;
 	priority: TodoPriority;
+	startDate?: string;
 	dueDate?: string;
 	tags: string[];
 	project?: string;

@@ -8,6 +8,7 @@ export interface ITodo extends Document {
 	description?: string;
 	status: TodoStatus;
 	priority: TodoPriority;
+	startDate?: Date;
 	dueDate?: Date;
 	tags: string[];
 	userId: mongoose.Types.ObjectId;
@@ -32,6 +33,7 @@ const TodoSchema = new Schema<ITodo>(
 			enum: ['low', 'medium', 'high', 'urgent'],
 			default: 'medium'
 		},
+		startDate: { type: Date },
 		dueDate: { type: Date },
 		tags: { type: [String], default: [] },
 		userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },

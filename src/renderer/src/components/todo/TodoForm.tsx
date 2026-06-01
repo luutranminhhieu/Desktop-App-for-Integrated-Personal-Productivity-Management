@@ -14,6 +14,7 @@ const defaultFormData: TodoFormData = {
 	title: '',
 	description: '',
 	priority: 'medium',
+	startDate: '',
 	dueDate: '',
 	tags: [],
 	project: ''
@@ -24,6 +25,7 @@ function toFormData(todo: TodoItem): TodoFormData {
 		title: todo.title,
 		description: todo.description ?? '',
 		priority: todo.priority,
+		startDate: todo.startDate ? new Date(todo.startDate).toISOString().slice(0, 16) : '',
 		dueDate: todo.dueDate ? new Date(todo.dueDate).toISOString().slice(0, 16) : '',
 		tags: [...todo.tags],
 		project: todo.project ?? ''
@@ -66,10 +68,9 @@ const TodoForm = ({
 	};
 
 	const priorities: { value: TodoPriority; label: string }[] = [
-		{ value: 'low', label: 'Thấp' },
-		{ value: 'medium', label: 'Trung bình' },
-		{ value: 'high', label: 'Cao' },
-		{ value: 'urgent', label: 'Khẩn cấp' }
+		{ value: 'low', label: 'Low' },
+		{ value: 'medium', label: 'Medium' },
+		{ value: 'high', label: 'High' },
 	];
 
 	return (
@@ -118,29 +119,42 @@ const TodoForm = ({
 						/>
 					</div>
 
-					{/* Priority & Due date row */}
+					{/* Priority */}
+					<div>
+						<label className="text-xs font-semibold text-[var(--color-muted)]">
+							Mức độ ưu tiên
+						</label>
+						<select
+							className="mt-2 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
+							value={formData.priority}
+							onChange={(e) =>
+								handleChange('priority', e.target.value)
+							}
+						>
+							{priorities.map((p) => (
+								<option key={p.value} value={p.value}>
+									{p.label}
+								</option>
+							))}
+						</select>
+					</div>
+
+					{/* Date Range (Start & End) */}
 					<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 						<div>
 							<label className="text-xs font-semibold text-[var(--color-muted)]">
-								Mức độ ưu tiên
+								Thời điểm bắt đầu
 							</label>
-							<select
+							<input
+								type="datetime-local"
 								className="mt-2 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
-								value={formData.priority}
-								onChange={(e) =>
-									handleChange('priority', e.target.value)
-								}
-							>
-								{priorities.map((p) => (
-									<option key={p.value} value={p.value}>
-										{p.label}
-									</option>
-								))}
-							</select>
+								value={formData.startDate ?? ''}
+								onChange={(e) => handleChange('startDate', e.target.value)}
+							/>
 						</div>
 						<div>
 							<label className="text-xs font-semibold text-[var(--color-muted)]">
-								Hạn chót
+								Thời điểm kết thúc
 							</label>
 							<input
 								type="datetime-local"
@@ -157,7 +171,7 @@ const TodoForm = ({
 				{error && <p className="mt-4 text-xs text-[var(--color-error)]">{error}</p>}
 
 				{/* Actions */}
-				<div className="mt-6 flex flex-wrap items-center justify-end gap-3">
+				<div className="mt-8 pt-4 border-t border-[var(--color-border)] flex flex-wrap items-center justify-end gap-3">
 					{mode === 'edit' && onDelete && (
 						<button
 							className="px-4 py-2 text-sm font-semibold text-[var(--color-error)] hover:bg-[var(--color-error-light)] rounded-md transition-colors"
@@ -168,7 +182,7 @@ const TodoForm = ({
 						</button>
 					)}
 					<button
-						className="px-4 py-2 text-sm font-semibold text-[var(--color-muted)] hover:bg-[var(--color-primary-lighter)] rounded-md transition-colors"
+						className=" px-4 py-2 text-sm font-semibold text-[var(--color-muted)] hover:bg-[var(--color-primary-lighter)] rounded-md transition-colors"
 						onClick={onClose}
 						type="button"
 					>
