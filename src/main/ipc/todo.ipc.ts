@@ -1,18 +1,31 @@
 import { ipcMain } from 'electron';
 import mongoose from 'mongoose';
 import { todoService } from '../services/todo.service';
-import { CreateTodoSchema, UpdateTodoSchema } from '../utils/validation';
+import { CreateTodoSchema, UpdateTodoSchema, toDateOrUndefined } from '../utils/validation';
 import { logger } from '../utils/logger';
+
+function prepareDates(input: Record<string, unknown>): Record<string, unknown> {
+	const dateFields = ['dueDate', 'focusDate', 'completedAt'];
+	for (const field of dateFields) {
+		if (input[field] === null) {
+			input[field] = null;
+		} else if (input[field] !== undefined) {
+			input[field] = toDateOrUndefined(input[field]);
+		}
+	}
+	return input;
+}
 
 export function registerTodoIPC(): void {
 	ipcMain.handle('todo:create', async (_, payload) => {
 		try {
 			const parsed = CreateTodoSchema.parse(payload);
+			const withDates = prepareDates({ ...parsed } as unknown as Record<string, unknown>);
 			const validatedPayload = {
-				...parsed,
+				...withDates,
 				userId: new mongoose.Types.ObjectId(parsed.userId)
 			} as any;
-			const data = await todoService.createTodo(validatedPayload);
+			const data = await todoService.createTodo(validatedPayload as any);
 			return { success: true, data };
 		} catch (error) {
 			logger.error('Error in todo:create', error);
@@ -33,7 +46,8 @@ export function registerTodoIPC(): void {
 	ipcMain.handle('todo:update', async (_, { todoId, updates, userId }) => {
 		try {
 			const validated = UpdateTodoSchema.parse({ todoId, updates, userId });
-			const data = await todoService.updateTodo(validated.todoId, validated.updates, validated.userId);
+			const preparedUpdates = prepareDates({ ...validated.updates } as unknown as Record<string, unknown>);
+			const data = await todoService.updateTodo(validated.todoId, preparedUpdates as any, validated.userId);
 			return { success: true, data };
 		} catch (error) {
 			logger.error('Error in todo:update', error);

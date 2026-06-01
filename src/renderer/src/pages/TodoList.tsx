@@ -447,8 +447,8 @@ const TodoList = (): React.JSX.Element => {
 		const stored = localStorage.getItem('user') || sessionStorage.getItem('user');
 		if (!stored) return null;
 		try {
-			const parsed = JSON.parse(stored) as { id?: string };
-			return parsed.id ?? null;
+			const parsed = JSON.parse(stored) as { id?: string; _id?: string };
+			return parsed.id ?? parsed._id ?? null;
 		} catch {
 			return null;
 		}

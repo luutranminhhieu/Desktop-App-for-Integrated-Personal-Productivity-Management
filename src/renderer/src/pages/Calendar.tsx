@@ -2,24 +2,12 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import type FullCalendar from '@fullcalendar/react';
 import CalendarView from '../components/calendar/CalendarView';
-import EventModal from '../components/calendar/EventModal';
 import MiniCalendar from '../components/calendar/MiniCalendar';
 import { EventStatusColor } from '../constants/eventStatusColor';
 import type {
 	CalendarEventRecord,
-	CalendarFormData,
-	CalendarModalMode,
 	CalendarViewType
 } from '@renderer/types';
-
-const defaultFormData: CalendarFormData = {
-	title: '',
-	startTime: '',
-	endTime: '',
-	color: EventStatusColor.todo,
-	location: '',
-	notes: ''
-};
 
 const toDateKey = (value: Dayjs): string => value.format('YYYY-MM-DD');
 
@@ -29,8 +17,8 @@ const Calendar = (): React.JSX.Element => {
 		const stored = localStorage.getItem('user') || sessionStorage.getItem('user');
 		if (!stored) return null;
 		try {
-			const parsed = JSON.parse(stored) as { id?: string };
-			return parsed.id ?? null;
+			const parsed = JSON.parse(stored) as { id?: string; _id?: string };
+			return parsed.id ?? parsed._id ?? null;
 		} catch {
 			return null;
 		}
@@ -44,10 +32,6 @@ const Calendar = (): React.JSX.Element => {
 	const [loadingEvents, setLoadingEvents] = useState(false);
 	const [eventsError, setEventsError] = useState('');
 	const [selectedEvent, setSelectedEvent] = useState<CalendarEventRecord | null>(null);
-	const [modalOpen, setModalOpen] = useState(false);
-	const [modalMode, setModalMode] = useState<CalendarModalMode>('create');
-	const [modalData, setModalData] = useState<CalendarFormData>(defaultFormData);
-	const [activeEventId, setActiveEventId] = useState<string | null>(null);
 	const calendarRef = useRef<FullCalendar | null>(null);
 
 	const calendarEvents = useMemo(() => {
@@ -105,102 +89,10 @@ const Calendar = (): React.JSX.Element => {
 		});
 	};
 
-	const handleSelectRange = (start: Date, end: Date): void => {
-		setSelectedEvent(null);
-		setModalMode('create');
-		setActiveEventId(null);
-		setModalData({
-			...defaultFormData,
-			startTime: dayjs(start).format('YYYY-MM-DDTHH:mm'),
-			endTime: dayjs(end).format('YYYY-MM-DDTHH:mm')
-		});
-		setModalOpen(true);
-	};
-
 	const handleEventClick = (eventId: string): void => {
 		const event = events.find((item) => item._id === eventId);
 		if (!event) return;
 		setSelectedEvent(event);
-		setModalMode('edit');
-		setActiveEventId(eventId);
-		setModalData({
-			title: event.title,
-			startTime: dayjs(event.startTime).format('YYYY-MM-DDTHH:mm'),
-			endTime: dayjs(event.endTime).format('YYYY-MM-DDTHH:mm'),
-			color: event.color,
-			location: event.location ?? '',
-			notes: event.notes ?? ''
-		});
-		setModalOpen(true);
-	};
-
-	const handleEventUpdate = async (eventId: string, start: Date, end: Date): Promise<void> => {
-		if (!userId) return;
-		const response = await window.api.calendar.update(
-			eventId,
-			{ startTime: start.toISOString(), endTime: end.toISOString() },
-			userId
-		);
-		if (!response.success) {
-			setEventsError(response.error || 'Không thể cập nhật lịch.');
-			return;
-		}
-		fetchEventsForRange(rangeStart, rangeEnd).catch(() => undefined);
-	};
-
-	const handleSubmit = async (data: CalendarFormData): Promise<void> => {
-		if (!userId) return;
-		if (modalMode === 'create') {
-			const response = await window.api.calendar.create({
-				title: data.title,
-				startTime: new Date(data.startTime).toISOString(),
-				endTime: new Date(data.endTime).toISOString(),
-				color: data.color,
-				location: data.location,
-				notes: data.notes,
-				userId
-			});
-			if (!response.success) {
-				setEventsError(response.error || 'Không thể tạo lịch.');
-				return;
-			}
-		} else if (activeEventId) {
-			const response = await window.api.calendar.update(
-				activeEventId,
-				{
-					title: data.title,
-					startTime: new Date(data.startTime).toISOString(),
-					endTime: new Date(data.endTime).toISOString(),
-					color: data.color,
-					location: data.location,
-					notes: data.notes
-				},
-				userId
-			);
-			if (!response.success) {
-				setEventsError(response.error || 'Không thể cập nhật lịch.');
-				return;
-			}
-		}
-
-		setModalOpen(false);
-		setModalData(defaultFormData);
-		setActiveEventId(null);
-		fetchEventsForRange(rangeStart, rangeEnd).catch(() => undefined);
-	};
-
-	const handleDelete = async (): Promise<void> => {
-		if (!userId || !activeEventId) return;
-		const confirmed = window.confirm('Bạn chắc chắn muốn xóa lịch này?');
-		if (!confirmed) return;
-		const response = await window.api.calendar.delete(activeEventId, userId);
-		if (!response.success) {
-			setEventsError(response.error || 'Không thể xóa lịch.');
-			return;
-		}
-		setModalOpen(false);
-		setActiveEventId(null);
-		fetchEventsForRange(rangeStart, rangeEnd).catch(() => undefined);
 	};
 
 	const handleViewChange = (nextView: CalendarViewType): void => {
@@ -265,22 +157,13 @@ const Calendar = (): React.JSX.Element => {
 								{selectedEvent.notes && (
 									<p className="text-xs text-[var(--color-muted)] mt-2">Ghi chú: {selectedEvent.notes}</p>
 								)}
-								<div className="mt-3 flex flex-wrap gap-2">
-									<button
-										className="px-3 py-1 text-xs font-semibold text-white bg-[var(--color-primary)] rounded-md hover:bg-[var(--color-primary-hover)]"
-										onClick={() => handleEventClick(selectedEvent._id)}
-										type="button"
-									>
-										Chỉnh sửa
-									</button>
-									<button
-										className="px-3 py-1 text-xs font-semibold text-[var(--color-muted)] hover:bg-[var(--color-primary-lighter)] rounded-md"
-										onClick={() => setSelectedEvent(null)}
-										type="button"
-									>
-										Bỏ chọn
-									</button>
-								</div>
+								<button
+									className="mt-3 px-3 py-1 text-xs font-semibold text-[var(--color-muted)] hover:bg-[var(--color-primary-lighter)] rounded-md"
+									onClick={() => setSelectedEvent(null)}
+									type="button"
+								>
+									Bỏ chọn
+								</button>
 							</div>
 						) : (
 							<div className="p-4 bg-[var(--color-primary-lighter)] border border-[var(--color-border)] rounded-lg">
@@ -369,10 +252,7 @@ const Calendar = (): React.JSX.Element => {
 							events={calendarEvents}
 							view={view}
 							onDatesChange={handleDatesChange}
-							onSelectRange={handleSelectRange}
 							onEventClick={handleEventClick}
-							onEventDrop={handleEventUpdate}
-							onEventResize={handleEventUpdate}
 						/>
 						{loadingEvents && (
 							<div className="absolute inset-0 flex items-center justify-center bg-[var(--color-bg)]/70">
@@ -386,14 +266,6 @@ const Calendar = (): React.JSX.Element => {
 				</section>
 			</div>
 
-			<EventModal
-				open={modalOpen}
-				mode={modalMode}
-				initialData={modalData}
-				onClose={() => setModalOpen(false)}
-				onSubmit={handleSubmit}
-				onDelete={modalMode === 'edit' ? handleDelete : undefined}
-			/>
 		</div>
 	);
 };

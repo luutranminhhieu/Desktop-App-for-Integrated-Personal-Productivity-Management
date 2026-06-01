@@ -7,8 +7,8 @@ type ListTodoOptions = {
 	priority?: TodoPriority;
 	tags?: string[];
 	query?: string;
-	dueDateFrom?: Date;
-	dueDateTo?: Date;
+	dueDateFrom?: Date | string;
+	dueDateTo?: Date | string;
 	limit?: number;
 };
 
@@ -65,7 +65,7 @@ export class TodoService {
 		}
 
 		const todo = await Todo.create(payload);
-		return todo;
+		return todo.toObject() as unknown as ITodo;
 	}
 
 	public async listTodos(options: ListTodoOptions): Promise<ITodo[]> {
@@ -97,9 +97,11 @@ export class TodoService {
 			}
 		}
 
-		return Todo.find(filter)
+		const todos = await Todo.find(filter)
 			.sort({ dueDate: 1, createdAt: -1 })
-			.limit(options.limit ?? DEFAULT_LIST_LIMIT);
+			.limit(options.limit ?? DEFAULT_LIST_LIMIT)
+			.lean();
+		return todos as unknown as ITodo[];
 	}
 
 	public async updateTodo(todoId: string, updates: Partial<ITodo>, userId: string): Promise<ITodo> {
@@ -107,13 +109,13 @@ export class TodoService {
 			{ _id: todoId, userId: new mongoose.Types.ObjectId(userId) },
 			updates,
 			{ new: true }
-		);
+		).lean();
 
 		if (!todo) {
 			throw new Error('Todo not found.');
 		}
 
-		return todo;
+		return todo as unknown as ITodo;
 	}
 
 	public async deleteTodo(todoId: string, userId: string): Promise<void> {
@@ -125,18 +127,20 @@ export class TodoService {
 
 	public async getTodayTasks(userId: string): Promise<ITodo[]> {
 		const now = new Date();
-		return Todo.find({
+		const todos = await Todo.find({
 			userId: new mongoose.Types.ObjectId(userId),
 			dueDate: { $gte: startOfDay(now), $lte: endOfDay(now) }
-		}).sort({ dueDate: 1 });
+		}).sort({ dueDate: 1 }).lean();
+		return todos as unknown as ITodo[];
 	}
 
 	public async getUrgentTasks(userId: string): Promise<ITodo[]> {
-		return Todo.find({
+		const todos = await Todo.find({
 			userId: new mongoose.Types.ObjectId(userId),
 			priority: { $in: ['urgent', 'high'] },
 			status: { $nin: ['completed', 'canceled'] }
-		}).sort({ dueDate: 1 });
+		}).sort({ dueDate: 1 }).lean();
+		return todos as unknown as ITodo[];
 	}
 
 	public async getTaskStats(userId: string): Promise<TaskStats> {

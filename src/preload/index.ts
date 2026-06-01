@@ -22,12 +22,9 @@ const api = {
     getStats: (userId, focusRange) => ipcRenderer.invoke('dashboard:getStats', { userId, focusRange })
   },
   calendar: {
-    create: (payload) => ipcRenderer.invoke('calendar:create', payload),
     list: (userId, date) => ipcRenderer.invoke('calendar:list', { userId, date }),
     listRange: (userId, startDate, endDate) =>
-      ipcRenderer.invoke('calendar:listRange', { userId, startDate, endDate }),
-    update: (eventId, updates, userId) => ipcRenderer.invoke('calendar:update', { eventId, updates, userId }),
-    delete: (eventId, userId) => ipcRenderer.invoke('calendar:delete', { eventId, userId })
+      ipcRenderer.invoke('calendar:listRange', { userId, startDate, endDate })
   },
   pomodoro: {
     getState: () => ipcRenderer.invoke('pomodoro:getState'),

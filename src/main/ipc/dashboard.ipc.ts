@@ -57,7 +57,7 @@ export function registerDashboardIPC(): void {
       const notifications = taskStats.urgent + taskStats.overdue;
 
       const timelineEvents = calendarEvents.map((event) => ({
-        time: formatTimeRange(event.startTime, event.endTime),
+        time: formatTimeRange(new Date(event.startTime), new Date(event.endTime)),
         title: event.title,
         color: event.color
       }));
