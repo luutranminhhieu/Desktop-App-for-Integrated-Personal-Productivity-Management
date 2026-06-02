@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import TodoForm from '../components/todo/TodoForm';
 import type {
 	TodoItem,
@@ -339,17 +339,36 @@ const TodoList = (): React.JSX.Element => {
 	const [draggingTodo, setDraggingTodo] = useState<TodoItem | null>(null);
 	const [dragOverTodoId, setDragOverTodoId] = useState<string | null>(null);
 
-	/* ── Fetch todos ── */
+	/* ── Client-side filtering ── */
+	const filteredTodos = useMemo(() => {
+		return todos.filter((todo) => {
+			const isOverdue =
+				todo.status === 'pending' &&
+				todo.dueDate &&
+				new Date(todo.dueDate) < new Date();
+
+			switch (activeFilter) {
+				case 'all':
+					return true;
+				case 'pending':
+					return todo.status === 'pending' && !isOverdue;
+				case 'completed':
+					return todo.status === 'completed';
+				case 'canceled':
+					return todo.status === 'canceled' || isOverdue;
+				default:
+					return true;
+			}
+		});
+	}, [todos, activeFilter]);
+
+	/* ── Fetch todos (always fetch ALL, filter client-side) ── */
 	const fetchTodos = useCallback(async (): Promise<void> => {
 		if (!userId) return;
 		setLoading(true);
 		setError('');
 
 		const options: Record<string, unknown> = { userId };
-
-		if (activeFilter !== 'all') {
-			options.status = activeFilter;
-		}
 
 		if (dueDateFrom) {
 			options.dueDateFrom = new Date(dueDateFrom).toISOString();
@@ -375,7 +394,7 @@ const TodoList = (): React.JSX.Element => {
 		} finally {
 			setLoading(false);
 		}
-	}, [userId, activeFilter, dueDateFrom, dueDateTo]);
+	}, [userId, dueDateFrom, dueDateTo]);
 
 	/* ── Load data on mount & when filters change ── */
 	useEffect(() => {
@@ -728,7 +747,7 @@ const TodoList = (): React.JSX.Element => {
 			{/* ═══ Main Content Panel ═══ */}
 			<div className="flex-1 min-h-0 overflow-y-auto pr-1 space-y-6 pb-6">
 
-				{!loading && todos.length === 0 && !error && (
+				{!loading && filteredTodos.length === 0 && !error && (
 					<div className="bg-[var(--color-bg)] rounded-lg border border-[var(--color-border)] p-12 text-center">
 						<span
 							className="material-symbols-outlined text-[var(--color-border)] mb-4 block"
@@ -747,10 +766,10 @@ const TodoList = (): React.JSX.Element => {
 					</div>
 				)}
 
-				{!loading && todos.length > 0 && (
+				{!loading && filteredTodos.length > 0 && (
 					<section className="space-y-8">
 						<TaskGroup
-							todos={todos}
+							todos={filteredTodos}
 							onToggle={handleToggleStatus}
 							onEdit={openEditModal}
 							onDragStart={handleDragStart}
