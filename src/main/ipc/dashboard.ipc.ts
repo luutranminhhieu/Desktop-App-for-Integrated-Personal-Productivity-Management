@@ -33,27 +33,23 @@ export function registerDashboardIPC(): void {
 
       const [
         taskStats,
-        focusHours,
+        focusTime,
         urgentTasks,
         todayTasks,
-        streak,
         activity,
         yearFocusHours,
-        pomodoroStats,
         calendarEvents
       ] = await Promise.all([
         todoService.getTaskStats(userId),
-        todoService.getFocusHours(userId, focusDays),
+        todoService.getFocusTime(userId, focusDays),
         todoService.getUrgentTasks(userId),
         todoService.getTodayTasks(userId),
-        todoService.getFocusStreak(userId),
         todoService.getActivityHeatmap(userId, 12),
         todoService.getFocusHoursTotal(userId, 365),
-        todoService.getPomodoroStatsToday(userId),
         calendarService.listEventsForDay(userId, today)
       ]);
 
-      const weeklyFocusHours = focusHours.reduce((sum, day) => sum + day.hours, 0);
+      const weeklyFocusHours = Math.round((focusTime.reduce((sum, day) => sum + day.minutes, 0) / 60) * 10) / 10;
       const notifications = taskStats.urgent + taskStats.overdue;
 
       const timelineEvents = calendarEvents.map((event) => ({
@@ -66,14 +62,12 @@ export function registerDashboardIPC(): void {
         success: true,
         data: {
           taskStats,
-          focusHours,
+          focusTime,
           urgentTasks,
           todayTasks,
-          focusStreakDays: streak,
           weeklyFocusHours,
           activity,
           yearFocusHours,
-          pomodoroStats,
           timelineEvents,
           notifications
         }

@@ -58,6 +58,15 @@ export function registerPomodoroIPC(): void {
 		}
 	});
 
+	ipcMain.handle('pomodoro:resetStats', async () => {
+		try {
+			return { success: true, data: pomodoroService.resetStats() };
+		} catch (error) {
+			logger.error('Error in pomodoro:resetStats', error);
+			return { success: false, error: (error as Error).message };
+		}
+	});
+
 	ipcMain.handle('pomodoro:skip', async () => {
 		try {
 			return { success: true, data: pomodoroService.skip() };

@@ -4,8 +4,7 @@ export const POMODORO_CONFIG = {
 
   // UI elements & Labels
   STRINGS: {
-    focusSessionsLabel: 'Phiên tập trung',
-    totalTimeLabel: 'Tổng thời gian'
+    focusSessionsLabel: ''
   },
 
   // Dynamic formatting strings

@@ -49,14 +49,10 @@ export interface TaskStats {
   tasksThisMonth: number;
 }
 
-export interface PomodoroStats {
-  completed: number;
-  target: number;
-}
 
-export interface FocusDay {
+export interface FocusTime {
   date: string;
-  hours: number;
+  minutes: number;
 }
 
 export interface HeatmapData {
@@ -64,13 +60,12 @@ export interface HeatmapData {
   values: number[];
 }
 
-export type PomodoroMode = 'work' | 'short_break' | 'long_break';
+export type PomodoroMode = 'work' | 'short_break';
 
 export interface PomodoroSettings {
   sessionsPerDay: number;
   workMinutes: number;
   shortBreakMinutes: number;
-  longBreakMinutes: number;
 }
 
 export interface PomodoroStats {
@@ -97,16 +92,14 @@ export interface TimelineEvent {
 
 export interface DashboardStats {
   taskStats: TaskStats;
-  focusHours: FocusDay[];
+  focusTime: FocusTime[];
   urgentTasks: TodoItem[];
   todayTasks: TodoItem[];
-  focusStreakDays: number;
   weeklyFocusHours: number;
   activity: HeatmapData;
   timelineEvents: TimelineEvent[];
   notifications: number;
   yearFocusHours: number;
-  pomodoroStats: PomodoroStats;
 }
 
 export interface CalendarEvent {
@@ -143,6 +136,7 @@ export interface IPomodoroAPI {
   start: () => Promise<{ success: boolean; data?: PomodoroState; error?: string }>;
   pause: () => Promise<{ success: boolean; data?: PomodoroState; error?: string }>;
   reset: () => Promise<{ success: boolean; data?: PomodoroState; error?: string }>;
+  resetStats: () => Promise<{ success: boolean; data?: PomodoroState; error?: string }>;
   skip: () => Promise<{ success: boolean; data?: PomodoroState; error?: string }>;
   setMode: (mode: PomodoroMode) => Promise<{ success: boolean; data?: PomodoroState; error?: string }>;
   onTick: (callback: (state: PomodoroState) => void) => () => void;

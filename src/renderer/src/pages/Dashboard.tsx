@@ -61,8 +61,8 @@ const Dashboard = (): React.JSX.Element => {
   }, [userId, focusRange]);
 
   /* ── Derived values ── */
-  const todayFocusHours = data?.focusHours?.length
-    ? data.focusHours[data.focusHours.length - 1].hours
+  const todayFocusMinutes = data?.focusTime?.length
+    ? data.focusTime[data.focusTime.length - 1].minutes
     : 0;
 
   /* ── Guard states ── */
@@ -82,7 +82,7 @@ const Dashboard = (): React.JSX.Element => {
     <div className="flex flex-col gap-4">
       {/* ── Row 1: Focus‑Day Card + Task‑Status Donut ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <FocusDayCard todayFocusHours={todayFocusHours} />
+        <FocusDayCard todayFocusMinutes={todayFocusMinutes} />
 
         <TaskStatus taskStats={data.taskStats} />
       </div>

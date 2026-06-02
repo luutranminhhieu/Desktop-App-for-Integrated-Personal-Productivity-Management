@@ -5,26 +5,23 @@ type PomodoroSettingsCardProps = {
 		sessionsPerDay: number;
 		workMinutes: number;
 		shortBreakMinutes: number;
-		longBreakMinutes: number;
 	};
-	onAdjust: (key: 'sessionsPerDay' | 'workMinutes' | 'shortBreakMinutes' | 'longBreakMinutes', delta: number) => void;
-	onChangeSetting?: (key: 'sessionsPerDay' | 'workMinutes' | 'shortBreakMinutes' | 'longBreakMinutes', value: number) => void;
+	onAdjust: (key: 'sessionsPerDay' | 'workMinutes' | 'shortBreakMinutes', delta: number) => void;
+	onChangeSetting?: (key: 'sessionsPerDay' | 'workMinutes' | 'shortBreakMinutes', value: number) => void;
 };
 
 const PomodoroSettingsCard = ({ settings, onAdjust, onChangeSetting }: PomodoroSettingsCardProps): React.JSX.Element => {
 	const [localValues, setLocalValues] = useState({
 		sessionsPerDay: settings.sessionsPerDay.toString(),
 		workMinutes: settings.workMinutes.toString(),
-		shortBreakMinutes: settings.shortBreakMinutes.toString(),
-		longBreakMinutes: settings.longBreakMinutes.toString()
+		shortBreakMinutes: settings.shortBreakMinutes.toString()
 	});
 
 	useEffect(() => {
 		setLocalValues({
 			sessionsPerDay: settings.sessionsPerDay.toString(),
 			workMinutes: settings.workMinutes.toString(),
-			shortBreakMinutes: settings.shortBreakMinutes.toString(),
-			longBreakMinutes: settings.longBreakMinutes.toString()
+			shortBreakMinutes: settings.shortBreakMinutes.toString()
 		});
 	}, [settings]);
 
@@ -43,15 +40,9 @@ const PomodoroSettingsCard = ({ settings, onAdjust, onChangeSetting }: PomodoroS
 		},
 		{
 			key: 'shortBreakMinutes',
-			title: 'Nghỉ giải lao (phút)',
-			subtitle: 'Nghỉ ngắn sau mỗi phiên',
+			title: 'Thời gian nghỉ (phút)',
+			subtitle: 'Thời gian nghỉ sau mỗi phiên',
 			value: settings.shortBreakMinutes
-		},
-		{
-			key: 'longBreakMinutes',
-			title: 'Nghỉ giải lao dài (phút)',
-			subtitle: 'Nghỉ dài sau mỗi 4 phiên',
-			value: settings.longBreakMinutes
 		}
 	] as const;
 

@@ -1,9 +1,9 @@
 import type { TodoItem, TaskStats } from './todo';
 
 /* ── Shared helpers ── */
-export type FocusDay = {
+export type FocusTime = {
   date: string;
-  hours: number;
+  minutes: number;
 };
 
 export type TimelineEvent = {
@@ -14,7 +14,7 @@ export type TimelineEvent = {
 
 /* ── Props for FocusDayCard ── */
 export type FocusDayCardProps = {
-  todayFocusHours: number;
+  todayFocusMinutes: number;
 };
 
 /* ── Props for TaskStatusDonut ── */
@@ -33,11 +33,9 @@ export type HeatmapProps = {
 /* ── Aggregated dashboard payload from API ── */
 export type DashboardData = {
   taskStats: TaskStats;
-  focusHours: FocusDay[];
+  focusTime: FocusTime[];
   urgentTasks: TodoItem[];
   todayTasks: TodoItem[];
-  pomodoroStats: { completed: number; target: number };
-  focusStreakDays: number;
   weeklyFocusHours: number;
   activity: { startDate: string; values: number[] };
   timelineEvents: TimelineEvent[];

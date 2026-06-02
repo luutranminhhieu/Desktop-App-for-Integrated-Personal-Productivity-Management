@@ -2,18 +2,17 @@ import React from 'react';
 import type { FocusDayCardProps } from '@renderer/types';
 import { FOCUS_RING_CONFIG, DASHBOARD_STRINGS } from '@renderer/config/dashboardConfig';
 
-const formatHours = (hours: number): string => {
-  const totalMinutes = Math.round(hours * 60);
+const formatMinutes = (totalMinutes: number): string => {
   const fullHours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
-  return `${fullHours}:${minutes.toString().padStart(2, '0')}`;
+  return `${fullHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 };
 
 const FocusDayCard: React.FC<FocusDayCardProps> = ({
-  todayFocusHours
+  todayFocusMinutes
 }) => {
-  const maxHours = 24;
-  const percent = Math.min(1, todayFocusHours / maxHours);
+  const maxMinutes = 24 * 60; // 24 hours in minutes
+  const percent = Math.min(1, todayFocusMinutes / maxMinutes);
   const offset = Math.round(FOCUS_RING_CONFIG.CIRCUMFERENCE * (1 - percent) * 100) / 100;
 
   return (
@@ -49,7 +48,7 @@ const FocusDayCard: React.FC<FocusDayCardProps> = ({
             ></circle>
           </svg>
           <div className="absolute flex flex-col items-center justify-center">
-            <span className="text-2xl font-bold text-[var(--color-text)]">{formatHours(todayFocusHours)}</span>
+            <span className="text-2xl font-bold text-[var(--color-text)]">{formatMinutes(todayFocusMinutes)}</span>
             <span className="text-xs text-[var(--color-muted)] uppercase tracking-wider mt-1">{DASHBOARD_STRINGS.focusHoursLabel}</span>
           </div>
         </div>

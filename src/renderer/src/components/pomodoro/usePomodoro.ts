@@ -10,8 +10,7 @@ import type {
 const defaultSettings: PomodoroSettings = {
 	sessionsPerDay: 12,
 	workMinutes: 25,
-	shortBreakMinutes: 5,
-	longBreakMinutes: 15
+	shortBreakMinutes: 5
 };
 
 const defaultStats: PomodoroStats = {
@@ -90,6 +89,13 @@ export const usePomodoro = (): PomodoroHook => {
 		}
 	}, [hydrateState]);
 
+	const resetStats = useCallback(async () => {
+		const response = await window.api.pomodoro.resetStats();
+		if (response.success) {
+			hydrateState(response.data);
+		}
+	}, [hydrateState]);
+
 	const skip = useCallback(async () => {
 		const response = await window.api.pomodoro.skip();
 		if (response.success) {
@@ -118,7 +124,7 @@ export const usePomodoro = (): PomodoroHook => {
 	);
 
 	return useMemo(
-		() => ({ state, settings, stats, start, pause, reset, skip, setMode, updateSettings }),
-		[state, settings, stats, start, pause, reset, skip, setMode, updateSettings]
+		() => ({ state, settings, stats, start, pause, reset, resetStats, skip, setMode, updateSettings }),
+		[state, settings, stats, start, pause, reset, resetStats, skip, setMode, updateSettings]
 	);
 };
