@@ -26,16 +26,23 @@ const Pomodoro = (): React.JSX.Element => {
 				value: `${stats.completedSessions} / ${stats.targetSessions}`
 			},
 			{ icon: 'bolt', label: 'Tổng thời gian', value: formatHoursMinutes(stats.totalWorkSeconds) },
-			{ icon: 'bedtime', label: 'Thời gian nghỉ', value: formatHoursMinutes(stats.totalBreakSeconds) }
 		],
 		[stats]
 	);
 
 	const handleAdjustSetting = (
-		key: 'sessionsPerDay' | 'workMinutes' | 'shortBreakMinutes',
+		key: 'sessionsPerDay' | 'workMinutes' | 'shortBreakMinutes' | 'longBreakMinutes',
 		delta: number
 	): void => {
 		const next = Math.max(1, settings[key] + delta);
+		void updateSettings({ [key]: next });
+	};
+
+	const handleChangeSetting = (
+		key: 'sessionsPerDay' | 'workMinutes' | 'shortBreakMinutes' | 'longBreakMinutes',
+		value: number
+	): void => {
+		const next = Math.max(1, value);
 		void updateSettings({ [key]: next });
 	};
 
@@ -63,7 +70,11 @@ const Pomodoro = (): React.JSX.Element => {
 							onReset={() => void reset()}
 							onSkip={() => void skip()}
 						/>
-						<PomodoroSettingsCard settings={settings} onAdjust={handleAdjustSetting} />
+						<PomodoroSettingsCard
+							settings={settings}
+							onAdjust={handleAdjustSetting}
+							onChangeSetting={handleChangeSetting}
+						/>
 					</div>
 				</div>
 			</div>

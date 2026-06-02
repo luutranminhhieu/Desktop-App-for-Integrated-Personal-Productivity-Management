@@ -21,7 +21,6 @@ const TodoFilter: React.FC<TodoFilterProps> = ({
 }) => {
   const statusOptions: { value: TodoStatus; label: string }[] = [
     { value: 'pending', label: 'Chờ' },
-    { value: 'in_progress', label: 'Đang làm' },
     { value: 'completed', label: 'Xong' },
     { value: 'canceled', label: 'Hủy' }
   ];

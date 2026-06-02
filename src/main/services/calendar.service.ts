@@ -22,9 +22,7 @@ function buildEventTimes(dueDate: Date): { startTime: Date; endTime: Date } {
 
 function statusToColor(status: TodoStatus): string {
   const colors: Record<TodoStatus, string> = {
-    backlog: EventStatusColor.paused,
     pending: EventStatusColor.todo,
-    in_progress: EventStatusColor.inProgress,
     completed: EventStatusColor.done,
     canceled: EventStatusColor.canceled
   };
@@ -33,7 +31,19 @@ function statusToColor(status: TodoStatus): string {
 
 function mapTodoToCalendarEvent(todo: ITodo) {
   if (!todo.dueDate) return null;
-  const { startTime, endTime } = buildEventTimes(new Date(todo.dueDate));
+  
+  let startTime: Date;
+  let endTime: Date;
+  
+  if (todo.startDate) {
+    startTime = new Date(todo.startDate);
+    endTime = new Date(todo.dueDate);
+  } else {
+    const times = buildEventTimes(new Date(todo.dueDate));
+    startTime = times.startTime;
+    endTime = times.endTime;
+  }
+
   return {
     _id: String(todo._id),
     title: todo.title,

@@ -17,7 +17,7 @@ export interface TokenPayload {
   exp?: number;
 }
 
-export type TodoStatus = 'pending' | 'in_progress' | 'completed' | 'canceled';
+export type TodoStatus = 'pending' | 'completed' | 'canceled';
 export type TodoPriority = 'low' | 'medium' | 'high' | 'urgent';
 
 export interface TodoItem {
@@ -27,6 +27,8 @@ export interface TodoItem {
   status: TodoStatus;
   priority: TodoPriority;
   dueDate?: string;
+  startDate?: string;
+  columnId?: number;
   tags: string[];
   userId: string;
   project?: string;

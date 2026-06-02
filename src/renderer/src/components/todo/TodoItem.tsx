@@ -9,15 +9,14 @@ interface TodoItemProps {
 }
 
 const priorityColors = {
-  low: '#10B981',
-  medium: '#F59E0B',
+  low: '#6B7280',
+  medium: '#3B82F6',
   high: '#EF4444',
   urgent: '#DC2626'
 };
 
 const statusColors = {
   pending: 'bg-[var(--color-warning)]/10 text-[var(--color-warning)]',
-  in_progress: 'bg-[var(--color-primary)]/10 text-[var(--color-primary)]',
   completed: 'bg-[var(--color-success)]/10 text-[var(--color-success)]',
   canceled: 'bg-[var(--color-muted)]/10 text-[var(--color-muted)]'
 };
@@ -78,7 +77,6 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onEdit, onDelete })
                 className={`px-2 py-1 text-[11px] font-semibold rounded ${statusColors[todo.status]}`}
               >
                 {todo.status === 'completed' ? 'XONG' : 
-                 todo.status === 'in_progress' ? 'ĐANG LÀM' :
                  todo.status === 'canceled' ? 'HỦY' : 'CHỜ'}
               </span>
             </div>
@@ -100,11 +98,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onEdit, onDelete })
               </span>
             )}
             
-            {todo.project && (
-              <span className="text-xs text-[var(--color-primary)]">
-                📁 {todo.project}
-              </span>
-            )}
+
             
             {todo.tags.length > 0 && (
               <div className="flex gap-1">

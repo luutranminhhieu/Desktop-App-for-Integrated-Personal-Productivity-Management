@@ -5,7 +5,7 @@ import { CreateTodoSchema, UpdateTodoSchema, toDateOrUndefined } from '../utils/
 import { logger } from '../utils/logger';
 
 function prepareDates(input: Record<string, unknown>): Record<string, unknown> {
-	const dateFields = ['dueDate', 'focusDate', 'completedAt'];
+	const dateFields = ['startDate', 'dueDate', 'focusDate', 'completedAt'];
 	for (const field of dateFields) {
 		if (input[field] === null) {
 			input[field] = null;
