@@ -16,6 +16,20 @@ function prepareDates(input: Record<string, unknown>): Record<string, unknown> {
 	return input;
 }
 
+function serialize<T>(data: T): T {
+	return JSON.parse(JSON.stringify(data));
+}
+
+function toIdString(value: unknown): string {
+	if (typeof value === 'string') return value;
+	if (value instanceof mongoose.Types.ObjectId) return value.toHexString();
+	if (value && typeof value === 'object' && 'id' in value) {
+		const raw = (value as { id: Uint8Array | Buffer }).id;
+		return Buffer.from(raw).toString('hex');
+	}
+	return String(value);
+}
+
 export function registerTodoIPC(): void {
 	ipcMain.handle('todo:create', async (_, payload) => {
 		try {
@@ -26,7 +40,7 @@ export function registerTodoIPC(): void {
 				userId: new mongoose.Types.ObjectId(parsed.userId)
 			} as any;
 			const data = await todoService.createTodo(validatedPayload as any);
-			return { success: true, data };
+			return { success: true, data: serialize(data) };
 		} catch (error) {
 			logger.error('Error in todo:create', error);
 			return { success: false, error: (error as Error).message };
@@ -36,7 +50,7 @@ export function registerTodoIPC(): void {
 	ipcMain.handle('todo:list', async (_, options) => {
 		try {
 			const data = await todoService.listTodos(options);
-			return { success: true, data };
+			return { success: true, data: serialize(data) };
 		} catch (error) {
 			logger.error('Error in todo:list', error);
 			return { success: false, error: (error as Error).message };
@@ -45,10 +59,12 @@ export function registerTodoIPC(): void {
 
 	ipcMain.handle('todo:update', async (_, { todoId, updates, userId }) => {
 		try {
-			const validated = UpdateTodoSchema.parse({ todoId, updates, userId });
+			const safeTodoId = toIdString(todoId);
+			const safeUserId = toIdString(userId);
+			const validated = UpdateTodoSchema.parse({ todoId: safeTodoId, updates, userId: safeUserId });
 			const preparedUpdates = prepareDates({ ...validated.updates } as unknown as Record<string, unknown>);
 			const data = await todoService.updateTodo(validated.todoId, preparedUpdates as any, validated.userId);
-			return { success: true, data };
+			return { success: true, data: serialize(data) };
 		} catch (error) {
 			logger.error('Error in todo:update', error);
 			return { success: false, error: (error as Error).message };
@@ -57,7 +73,9 @@ export function registerTodoIPC(): void {
 
 	ipcMain.handle('todo:delete', async (_, { todoId, userId }) => {
 		try {
-			await todoService.deleteTodo(todoId, userId);
+			const safeTodoId = toIdString(todoId);
+			const safeUserId = toIdString(userId);
+			await todoService.deleteTodo(safeTodoId, safeUserId);
 			return { success: true };
 		} catch (error) {
 			logger.error('Error in todo:delete', error);
@@ -67,11 +85,13 @@ export function registerTodoIPC(): void {
 
 	ipcMain.handle('todo:stats', async (_, { userId }) => {
 		try {
-			const data = await todoService.getTaskStats(userId);
-			return { success: true, data };
+			const safeUserId = toIdString(userId);
+			const data = await todoService.getTaskStats(safeUserId);
+			return { success: true, data: serialize(data) };
 		} catch (error) {
 			logger.error('Error in todo:stats', error);
 			return { success: false, error: (error as Error).message };
 		}
 	});
 }
+
