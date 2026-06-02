@@ -50,7 +50,6 @@ export interface TodoFormData {
 	priority: TodoPriority;
 	startDate?: string;
 	dueDate?: string;
-	columnId?: number;
 	tags: string[];
 	project?: string;
 }

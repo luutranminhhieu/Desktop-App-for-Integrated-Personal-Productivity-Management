@@ -9,8 +9,8 @@ interface TodoItemProps {
 }
 
 const priorityColors = {
-  low: '#10B981',
-  medium: '#F59E0B',
+  low: '#6B7280',
+  medium: '#3B82F6',
   high: '#EF4444',
   urgent: '#DC2626'
 };

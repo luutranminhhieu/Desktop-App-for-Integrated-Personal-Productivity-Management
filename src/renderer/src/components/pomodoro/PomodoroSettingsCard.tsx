@@ -1,15 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 type PomodoroSettingsCardProps = {
 	settings: {
 		sessionsPerDay: number;
 		workMinutes: number;
 		shortBreakMinutes: number;
+		longBreakMinutes: number;
 	};
-	onAdjust: (key: 'sessionsPerDay' | 'workMinutes' | 'shortBreakMinutes', delta: number) => void;
+	onAdjust: (key: 'sessionsPerDay' | 'workMinutes' | 'shortBreakMinutes' | 'longBreakMinutes', delta: number) => void;
+	onChangeSetting?: (key: 'sessionsPerDay' | 'workMinutes' | 'shortBreakMinutes' | 'longBreakMinutes', value: number) => void;
 };
 
-const PomodoroSettingsCard = ({ settings, onAdjust }: PomodoroSettingsCardProps): React.JSX.Element => {
+const PomodoroSettingsCard = ({ settings, onAdjust, onChangeSetting }: PomodoroSettingsCardProps): React.JSX.Element => {
+	const [localValues, setLocalValues] = useState({
+		sessionsPerDay: settings.sessionsPerDay.toString(),
+		workMinutes: settings.workMinutes.toString(),
+		shortBreakMinutes: settings.shortBreakMinutes.toString(),
+		longBreakMinutes: settings.longBreakMinutes.toString()
+	});
+
+	useEffect(() => {
+		setLocalValues({
+			sessionsPerDay: settings.sessionsPerDay.toString(),
+			workMinutes: settings.workMinutes.toString(),
+			shortBreakMinutes: settings.shortBreakMinutes.toString(),
+			longBreakMinutes: settings.longBreakMinutes.toString()
+		});
+	}, [settings]);
+
 	const items = [
 		{
 			key: 'sessionsPerDay',
@@ -28,6 +46,12 @@ const PomodoroSettingsCard = ({ settings, onAdjust }: PomodoroSettingsCardProps)
 			title: 'Nghỉ giải lao (phút)',
 			subtitle: 'Nghỉ ngắn sau mỗi phiên',
 			value: settings.shortBreakMinutes
+		},
+		{
+			key: 'longBreakMinutes',
+			title: 'Nghỉ giải lao dài (phút)',
+			subtitle: 'Nghỉ dài sau mỗi 4 phiên',
+			value: settings.longBreakMinutes
 		}
 	] as const;
 
@@ -49,17 +73,41 @@ const PomodoroSettingsCard = ({ settings, onAdjust }: PomodoroSettingsCardProps)
 							</div>
 							<div className="flex items-center gap-3 bg-[var(--color-surface)] rounded-lg p-1">
 								<button
-									className="h-8 w-8 rounded bg-[var(--color-bg)] shadow-sm flex items-center justify-center text-[var(--color-text)] hover:text-[var(--color-primary)]"
+									className="h-8 w-8 rounded bg-[var(--color-bg)] shadow-sm flex items-center justify-center text-[var(--color-text)] hover:text-[var(--color-primary)] cursor-pointer"
 									type="button"
 									onClick={() => onAdjust(item.key, -1)}
 								>
 									-
 								</button>
-								<span className="text-[15px] font-medium text-[var(--color-text)] px-3">
-									{item.value.toString().padStart(2, '0')}
-								</span>
+								<input
+									type="text"
+									inputMode="numeric"
+									pattern="[0-9]*"
+									value={localValues[item.key]}
+									onChange={(e) => {
+										const text = e.target.value.replace(/\D/g, ''); // Allow only digits
+										setLocalValues((prev) => ({ ...prev, [item.key]: text }));
+
+										const val = parseInt(text, 10);
+										if (!isNaN(val) && val > 0 && onChangeSetting) {
+											onChangeSetting(item.key, val);
+										}
+									}}
+									onBlur={() => {
+										const val = parseInt(localValues[item.key], 10);
+										if (isNaN(val) || val <= 0) {
+											setLocalValues((prev) => ({
+												...prev,
+												[item.key]: settings[item.key].toString()
+											}));
+										} else if (onChangeSetting) {
+											onChangeSetting(item.key, val);
+										}
+									}}
+									className="w-12 h-8 bg-transparent text-center text-[15px] font-medium text-[var(--color-text)] focus:outline-none border-b border-transparent focus:border-[var(--color-primary)]"
+								/>
 								<button
-									className="h-8 w-8 rounded bg-[var(--color-bg)] shadow-sm flex items-center justify-center text-[var(--color-text)] hover:text-[var(--color-primary)]"
+									className="h-8 w-8 rounded bg-[var(--color-bg)] shadow-sm flex items-center justify-center text-[var(--color-text)] hover:text-[var(--color-primary)] cursor-pointer"
 									type="button"
 									onClick={() => onAdjust(item.key, 1)}
 								>

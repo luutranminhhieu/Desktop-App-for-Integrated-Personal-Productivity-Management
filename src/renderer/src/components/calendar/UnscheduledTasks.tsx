@@ -8,9 +8,9 @@ export type UnscheduledTasksProps = {
 
 const priorityStyles: Record<string, { dot: string; text: string }> = {
   urgent: { dot: 'bg-[var(--color-error)]', text: 'text-[var(--color-error)]' },
-  high: { dot: 'bg-[var(--color-warning)]', text: 'text-[var(--color-warning)]' },
+  high: { dot: 'bg-[var(--color-error)]', text: 'text-[var(--color-error)]' },
   medium: { dot: 'bg-[var(--color-primary)]', text: 'text-[var(--color-primary)]' },
-  low: { dot: 'bg-[var(--color-success)]', text: 'text-[var(--color-success)]' }
+  low: { dot: 'bg-[var(--color-muted)]', text: 'text-[var(--color-muted)]' }
 };
 
 const UnscheduledTasks = ({ tasks, loading }: UnscheduledTasksProps): React.JSX.Element => {
