@@ -3,12 +3,15 @@ import PomodoroSettingsCard from '../components/pomodoro/PomodoroSettingsCard';
 import PomodoroStatsRow from '../components/pomodoro/PomodoroStatsRow';
 import PomodoroTimerCard from '../components/pomodoro/PomodoroTimerCard';
 import { usePomodoro } from '../components/pomodoro/usePomodoro';
+import { POMODORO_CONFIG } from '@renderer/config/pomodoroConfig';
 
 const formatHoursMinutes = (totalSeconds: number): string => {
 	const totalMinutes = Math.floor(totalSeconds / 60);
 	const hours = Math.floor(totalMinutes / 60);
 	const minutes = totalMinutes % 60;
-	return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
+	return hours > 0 
+		? POMODORO_CONFIG.FORMATS.hoursAndMinutes(hours, minutes)
+		: POMODORO_CONFIG.FORMATS.minutesOnly(minutes);
 };
 
 const Pomodoro = (): React.JSX.Element => {
@@ -22,10 +25,14 @@ const Pomodoro = (): React.JSX.Element => {
 		() => [
 			{
 				icon: 'timer',
-				label: 'Phiên tập trung',
+				label: POMODORO_CONFIG.STRINGS.focusSessionsLabel,
 				value: `${stats.completedSessions} / ${stats.targetSessions}`
 			},
-			{ icon: 'bolt', label: 'Tổng thời gian', value: formatHoursMinutes(stats.totalWorkSeconds) },
+			{ 
+				icon: 'bolt', 
+				label: POMODORO_CONFIG.STRINGS.totalTimeLabel, 
+				value: formatHoursMinutes(stats.totalWorkSeconds) 
+			},
 		],
 		[stats]
 	);

@@ -4,6 +4,7 @@ import type FullCalendar from '@fullcalendar/react';
 import CalendarView from '../components/calendar/CalendarView';
 import MiniCalendar from '../components/calendar/MiniCalendar';
 import { EventStatusColor } from '../constants/eventStatusColor';
+import { CALENDAR_CONFIG } from '@renderer/config/calendarConfig';
 import type {
 	CalendarEventRecord,
 	CalendarViewType
@@ -23,7 +24,7 @@ const Calendar = (): React.JSX.Element => {
 			return null;
 		}
 	});
-	const [view, setView] = useState<CalendarViewType>('timeGridWeek');
+	const [view, setView] = useState<CalendarViewType>(CALENDAR_CONFIG.DEFAULT_VIEW);
 	const [rangeStart, setRangeStart] = useState<Dayjs>(dayjs());
 	const [rangeEnd, setRangeEnd] = useState<Dayjs>(dayjs().add(7, 'day'));
 	const [monthDate, setMonthDate] = useState<Dayjs>(dayjs());
@@ -66,7 +67,7 @@ const Calendar = (): React.JSX.Element => {
 			);
 
 			if (!response.success || !response.data) {
-				setEventsError(response.error || 'Không thể tải lịch.');
+				setEventsError(response.error || CALENDAR_CONFIG.STRINGS.fetchError);
 				setLoadingEvents(false);
 				return;
 			}
@@ -84,7 +85,7 @@ const Calendar = (): React.JSX.Element => {
 		setRangeEnd(endDay);
 		setMonthDate(startDay);
 		fetchEventsForRange(startDay, endDay).catch(() => {
-			setEventsError('Không thể tải lịch.');
+			setEventsError(CALENDAR_CONFIG.STRINGS.fetchError);
 			setLoadingEvents(false);
 		});
 	};
@@ -131,9 +132,8 @@ const Calendar = (): React.JSX.Element => {
 					/>
 					<div className="flex flex-col gap-4">
 						<div className="flex items-center justify-between">
-							<h4 className="text-[15px] font-bold">Chi tiết công việc</h4>
+							<h4 className="text-[15px] font-bold">{CALENDAR_CONFIG.STRINGS.taskDetailsHeader}</h4>
 							<span className="text-xs font-bold text-[var(--color-muted)] bg-[var(--color-primary-lighter)] px-2 rounded">
-								{selectedEvent ? '1' : '0'}
 							</span>
 						</div>
 						{selectedEvent ? (
@@ -141,34 +141,34 @@ const Calendar = (): React.JSX.Element => {
 								<div className="flex items-center gap-2 mb-3">
 									<span
 										className="w-2 h-2 rounded-full"
-										style={{ backgroundColor: selectedEvent.color || '#1E3A8A' }}
+										style={{ backgroundColor: selectedEvent.color || CALENDAR_CONFIG.FALLBACK_EVENT_COLOR }}
 									></span>
 									<h5 className="text-[15px] font-semibold text-[var(--color-text)] truncate">
 										{selectedEvent.title}
 									</h5>
 								</div>
 								<p className="text-xs text-[var(--color-muted)]">
-									{dayjs(selectedEvent.startTime).format('DD/MM/YYYY, HH:mm')} -
-									{dayjs(selectedEvent.endTime).format(' HH:mm')}
+									{dayjs(selectedEvent.startTime).format(CALENDAR_CONFIG.DATE_FORMATS.dateTime)} -
+									{dayjs(selectedEvent.endTime).format(CALENDAR_CONFIG.DATE_FORMATS.timeOnly)}
 								</p>
 								{selectedEvent.location && (
-									<p className="text-xs text-[var(--color-muted)] mt-2">Địa điểm: {selectedEvent.location}</p>
+									<p className="text-xs text-[var(--color-muted)] mt-2">{CALENDAR_CONFIG.STRINGS.locationPrefix}{selectedEvent.location}</p>
 								)}
 								{selectedEvent.notes && (
-									<p className="text-xs text-[var(--color-muted)] mt-2">Ghi chú: {selectedEvent.notes}</p>
+									<p className="text-xs text-[var(--color-muted)] mt-2">{CALENDAR_CONFIG.STRINGS.notesPrefix}{selectedEvent.notes}</p>
 								)}
 								<button
 									className="mt-3 px-3 py-1 text-xs font-semibold text-[var(--color-muted)] hover:bg-[var(--color-primary-lighter)] rounded-md"
 									onClick={() => setSelectedEvent(null)}
 									type="button"
 								>
-									Bỏ chọn
+									{CALENDAR_CONFIG.STRINGS.deselectButton}
 								</button>
 							</div>
 						) : (
 							<div className="p-4 bg-[var(--color-primary-lighter)] border border-[var(--color-border)] rounded-lg">
 								<p className="text-xs text-[var(--color-muted)]">
-									Chọn một sự kiện trên lịch để xem chi tiết.
+									{CALENDAR_CONFIG.STRINGS.selectInstruction}
 								</p>
 							</div>
 						)}
@@ -183,7 +183,7 @@ const Calendar = (): React.JSX.Element => {
 								type="button"
 								onClick={handleToday}
 							>
-								Today
+								{CALENDAR_CONFIG.STRINGS.todayButton}
 							</button>
 							<div className="flex items-center">
 								<button
@@ -204,39 +204,20 @@ const Calendar = (): React.JSX.Element => {
 							<h2 className="text-lg font-semibold ml-2"></h2>
 						</div>
 						<div className="flex bg-[var(--color-primary-lighter)] p-1 rounded-lg">
-							<button
-								className={`px-4 py-2 text-xs rounded-md ${
-									view === 'timeGridDay'
-										? 'bg-[var(--color-bg)] text-[var(--color-primary)] shadow-sm font-bold'
-										: 'text-[var(--color-muted)] font-medium'
-								}`}
-								type="button"
-								onClick={() => handleViewChange('timeGridDay')}
-							>
-								Ngày
-							</button>
-							<button
-								className={`px-4 py-2 text-xs rounded-md ${
-									view === 'timeGridWeek'
-										? 'bg-[var(--color-bg)] text-[var(--color-primary)] shadow-sm font-bold'
-										: 'text-[var(--color-muted)] font-medium'
-								}`}
-								type="button"
-								onClick={() => handleViewChange('timeGridWeek')}
-							>
-								Tuần
-							</button>
-							<button
-								className={`px-4 py-2 text-xs rounded-md ${
-									view === 'dayGridMonth'
-										? 'bg-[var(--color-bg)] text-[var(--color-primary)] shadow-sm font-bold'
-										: 'text-[var(--color-muted)] font-medium'
-								}`}
-								type="button"
-								onClick={() => handleViewChange('dayGridMonth')}
-							>
-								Tháng
-							</button>
+							{CALENDAR_CONFIG.VIEWS.map((item) => (
+								<button
+									key={item.key}
+									className={`px-4 py-2 text-xs rounded-md ${
+										view === item.key
+											? 'bg-[var(--color-bg)] text-[var(--color-primary)] shadow-sm font-bold'
+											: 'text-[var(--color-muted)] font-medium'
+									}`}
+									type="button"
+									onClick={() => handleViewChange(item.key)}
+								>
+									{item.label}
+								</button>
+							))}
 						</div>
 					</div>
 

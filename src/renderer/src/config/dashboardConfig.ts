@@ -1,8 +1,3 @@
-/**
- * Dashboard Configurations & Constants
- * Used to avoid hardcoding locales, geometry constants, and UI text values.
- */
-
 // 1. Locale settings
 export const DASHBOARD_LOCALE = 'vi-VN';
 
@@ -33,11 +28,8 @@ export const TASK_DONUT_CONFIG = {
 // 4. UI Translation Strings for Dashboard
 export const DASHBOARD_STRINGS = {
   // Focus Card
-  focusTitle: 'Tập trung',
-  focusHoursLabel: 'GIỜ',
-  pomodoroLabel: 'Pomodoro',
-  goalLabel: 'Mục tiêu',
-  noDeadline: 'Không có hạn',
+  focusTitle: 'Daily focus time',
+  focusHoursLabel: 'Time',
 
   // Task Status Card
   taskStatusTitle: 'Trạng thái Task',

@@ -15,9 +15,6 @@ export type TimelineEvent = {
 /* ── Props for FocusDayCard ── */
 export type FocusDayCardProps = {
   todayFocusHours: number;
-  focusGoal: number;
-  pomodoroCompleted: number;
-  pomodoroTarget: number;
 };
 
 /* ── Props for TaskStatusDonut ── */
