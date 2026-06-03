@@ -11,14 +11,14 @@ type Segment = {
 
 const TaskStatus: React.FC<TaskStatusProps> = ({ taskStats }) => {
   const overdueCount = Math.max(0, taskStats.overdue);
-  const pendingCount = Math.max(0, taskStats.pending - overdueCount);
+  const todoCount = Math.max(0, taskStats.todo - overdueCount);
   const completedCount = Math.max(0, taskStats.completed);
   const canceledCount = Math.max(0, taskStats.canceled);
-  const total = completedCount + pendingCount + overdueCount + canceledCount || 1;
+  const total = completedCount + todoCount + overdueCount + canceledCount || 1;
 
   const segments: Segment[] = [
     { key: 'done', label: DASHBOARD_STRINGS.taskDone, color: 'var(--color-success)', value: completedCount },
-    { key: 'pending', label: DASHBOARD_STRINGS.taskPending, color: 'var(--color-primary)', value: pendingCount },
+    { key: 'todo', label: DASHBOARD_STRINGS.taskPending, color: 'var(--color-primary)', value: todoCount },
     { key: 'overdue', label: DASHBOARD_STRINGS.taskOverdue, color: 'var(--color-error)', value: overdueCount },
     { key: 'canceled', label: DASHBOARD_STRINGS.taskCanceled, color: 'var(--color-muted)', value: canceledCount }
   ];

@@ -7,9 +7,9 @@ export const CALENDAR_CONFIG = {
   // Default Views configurations
   DEFAULT_VIEW: 'timeGridWeek' as CalendarViewType,
   VIEWS: [
-    { key: 'timeGridDay' as const, label: 'Ngày' },
-    { key: 'timeGridWeek' as const, label: 'Tuần' },
-    { key: 'dayGridMonth' as const, label: 'Tháng' }
+    { key: 'timeGridDay' as const, label: 'Day' },
+    { key: 'timeGridWeek' as const, label: 'Week' },
+    { key: 'dayGridMonth' as const, label: 'Month' }
   ] as { key: CalendarViewType; label: string }[],
 
   // Style configurations
@@ -23,16 +23,17 @@ export const CALENDAR_CONFIG = {
 
   // Centralized strings used in UI
   STRINGS: {
-    taskDetailsHeader: 'Chi tiết công việc',
-    locationPrefix: 'Địa điểm: ',
-    notesPrefix: 'Ghi chú: ',
-    deselectButton: 'Bỏ chọn',
-    selectInstruction: 'Chọn một sự kiện trên lịch để xem chi tiết.',
+    taskDetailsHeader: 'Task Details',
+    locationPrefix: 'Location: ',
+    notesPrefix: 'Notes: ',
+    deselectButton: 'Deselect',
+    allDayText: 'All day',
+    selectInstruction: 'Select a calendar event to view details.',
     todayButton: 'Today',
-    unscheduledTasksHeader: 'Việc chưa xếp lịch',
-    noUnscheduledTasks: 'Không có công việc chưa xếp lịch.',
+    unscheduledTasksHeader: 'Unscheduled Tasks',
+    noUnscheduledTasks: 'No unscheduled tasks.',
     
     // API/Guard errors
-    fetchError: 'Không thể tải lịch.'
+    fetchError: 'Cannot load calendar.'
   }
 };
