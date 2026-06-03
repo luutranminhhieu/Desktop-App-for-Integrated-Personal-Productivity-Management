@@ -90,6 +90,7 @@ interface TaskRowProps {
 	todo: TodoItem;
 	onToggle: (todo: TodoItem) => void;
 	onEdit: (todo: TodoItem) => void;
+	onDelete: (todo: TodoItem) => void;
 	onDragStart: (e: React.DragEvent, todo: TodoItem) => void;
 	onDragEnd: () => void;
 	onDragOver: (e: React.DragEvent, todo: TodoItem) => void;
@@ -102,6 +103,7 @@ const TaskRow = ({
 	todo,
 	onToggle,
 	onEdit,
+	onDelete,
 	onDragStart,
 	onDragEnd,
 	onDragOver,
@@ -140,13 +142,25 @@ const TaskRow = ({
 			<TaskCheckbox status={todo.status} onClick={() => onToggle(todo)} />
 
 			<div className="flex-1 min-w-0">
-				<p
-					className={`text-sm leading-relaxed ${
-						isMuted ? 'text-[var(--color-muted)]' : 'text-[var(--color-text)]'
-					} ${isDone ? 'line-through' : ''}`}
-				>
-					{todo.title}
-				</p>
+				<div className="flex items-baseline gap-2 min-w-0">
+					<span
+						className={`text-sm font-medium leading-relaxed truncate shrink-0 max-w-[60%] ${
+							isMuted ? 'text-[var(--color-muted)]' : 'text-[var(--color-text)]'
+						} ${isDone ? 'line-through' : ''}`}
+					>
+						{todo.title}
+					</span>
+					{todo.description && (
+						<span
+							className={`text-xs truncate text-[var(--color-muted)] flex-grow flex-shrink min-w-0 ${
+								isMuted ? 'opacity-70' : ''
+							}`}
+							title={todo.description}
+						>
+							— {todo.description}
+						</span>
+					)}
+				</div>
 				<div className="flex items-center gap-4 mt-1 flex-wrap">
 					{/* Priority badge (only for active tasks) */}
 					{!isDone && !isCanceled && <PriorityBadge priority={todo.priority} />}
@@ -160,6 +174,7 @@ const TaskRow = ({
 							>
 								event
 							</span>
+
 							{formatExpired(todo.dueDate)}
 						</span>
 					)}
@@ -206,13 +221,29 @@ const TaskRow = ({
 				</div>
 			</div>
 
-			<button
-				className="task-actions opacity-0 text-[var(--color-muted)] hover:text-[var(--color-primary)] transition-opacity p-1"
-				onClick={() => onEdit(todo)}
-				type="button"
-			>
-				<span className="material-symbols-outlined">more_horiz</span>
-			</button>
+			<div className="flex items-center gap-1">
+				<button
+					className="task-actions opacity-0 text-[var(--color-muted)] hover:text-[var(--color-primary)] transition-opacity p-1 cursor-pointer"
+					onClick={(e) => {
+						e.stopPropagation();
+						onEdit(todo);
+					}}
+					type="button"
+				>
+					<span className="material-symbols-outlined">more_horiz</span>
+				</button>
+				<button
+					className="task-actions opacity-0 text-[var(--color-muted)] hover:text-[var(--color-error)] transition-opacity p-1 cursor-pointer"
+					onClick={(e) => {
+						e.stopPropagation();
+						onDelete(todo);
+					}}
+					type="button"
+					title="Xóa nhanh"
+				>
+					<span className="material-symbols-outlined" style={{ fontSize: '20px' }}>close</span>
+				</button>
+			</div>
 		</div>
 	);
 };
@@ -222,6 +253,7 @@ interface TaskGroupProps {
 	todos: TodoItem[];
 	onToggle: (todo: TodoItem) => void;
 	onEdit: (todo: TodoItem) => void;
+	onDelete: (todo: TodoItem) => void;
 	onDragStart: (e: React.DragEvent, todo: TodoItem) => void;
 	onDragEnd: () => void;
 	onDragOverTask: (e: React.DragEvent, todo: TodoItem) => void;
@@ -235,6 +267,7 @@ const TaskGroup = ({
 	todos,
 	onToggle,
 	onEdit,
+	onDelete,
 	onDragStart,
 	onDragEnd,
 	onDragOverTask,
@@ -262,6 +295,7 @@ const TaskGroup = ({
 						todo={todo}
 						onToggle={onToggle}
 						onEdit={onEdit}
+						onDelete={onDelete}
 						onDragStart={onDragStart}
 						onDragEnd={onDragEnd}
 						onDragOver={onDragOverTask}
@@ -328,15 +362,15 @@ const TodoList = (): React.JSX.Element => {
 	const filteredTodos = useMemo(() => {
 		return todos.filter((todo) => {
 			const isOverdue =
-				todo.status === 'pending' &&
+				todo.status === 'todo' &&
 				todo.dueDate &&
 				new Date(todo.dueDate) < new Date();
 
 			switch (activeFilter) {
 				case 'all':
 					return true;
-				case 'pending':
-					return todo.status === 'pending' && !isOverdue;
+				case 'todo':
+					return todo.status === 'todo' && !isOverdue;
 				case 'completed':
 					return todo.status === 'completed';
 				case 'canceled':
@@ -511,10 +545,21 @@ const TodoList = (): React.JSX.Element => {
 		await reloadData();
 	};
 
+	const handleQuickDelete = async (todo: TodoItem): Promise<void> => {
+		if (!userId) return;
+
+		const response = await window.api.todo.delete(todo._id, userId);
+		if (!response.success) {
+			setError(response.error || TODO_CONFIG.STRINGS.deleteError);
+			return;
+		}
+		await reloadData();
+	};
+
 	const handleToggleStatus = async (todo: TodoItem): Promise<void> => {
 		if (!userId) return;
 		const newStatus: TodoStatus =
-			todo.status === 'completed' ? 'pending' : 'completed';
+			todo.status === 'completed' ? 'todo' : 'completed';
 		const updates: Record<string, unknown> = { status: newStatus };
 		if (newStatus === 'completed') {
 			updates.completedAt = new Date().toISOString();
@@ -676,7 +721,7 @@ const TodoList = (): React.JSX.Element => {
 							<span>
 								{activeFilter === 'all'
 									? TODO_CONFIG.STRINGS.allStatuses
-									: activeFilter === 'pending'
+									: activeFilter === 'todo'
 									? TODO_CONFIG.STRINGS.todo
 									: activeFilter === 'canceled'
 									? TODO_CONFIG.STRINGS.cancel
@@ -714,17 +759,19 @@ const TodoList = (): React.JSX.Element => {
 					</div>
 				</div>
 
-				<div className="flex items-center gap-3 animate-fade-in">
-					{/* Create Task Button */}
-					<button
-						className="h-10 px-5 bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] transition-colors rounded-md text-sm font-semibold flex items-center gap-2 shadow-sm"
-						onClick={openCreateModal}
-						type="button"
-					>
-						<span className="material-symbols-outlined text-[18px]">add</span>
-						{TODO_CONFIG.STRINGS.createNewTask}
-					</button>
-				</div>
+				{(activeFilter === 'all' || activeFilter === 'todo') && (
+					<div className="flex items-center gap-3 animate-fade-in">
+						{/* Create Task Button */}
+						<button
+							className="h-10 px-5 bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-hover)] transition-colors rounded-md text-sm font-semibold flex items-center gap-2 shadow-sm"
+							onClick={openCreateModal}
+							type="button"
+						>
+							<span className="material-symbols-outlined text-[18px]">add</span>
+							{TODO_CONFIG.STRINGS.createNewTask}
+						</button>
+					</div>
+				)}
 			</div>
 
 			{/* ═══ Main Content Panel ═══ */}
@@ -755,6 +802,7 @@ const TodoList = (): React.JSX.Element => {
 							todos={filteredTodos}
 							onToggle={handleToggleStatus}
 							onEdit={openEditModal}
+							onDelete={handleQuickDelete}
 							onDragStart={handleDragStart}
 							onDragEnd={handleDragEnd}
 							onDragOverTask={handleDragOverTask}

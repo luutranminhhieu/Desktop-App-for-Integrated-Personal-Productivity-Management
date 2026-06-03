@@ -1,6 +1,6 @@
 /* ── Status & Priority enums (mirroring preload/index.d.ts) ── */
-export type TodoStatus = 'pending' | 'completed' | 'canceled';
-export type TodoPriority = 'low' | 'medium' | 'high' | 'urgent';
+export type TodoStatus = 'todo' | 'completed' | 'canceled';
+export type TodoPriority = 'low' | 'medium' | 'high';
 
 /* ── TodoItem shape returned by API ── */
 export interface TodoItem {
@@ -26,9 +26,8 @@ export interface TodoItem {
 export interface TaskStats {
 	total: number;
 	completed: number;
-	pending: number;
+	todo: number;
 	overdue: number;
-	urgent: number;
 	canceled: number;
 	tasksThisMonth: number;
 }
@@ -61,4 +60,4 @@ export type TodoModalMode = 'create' | 'edit';
 export type TabKey = 'daily' | 'monthly' | 'yearly';
 
 /* ── Status filter key used in the sidebar ── */
-export type StatusFilterKey = 'all' | 'pending' | 'completed' | 'canceled';
+export type StatusFilterKey = 'all' | 'todo' | 'completed' | 'canceled';

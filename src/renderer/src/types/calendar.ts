@@ -27,7 +27,7 @@ export type CalendarModalMode = 'create' | 'edit';
 export type UnscheduledTask = {
   _id: string;
   title: string;
-  priority?: 'low' | 'medium' | 'high' | 'urgent';
+  priority?: 'low' | 'medium' | 'high';
   project?: string;
   dueDate?: string;
 };

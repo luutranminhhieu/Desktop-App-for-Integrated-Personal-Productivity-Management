@@ -15,9 +15,8 @@ type ListTodoOptions = {
 export type TaskStats = {
 	total: number;
 	completed: number;
-	pending: number;
+	todo: number;
 	overdue: number;
-	urgent: number;
 	canceled: number;
 	tasksThisMonth: number;
 };
@@ -129,26 +128,16 @@ export class TodoService {
 		return todos as unknown as ITodo[];
 	}
 
-	public async getUrgentTasks(userId: string): Promise<ITodo[]> {
-		const todos = await Todo.find({
-			userId: new mongoose.Types.ObjectId(userId),
-			priority: { $in: ['urgent', 'high'] },
-			status: { $nin: ['completed', 'canceled'] }
-		}).sort({ dueDate: 1 }).lean();
-		return todos as unknown as ITodo[];
-	}
-
 	public async getTaskStats(userId: string): Promise<TaskStats> {
 		const uid = new mongoose.Types.ObjectId(userId);
 		const now = new Date();
 		const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 		const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
 
-		const [total, completed, pending, urgent, overdue, canceled, tasksThisMonth] = await Promise.all([
+		const [total, completed, todoCount, overdue, canceled, tasksThisMonth] = await Promise.all([
 			Todo.countDocuments({ userId: uid }),
 			Todo.countDocuments({ userId: uid, status: 'completed' }),
-			Todo.countDocuments({ userId: uid, status: 'pending' }),
-			Todo.countDocuments({ userId: uid, priority: { $in: ['urgent', 'high'] } }),
+			Todo.countDocuments({ userId: uid, status: 'todo' }),
 			Todo.countDocuments({
 				userId: uid,
 				status: { $nin: ['completed', 'canceled'] },
@@ -158,7 +147,7 @@ export class TodoService {
 			Todo.countDocuments({ userId: uid, createdAt: { $gte: monthStart, $lte: monthEnd } })
 		]);
 
-		return { total, completed, pending, overdue, urgent, canceled, tasksThisMonth };
+		return { total, completed, todo: todoCount, overdue, canceled, tasksThisMonth };
 	}
 
 	public async getFocusTime(userId: string, days = 7): Promise<FocusTime[]> {

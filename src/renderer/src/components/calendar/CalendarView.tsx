@@ -3,8 +3,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import viLocale from '@fullcalendar/core/locales/vi';
-
+import { CALENDAR_CONFIG } from '@renderer/config/calendarConfig';
 import type { CalendarViewType } from '@renderer/types';
 
 export type CalendarViewProps = {
@@ -39,7 +38,10 @@ const CalendarView = ({
         initialView={view}
         headerToolbar={false}
         height="100%"
-        locale={viLocale}
+        locale="en"
+        firstDay={1}
+        allDayText={CALENDAR_CONFIG.STRINGS.allDayText}
+        dayHeaderFormat={{ weekday: 'short' }}
         slotDuration="01:00:00"
         slotLabelInterval="01:00"
         editable={false}

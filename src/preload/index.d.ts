@@ -17,8 +17,8 @@ export interface TokenPayload {
   exp?: number;
 }
 
-export type TodoStatus = 'pending' | 'completed' | 'canceled';
-export type TodoPriority = 'low' | 'medium' | 'high' | 'urgent';
+export type TodoStatus = 'todo' | 'completed' | 'canceled';
+export type TodoPriority = 'low' | 'medium' | 'high';
 
 export interface TodoItem {
   _id: string;
@@ -42,9 +42,8 @@ export interface TodoItem {
 export interface TaskStats {
   total: number;
   completed: number;
-  pending: number;
+  todo: number;
   overdue: number;
-  urgent: number;
   canceled: number;
   tasksThisMonth: number;
 }
@@ -93,7 +92,6 @@ export interface TimelineEvent {
 export interface DashboardStats {
   taskStats: TaskStats;
   focusTime: FocusTime[];
-  urgentTasks: TodoItem[];
   todayTasks: TodoItem[];
   weeklyFocusHours: number;
   activity: HeatmapData;

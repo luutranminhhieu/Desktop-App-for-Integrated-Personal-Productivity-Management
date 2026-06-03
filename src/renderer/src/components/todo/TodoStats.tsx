@@ -25,8 +25,8 @@ const TodoStats: React.FC<TodoStatsProps> = ({ stats }) => {
         </div>
         
         <div className="text-center p-4 bg-[var(--color-warning-light)] rounded-lg">
-          <p className="text-xs text-[var(--color-warning-text)] mb-1">{TODO_CONFIG.STRINGS.statsPending}</p>
-          <p className="text-2xl font-bold text-[var(--color-warning)]">{stats.pending}</p>
+          <p className="text-xs text-[var(--color-warning-text)] mb-1">{TODO_CONFIG.STRINGS.statsTodo}</p>
+          <p className="text-2xl font-bold text-[var(--color-warning)]">{stats.todo}</p>
         </div>
         
         <div className="text-center p-4 bg-[var(--color-error-light)] rounded-lg">
@@ -50,11 +50,6 @@ const TodoStats: React.FC<TodoStatsProps> = ({ stats }) => {
         </div>
         
         <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[var(--color-border)]">
-          <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-[var(--color-error)]"></span>
-            <span className="text-[13px] text-[var(--color-muted)]">{TODO_CONFIG.STRINGS.statsUrgent(stats.urgent)}</span>
-          </div>
-          
           <div className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-[var(--color-muted)]"></span>
             <span className="text-[13px] text-[var(--color-muted)]">{TODO_CONFIG.STRINGS.statsCanceled(stats.canceled)}</span>

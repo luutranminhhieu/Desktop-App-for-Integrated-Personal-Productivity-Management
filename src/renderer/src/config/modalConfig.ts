@@ -1,11 +1,11 @@
 export const MODAL_CONFIG = {
   // Common strings shared across multiple system modals
   COMMON: {
-    cancel: 'Hủy',
-    save: 'Lưu',
-    delete: 'Xóa',
-    create: 'Tạo mới',
-    saveChanges: 'Lưu thay đổi',
+    cancel: 'Cancel',
+    save: 'Save',
+    delete: 'Delete',
+    create: 'Create',
+    saveChanges: 'Save Changes',
     close: 'close'
   },
 
@@ -14,14 +14,13 @@ export const MODAL_CONFIG = {
     title: 'Setting',
     tabProfile: 'Profile',
     tabSecurity: 'Security',
-    changeAvatar: 'Đổi ảnh',
-    labelFullName: 'Họ và Tên',
-    placeholderFullName: 'Nhập họ và tên',
-    deleteAccount: 'Xóa tài khoản',
-    changePassword: 'Đổi mật khẩu',
-    currentPassword: 'Mật khẩu hiện tại',
-    newPassword: 'Mật khẩu mới',
-    confirmNewPassword: 'Xác nhận mật khẩu mới',
-    updatePassword: 'Cập nhật mật khẩu'
+    labelFullName: 'Username',
+    placeholderFullName: 'Enter username',
+    deleteAccount: 'Delete Account',
+    changePassword: 'Change Password',
+    currentPassword: 'Current Password',
+    newPassword: 'New Password',
+    confirmNewPassword: 'Confirm New Password',
+    updatePassword: 'Update Password'
   }
 };
