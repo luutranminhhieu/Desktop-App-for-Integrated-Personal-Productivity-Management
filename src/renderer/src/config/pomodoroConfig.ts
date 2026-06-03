@@ -4,7 +4,18 @@ export const POMODORO_CONFIG = {
 
   // UI elements & Labels
   STRINGS: {
-    focusSessionsLabel: ''
+    settingsTitle: 'Setting',
+    sessionsPerDayTitle: 'Session',
+    sessionsPerDaySubtitle: 'Today',
+    workMinutesTitle: 'Work',
+    workMinutesSubtitle: 'Max (minutes)',
+    shortBreakMinutesTitle: 'Break',
+    shortBreakMinutesSubtitle: 'Max (minutes)',
+    modeLabels: {
+      work: 'Pomodoro',
+      short_break: 'Break',
+      sessions: 'Section'
+    }
   },
 
   // Dynamic formatting strings
