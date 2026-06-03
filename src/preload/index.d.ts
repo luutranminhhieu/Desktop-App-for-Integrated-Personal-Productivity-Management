@@ -66,8 +66,6 @@ export interface PomodoroSettings {
 export interface PomodoroStats {
   completedSessions: number;
   targetSessions: number;
-  totalWorkSeconds: number;
-  totalBreakSeconds: number;
 }
 
 export interface PomodoroState {

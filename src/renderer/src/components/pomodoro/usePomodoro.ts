@@ -15,9 +15,7 @@ const defaultSettings: PomodoroSettings = {
 
 const defaultStats: PomodoroStats = {
 	completedSessions: 0,
-	targetSessions: 12,
-	totalWorkSeconds: 0,
-	totalBreakSeconds: 0
+	targetSessions: 12
 };
 
 const defaultState: PomodoroState = {
