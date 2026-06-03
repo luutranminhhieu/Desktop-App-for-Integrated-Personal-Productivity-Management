@@ -26,8 +26,6 @@ export const CALENDAR_CONFIG = {
     taskDetailsHeader: 'Task Details',
     locationPrefix: 'Location: ',
     notesPrefix: 'Notes: ',
-    deselectButton: 'Deselect',
-    allDayText: 'All day',
     selectInstruction: 'Select a calendar event to view details.',
     todayButton: 'Today',
     unscheduledTasksHeader: 'Unscheduled Tasks',

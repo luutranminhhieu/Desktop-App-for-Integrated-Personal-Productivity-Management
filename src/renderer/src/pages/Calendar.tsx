@@ -161,11 +161,12 @@ const Calendar = (): React.JSX.Element => {
 									<p className="text-xs text-[var(--color-muted)] mt-2">{CALENDAR_CONFIG.STRINGS.notesPrefix}{selectedEvent.notes}</p>
 								)}
 								<button
-									className="mt-3 px-3 py-1 text-xs font-semibold text-[var(--color-muted)] hover:bg-[var(--color-primary-lighter)] rounded-md"
+									className="mt-3 px-2 py-0.5 text-xs font-semibold text-[var(--color-muted)] hover:bg-[var(--color-primary-lighter)] rounded-md flex items-center justify-center"
 									onClick={() => setSelectedEvent(null)}
 									type="button"
+									title="Deselect"
 								>
-									{CALENDAR_CONFIG.STRINGS.deselectButton}
+									<span className="material-symbols-outlined" style={{ fontSize: '16px' }}>remove</span>
 								</button>
 							</div>
 						) : (

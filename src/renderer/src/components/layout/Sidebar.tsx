@@ -22,11 +22,15 @@ export type SidebarState = {
 	collapsed: boolean;
 };
 
-const Sidebar = (): React.JSX.Element => {
+type SidebarProps = {
+	collapsed: boolean;
+	onToggle: () => void;
+};
+
+const Sidebar = ({ collapsed, onToggle }: SidebarProps): React.JSX.Element => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const currentKey = routeToKey(location.pathname);
-	const [collapsed, setCollapsed] = useState(false);
 
 	return (
 		<aside
@@ -73,7 +77,7 @@ const Sidebar = (): React.JSX.Element => {
 				<div className={`px-4 ${collapsed ? 'flex justify-center' : ''} mt-2`}>
 					<button
 						className="p-2 rounded-md hover:bg-[var(--color-primary-lighter)] text-[var(--color-muted)] hover:text-[var(--color-primary)] transition-colors"
-						onClick={() => setCollapsed((prev) => !prev)}
+						onClick={onToggle}
 						title={collapsed ? 'Mở rộng sidebar' : 'Thu gọn sidebar'}
 						type="button"
 					>
