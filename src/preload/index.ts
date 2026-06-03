@@ -9,7 +9,10 @@ const api = {
     googleSignIn: () => ipcRenderer.invoke('auth:googleSignIn'),
     requestPasswordReset: (email) => ipcRenderer.invoke('auth:requestPasswordReset', { email }),
     resendPasswordReset: (email) => ipcRenderer.invoke('auth:resendPasswordReset', { email }),
-    resetPassword: (token, newPassword) => ipcRenderer.invoke('auth:resetPassword', { token, newPassword })
+    resetPassword: (token, newPassword) => ipcRenderer.invoke('auth:resetPassword', { token, newPassword }),
+    updateUsername: (userId, name) => ipcRenderer.invoke('auth:updateUsername', { userId, name }),
+    changePassword: (userId, currentPassword, newPassword) =>
+      ipcRenderer.invoke('auth:changePassword', { userId, currentPassword, newPassword })
   },
   todo: {
     create: (payload) => ipcRenderer.invoke('todo:create', payload),

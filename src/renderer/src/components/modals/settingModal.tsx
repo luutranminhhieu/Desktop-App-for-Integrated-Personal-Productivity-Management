@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MODAL_CONFIG } from '@renderer/config/modalConfig';
 
 type UserInfo = {
@@ -13,11 +13,115 @@ type SettingsModalProps = {
 	onClose: () => void;
 	user: UserInfo | null;
 	initials: string;
+	onUserUpdate?: (updatedUser: UserInfo) => void;
 };
 
-const SettingsModal = ({ isOpen, onClose, user, initials }: SettingsModalProps): React.JSX.Element | null => {
+const SettingsModal = ({
+	isOpen,
+	onClose,
+	user,
+	initials,
+	onUserUpdate
+}: SettingsModalProps): React.JSX.Element | null => {
 	const [activeTab, setActiveTab] = useState<'profile' | 'security'>('profile');
 	const [displayName, setDisplayName] = useState(user?.name || '');
+
+	// Password and Security State
+	const [currentPassword, setCurrentPassword] = useState('');
+	const [newPassword, setNewPassword] = useState('');
+	const [confirmNewPassword, setConfirmNewPassword] = useState('');
+
+	// UI Feedback State
+	const [loadingProfile, setLoadingProfile] = useState(false);
+	const [loadingPassword, setLoadingPassword] = useState(false);
+	const [errorMsg, setErrorMsg] = useState<string | null>(null);
+	const [successMsg, setSuccessMsg] = useState<string | null>(null);
+
+	// Reset state when modal is opened or active tab changes
+	useEffect(() => {
+		if (isOpen) {
+			setDisplayName(user?.name || '');
+			setCurrentPassword('');
+			setNewPassword('');
+			setConfirmNewPassword('');
+			setErrorMsg(null);
+			setSuccessMsg(null);
+		}
+	}, [isOpen, user, activeTab]);
+
+	const handleSaveProfile = async (): Promise<void> => {
+		if (!user) return;
+		if (!displayName.trim()) {
+			setErrorMsg('Username cannot be empty.');
+			setSuccessMsg(null);
+			return;
+		}
+
+		setLoadingProfile(true);
+		setErrorMsg(null);
+		setSuccessMsg(null);
+
+		try {
+			const res = await window.api.auth.updateUsername(user.id, displayName.trim());
+			if (res.success && res.data) {
+				setSuccessMsg('Username updated successfully!');
+				if (onUserUpdate) {
+					onUserUpdate(res.data);
+				}
+			} else {
+				setErrorMsg(res.error || 'Failed to update username.');
+			}
+		} catch (err) {
+			setErrorMsg((err as Error).message || 'An error occurred.');
+		} finally {
+			setLoadingProfile(false);
+		}
+	};
+
+	const handleUpdatePassword = async (): Promise<void> => {
+		if (!user) return;
+
+		// Validation
+		if (!newPassword) {
+			setErrorMsg('New password is required.');
+			setSuccessMsg(null);
+			return;
+		}
+		if (newPassword.length < 6) {
+			setErrorMsg('New password must be at least 6 characters.');
+			setSuccessMsg(null);
+			return;
+		}
+		if (newPassword !== confirmNewPassword) {
+			setErrorMsg('New passwords do not match.');
+			setSuccessMsg(null);
+			return;
+		}
+
+		setLoadingPassword(true);
+		setErrorMsg(null);
+		setSuccessMsg(null);
+
+		try {
+			const res = await window.api.auth.changePassword(
+				user.id,
+				currentPassword || undefined,
+				newPassword
+			);
+			if (res.success) {
+				setSuccessMsg('Password updated successfully!');
+				setCurrentPassword('');
+				setNewPassword('');
+				setConfirmNewPassword('');
+			} else {
+				setErrorMsg(res.error || 'Failed to update password.');
+			}
+		} catch (err) {
+			setErrorMsg((err as Error).message || 'An error occurred.');
+		} finally {
+			setLoadingPassword(false);
+		}
+	};
 
 	const avatarContent = user?.avatarUrl ? (
 		<img
@@ -44,6 +148,7 @@ const SettingsModal = ({ isOpen, onClose, user, initials }: SettingsModalProps):
 				className="bg-[var(--color-bg)] w-full max-w-[600px] h-[480px] rounded-lg shadow-soft flex flex-col overflow-hidden"
 				onClick={(event) => event.stopPropagation()}
 			>
+				{/* Modal Header */}
 				<div className="px-6 py-4 border-b border-[var(--color-border)] flex items-center justify-between">
 					<div className="flex items-center gap-2">
 						<span className="material-symbols-outlined text-[var(--color-primary)]">settings</span>
@@ -59,6 +164,7 @@ const SettingsModal = ({ isOpen, onClose, user, initials }: SettingsModalProps):
 				</div>
 
 				<div className="flex-1 flex overflow-hidden">
+					{/* Modal Sidebar */}
 					<div className="w-40 border-r border-[var(--color-border)] bg-[var(--color-bg)] p-4 space-y-2 shrink-0">
 						<button
 							className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all ${
@@ -96,15 +202,26 @@ const SettingsModal = ({ isOpen, onClose, user, initials }: SettingsModalProps):
 						</button>
 					</div>
 
+					{/* Modal Tab Content */}
 					<div className="flex-1 p-5 overflow-y-auto no-scrollbar">
+						{/* Alerts */}
+						{errorMsg && (
+							<div className="mb-4 flex items-center gap-2 rounded-md bg-[var(--color-error-light)] border border-[var(--color-error-border)] p-3 text-xs text-[var(--color-error)] font-medium transition-all">
+								<span className="material-symbols-outlined text-base">error</span>
+								<span>{errorMsg}</span>
+							</div>
+						)}
+						{successMsg && (
+							<div className="mb-4 flex items-center gap-2 rounded-md bg-[var(--color-success-light)] border border-[var(--color-success-border)] p-3 text-xs text-[var(--color-success)] font-medium transition-all">
+								<span className="material-symbols-outlined text-base">check_circle</span>
+								<span>{successMsg}</span>
+							</div>
+						)}
+
 						{activeTab === 'profile' && (
 							<section className="space-y-6">
 								<div className="flex flex-col items-center gap-3">
-									<div className="relative group">
-										{avatarContent}
-										<div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-										</div>
-									</div>
+									{avatarContent}
 								</div>
 
 								<div className="space-y-4">
@@ -119,12 +236,19 @@ const SettingsModal = ({ isOpen, onClose, user, initials }: SettingsModalProps):
 												onChange={(event) => setDisplayName(event.target.value)}
 												placeholder={MODAL_CONFIG.SETTINGS_MODAL.placeholderFullName}
 												type="text"
+												disabled={loadingProfile}
 											/>
 											<button
-												className="px-6 h-11 bg-[var(--color-primary)] text-white rounded-md text-sm font-medium hover:bg-[var(--color-primary-hover)] transition-all"
+												className="px-6 h-11 bg-[var(--color-primary)] text-white rounded-md text-sm font-medium hover:bg-[var(--color-primary-hover)] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center min-w-[80px]"
 												type="button"
+												onClick={handleSaveProfile}
+												disabled={loadingProfile}
 											>
-												{MODAL_CONFIG.COMMON.save}
+												{loadingProfile ? (
+													<span className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin"></span>
+												) : (
+													MODAL_CONFIG.COMMON.save
+												)}
 											</button>
 										</div>
 									</div>
@@ -144,6 +268,9 @@ const SettingsModal = ({ isOpen, onClose, user, initials }: SettingsModalProps):
 											<input
 												className="w-full h-11 border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] rounded-md px-4 focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary)]/10 outline-none transition-all"
 												type="password"
+												value={currentPassword}
+												onChange={(e) => setCurrentPassword(e.target.value)}
+												disabled={loadingPassword}
 											/>
 										</div>
 										<div>
@@ -153,6 +280,9 @@ const SettingsModal = ({ isOpen, onClose, user, initials }: SettingsModalProps):
 											<input
 												className="w-full h-11 border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] rounded-md px-4 focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary)]/10 outline-none transition-all"
 												type="password"
+												value={newPassword}
+												onChange={(e) => setNewPassword(e.target.value)}
+												disabled={loadingPassword}
 											/>
 										</div>
 										<div>
@@ -162,24 +292,23 @@ const SettingsModal = ({ isOpen, onClose, user, initials }: SettingsModalProps):
 											<input
 												className="w-full h-11 border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] rounded-md px-4 focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary)]/10 outline-none transition-all"
 												type="password"
+												value={confirmNewPassword}
+												onChange={(e) => setConfirmNewPassword(e.target.value)}
+												disabled={loadingPassword}
 											/>
 										</div>
 										<div className="pt-2">
 											<button
-												className="bg-[var(--color-primary)]  text-white text-sm font-medium px-6 py-3 rounded-md hover:bg-[var(--color-primary-hover)] active:scale-95 transition-all shadow-sm"
+												className="bg-[var(--color-primary)] text-white text-sm font-medium px-6 py-3 rounded-md hover:bg-[var(--color-primary-hover)] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm flex items-center justify-center min-w-[150px]"
 												type="button"
+												onClick={handleUpdatePassword}
+												disabled={loadingPassword}
 											>
-												{MODAL_CONFIG.SETTINGS_MODAL.updatePassword}
-											</button>
-										</div>
-										
-										<div className="pt-2 space-y-3">
-											<button
-												className="w-full h-11 flex items-center justify-center gap-2 border border-[var(--color-error)] text-[var(--color-error)] rounded-md text-sm font-medium hover:bg-[var(--color-error)] hover:text-white transition-all"
-												type="button"
-											>
-												<span className="material-symbols-outlined text-xl">delete_forever</span>
-												{MODAL_CONFIG.SETTINGS_MODAL.deleteAccount}
+												{loadingPassword ? (
+													<span className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin"></span>
+												) : (
+													MODAL_CONFIG.SETTINGS_MODAL.updatePassword
+												)}
 											</button>
 										</div>
 									</div>

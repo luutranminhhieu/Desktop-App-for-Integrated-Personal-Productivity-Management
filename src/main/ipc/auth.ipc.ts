@@ -72,4 +72,24 @@ export function registerAuthIPC(): void {
       return { success: false, error: (error as Error).message };
     }
   });
+
+  ipcMain.handle('auth:updateUsername', async (_, { userId, name }) => {
+    try {
+      const result = await authService.updateUsername(userId, name);
+      return { success: true, data: result };
+    } catch (error) {
+      logger.error('Error in auth:updateUsername', error);
+      return { success: false, error: (error as Error).message };
+    }
+  });
+
+  ipcMain.handle('auth:changePassword', async (_, { userId, currentPassword, newPassword }) => {
+    try {
+      await authService.changePassword(userId, currentPassword, newPassword);
+      return { success: true };
+    } catch (error) {
+      logger.error('Error in auth:changePassword', error);
+      return { success: false, error: (error as Error).message };
+    }
+  });
 }
