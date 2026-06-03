@@ -1,6 +1,6 @@
 export const POMODORO_CONFIG = {
   // Locale
-  LOCALE: 'vi-VN',
+  LOCALE: 'en-US',
 
   // UI elements & Labels
   STRINGS: {

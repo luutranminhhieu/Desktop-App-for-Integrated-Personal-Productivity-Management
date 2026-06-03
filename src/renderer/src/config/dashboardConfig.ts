@@ -1,5 +1,5 @@
 //Locale settings
-export const DASHBOARD_LOCALE = 'vi-VN';
+export const DASHBOARD_LOCALE = 'en-US';
 
 export const TASK_DONUT_CONFIG = {
   RADIUS: 70,
