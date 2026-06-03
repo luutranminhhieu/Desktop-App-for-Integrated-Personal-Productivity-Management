@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import type { DashboardData } from '@renderer/types';
-import FocusDayCard from '@renderer/components/dashboard/FocusDayCard';
 import TaskStatus from '@renderer/components/dashboard/TaskStatus';
 import Heatmap from '@renderer/components/dashboard/Heatmap';
 import {
@@ -11,7 +10,6 @@ const Dashboard = (): React.JSX.Element => {
   const storedToken = localStorage.getItem('token') || sessionStorage.getItem('token');
   const [loading, setLoading] = useState(() => Boolean(storedToken));
   const [error, setError] = useState(() => (storedToken ? '' : DASHBOARD_STRINGS.authError));
-  const [focusRange] = useState<'week' | 'month' | 'year'>('week');
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -43,7 +41,7 @@ const Dashboard = (): React.JSX.Element => {
     const loadDashboard = async (): Promise<void> => {
       setLoading(true);
       try {
-        const response = await window.api.dashboard.getStats(userId, focusRange);
+        const response = await window.api.dashboard.getStats(userId);
         if (response.success && response.data) {
           setData(response.data as DashboardData);
           setError('');
@@ -58,12 +56,9 @@ const Dashboard = (): React.JSX.Element => {
     };
 
     void loadDashboard();
-  }, [userId, focusRange]);
+  }, [userId]);
 
-  /* ── Derived values ── */
-  const todayFocusMinutes = data?.focusTime?.length
-    ? data.focusTime[data.focusTime.length - 1].minutes
-    : 0;
+
 
   /* ── Guard states ── */
   if (loading) {
@@ -80,10 +75,8 @@ const Dashboard = (): React.JSX.Element => {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* ── Row 1: Focus‑Day Card + Task‑Status Donut ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <FocusDayCard todayFocusMinutes={todayFocusMinutes} />
-
+      {/* ── Row 1: Task‑Status Donut ── */}
+      <div className="w-full">
         <TaskStatus taskStats={data.taskStats} />
       </div>
 

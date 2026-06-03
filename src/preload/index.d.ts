@@ -49,10 +49,6 @@ export interface TaskStats {
 }
 
 
-export interface FocusTime {
-  date: string;
-  minutes: number;
-}
 
 export interface HeatmapData {
   startDate: string;
@@ -91,13 +87,10 @@ export interface TimelineEvent {
 
 export interface DashboardStats {
   taskStats: TaskStats;
-  focusTime: FocusTime[];
   todayTasks: TodoItem[];
-  weeklyFocusHours: number;
   activity: HeatmapData;
   timelineEvents: TimelineEvent[];
   notifications: number;
-  yearFocusHours: number;
 }
 
 export interface CalendarEvent {
