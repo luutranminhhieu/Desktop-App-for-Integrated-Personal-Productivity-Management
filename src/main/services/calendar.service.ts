@@ -30,7 +30,7 @@ function statusToColor(status: TodoStatus, dueDate?: Date): string {
   }
 
   const colors: Record<TodoStatus, string> = {
-    pending: EventStatusColor.todo,
+    todo: EventStatusColor.todo,
     completed: EventStatusColor.done,
     canceled: EventStatusColor.canceled
   };

@@ -103,15 +103,8 @@ const SettingsModal = ({ isOpen, onClose, user, initials }: SettingsModalProps):
 									<div className="relative group">
 										{avatarContent}
 										<div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-											<span className="text-[10px] uppercase tracking-wider text-white font-bold">{MODAL_CONFIG.SETTINGS_MODAL.changeAvatar}</span>
 										</div>
 									</div>
-									<button
-										className="rounded-full border border-[var(--color-border)] px-4 py-1 text-xs text-[var(--color-primary)] font-medium hover:bg-[var(--color-primary-light)] transition-colors"
-										type="button"
-									>
-										{MODAL_CONFIG.COMMON.save}
-									</button>
 								</div>
 
 								<div className="space-y-4">

@@ -34,7 +34,6 @@ export type HeatmapProps = {
 export type DashboardData = {
   taskStats: TaskStats;
   focusTime: FocusTime[];
-  urgentTasks: TodoItem[];
   todayTasks: TodoItem[];
   weeklyFocusHours: number;
   activity: { startDate: string; values: number[] };

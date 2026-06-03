@@ -6,15 +6,14 @@ export const TODO_CONFIG = {
 
   // Status Filter options used in TodoList Page
   FILTER_OPTIONS: [
-    { key: 'all' as const, label: 'Tất cả', icon: 'all_inbox' },
-    { key: 'pending' as const, label: 'To-do', icon: 'schedule' },
+    { key: 'all' as const, label: 'All', icon: 'all_inbox' },
+    { key: 'todo' as const, label: 'To-do', icon: 'schedule' },
     { key: 'canceled' as const, label: 'Cancel', icon: 'cancel' },
     { key: 'completed' as const, label: 'Done', icon: 'check_circle' }
   ] as { key: 'all' | TodoStatus; label: string; icon: string }[],
 
   // Styles & labels for Priority Badge
   PRIORITY_BADGES: {
-    urgent: { bg: 'var(--color-error-light)', text: '#DC2626', label: 'URGENT' },
     high: { bg: 'var(--color-error-light)', text: '#EF4444', label: 'HIGH' },
     medium: { bg: 'var(--color-primary-light)', text: '#3B82F6', label: 'MEDIUM' },
     low: { bg: 'var(--color-surface)', text: '#6B7280', label: 'LOW' }
@@ -24,102 +23,96 @@ export const TODO_CONFIG = {
   PRIORITY_COLORS: {
     low: '#6B7280',
     medium: '#3B82F6',
-    high: '#EF4444',
-    urgent: '#DC2626'
+    high: '#EF4444'
   } as Record<TodoPriority, string>,
 
   // Status Tailwind colors for badge UI
   STATUS_COLORS: {
-    pending: 'bg-[var(--color-warning)]/10 text-[var(--color-warning)]',
+    todo: 'bg-[var(--color-warning)]/10 text-[var(--color-warning)]',
     completed: 'bg-[var(--color-success)]/10 text-[var(--color-success)]',
     canceled: 'bg-[var(--color-muted)]/10 text-[var(--color-muted)]'
   } as Record<TodoStatus, string>,
 
   // Status Vietnamese Labels
   STATUS_LABELS: {
-    pending: 'CHỜ',
-    completed: 'XONG',
-    canceled: 'HỦY'
+    todo: 'TO-DO',
+    completed: 'DONE',
+    canceled: 'CANCEL'
   } as Record<TodoStatus, string>,
 
   // Filter component configurations
   FILTER: {
     statusOptions: [
-      { value: 'pending' as const, label: 'Chờ' },
-      { value: 'completed' as const, label: 'Xong' },
-      { value: 'canceled' as const, label: 'Hủy' }
+      { value: 'todo' as const, label: 'To-do' },
+      { value: 'completed' as const, label: 'Done' },
+      { value: 'canceled' as const, label: 'Cancel' }
     ] as { value: TodoStatus; label: string }[],
 
     priorityOptions: [
-      { value: 'low' as const, label: 'Thấp' },
-      { value: 'medium' as const, label: 'Trung bình' },
-      { value: 'high' as const, label: 'Cao' },
-      { value: 'urgent' as const, label: 'Khẩn cấp' }
+      { value: 'low' as const, label: 'Low' },
+      { value: 'medium' as const, label: 'Medium' },
+      { value: 'high' as const, label: 'High' }
     ] as { value: TodoPriority; label: string }[]
   },
 
   // Text values used across UI
   STRINGS: {
-    title: 'Danh sách công việc',
-    createNewTask: 'Tạo task mới',
+    title: 'To-do List',
+    createNewTask: 'Create new tasks',
     skipped: 'Skipped',
     tasksCount: 'tasks',
-    noTasksInGroup: 'Không có task nào trong nhóm này',
-    noTasks: 'Không có task nào',
-    tryChangingFilters: 'Thử thay đổi bộ lọc để thấy kết quả khác',
-    startByCreatingNew: 'Bắt đầu bằng việc tạo task mới',
-    edit: 'Chỉnh sửa',
-    delete: 'Xóa',
-    overdueBadge: ' (QUÁ HẠN)',
+    noTasksInGroup: 'No tasks in this group',
+    noTasks: 'No tasks',
+    tryChangingFilters: 'Try changing the filter to see other results',
+    startByCreatingNew: 'Start by creating new tasks',
+    edit: 'Edit',
+    delete: 'Delete',
+    overdueBadge: ' (OVERDUE)',
     
     // Date popover
-    dateRange: 'Khoảng ngày',
-    selectDateRange: 'Chọn khoảng ngày',
-    fromDate: 'Từ ngày',
-    toDate: 'Đến ngày',
-    clear: 'Xóa',
-    apply: 'Áp dụng',
+    dateRange: 'Date Range',
+    selectDateRange: 'Select Date Range',
+    fromDate: 'From Date',
+    toDate: 'To Date',
+    clear: 'Clear',
+    apply: 'Apply',
     
     // Status popover
-    allStatuses: 'Tất cả trạng thái',
+    allStatuses: 'All Status',
     todo: 'To-do',
     cancel: 'Cancel',
     done: 'Done',
-
-    // Confirmation & Messages
-    deleteConfirm: 'Bạn có chắc chắn muốn xóa task này?',
     
     // API/Guard errors
-    fetchError: 'Không thể tải danh sách task.',
-    userRequiredError: 'Thiếu thông tin người dùng.',
-    createError: 'Không thể tạo task.',
-    updateError: 'Không thể cập nhật task.',
-    deleteError: 'Không thể xóa task.',
-    updateStatusError: 'Không thể cập nhật trạng thái.',
+    fetchError: 'Cannot load task list.',
+    userRequiredError: 'User information is missing.',
+    createError: 'Cannot create task.',
+    updateError: 'Cannot update task.',
+    deleteError: 'Cannot delete task.',
+    updateStatusError: 'Cannot update status.',
 
     // TodoFilter strings
-    filterTitle: 'Bộ lọc & Tìm kiếm',
-    displayLabel: (filtered: number, total: number): string => `Hiển thị: ${filtered}/${total} công việc`,
-    clearFilters: 'Xóa bộ lọc',
-    searchPlaceholder: 'Tìm kiếm theo tiêu đề, mô tả, dự án...',
-    statusSelectLabel: 'Trạng thái',
-    prioritySelectLabel: 'Mức độ ưu tiên',
-    deadlineRangeLabel: 'Khoảng hạn chót',
-    allOption: 'Tất cả',
-    fromLabel: 'Từ',
-    toLabel: 'Đến',
+    filterTitle: 'Filter & Search',
+    displayLabel: (filtered: number, total: number): string => `Display: ${filtered}/${total} tasks`,
+    clearFilters: 'Clear filters',
+    searchPlaceholder: 'Search by title, description, project...',
+    statusSelectLabel: 'Status',
+    prioritySelectLabel: 'Priority',
+    deadlineRangeLabel: 'Deadline Range',
+    allOption: 'All',
+    fromLabel: 'From',
+    toLabel: 'To',
 
     // TodoStats strings
-    statsTitle: 'Thống kê công việc',
-    statsTotal: 'Tổng công việc',
-    statsCompleted: 'Hoàn thành',
-    statsPending: 'Đang làm',
-    statsOverdue: 'Quá hạn',
-    completionRateLabel: 'Tỷ lệ hoàn thành',
-    statsUrgent: (count: number): string => `Khẩn cấp: ${count}`,
-    statsCanceled: (count: number): string => `Hủy: ${count}`,
-    statsThisMonth: (count: number): string => `Tháng này: ${count}`,
-    statsRemaining: (count: number): string => `Còn lại: ${count}`,
+    statsTitle: 'Task Statistics',
+    statsTotal: 'Total Tasks',
+    statsCompleted: 'Completed',
+    statsTodo: 'To-do',
+    statsOverdue: 'Overdue',
+    completionRateLabel: 'Completion Rate',
+    statsCanceled: (count: number): string => `Canceled: ${count}`,
+    statsThisMonth: (count: number): string => `This Month: ${count}`,
+    statsRemaining: (count: number): string => `Remaining: ${count}`,
   },
 
   // Dynamic formatting strings
@@ -132,21 +125,21 @@ export const TODO_CONFIG = {
 
   // Todo Modal Form Configuration
   TODO_MODAL: {
-    titleCreate: 'Tạo task mới',
-    titleEdit: 'Chỉnh sửa task',
-    labelTitle: 'Tiêu đề',
-    placeholderTitle: 'Nhập tiêu đề công việc',
-    labelDescription: 'Mô tả',
-    placeholderDescription: 'Mô tả chi tiết (tùy chọn)',
-    labelPriority: 'Mức độ ưu tiên',
-    labelStart: 'Thời điểm bắt đầu',
-    labelEnd: 'Thời điểm kết thúc',
+    titleCreate: 'Create new task',
+    titleEdit: 'Edit task',
+    labelTitle: 'Title',
+    placeholderTitle: 'Enter title',
+    labelDescription: 'Description',
+    placeholderDescription: 'Enter description',
+    labelPriority: 'Priority',
+    labelStart: 'Start Time',
+    labelEnd: 'End Time',
     
     priorities: [
       { value: 'low' as const, label: 'Low' },
       { value: 'medium' as const, label: 'Medium' },
       { value: 'high' as const, label: 'High' }
     ],
-    validationTitleRequired: 'Vui lòng nhập tiêu đề.'
+    validationTitleRequired: 'Title is required.'
   }
 };
