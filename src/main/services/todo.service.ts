@@ -21,10 +21,6 @@ export type TaskStats = {
 	tasksThisMonth: number;
 };
 
-export type FocusTime = {
-	date: string;
-	minutes: number;
-};
 
 export type HeatmapData = {
 	startDate: string;
@@ -150,58 +146,6 @@ export class TodoService {
 		return { total, completed, todo: todoCount, overdue, canceled, tasksThisMonth };
 	}
 
-	public async getFocusTime(userId: string, days = 7): Promise<FocusTime[]> {
-		const uid = new mongoose.Types.ObjectId(userId);
-		const now = new Date();
-		const startDate = startOfDay(new Date(now.getTime() - (days - 1) * 86400000));
-
-		const rows = await Todo.aggregate<{ _id: string; date: string; totalMinutes: number }>([
-			{ $match: { userId: uid, focusMinutes: { $gt: 0 } } },
-			{
-				$addFields: {
-					focusDay: { $ifNull: ['$focusDate', '$updatedAt'] }
-				}
-			},
-			{ $match: { focusDay: { $gte: startDate, $lte: endOfDay(now) } } },
-			{
-				$group: {
-					_id: { $dateToString: { format: '%Y-%m-%d', date: '$focusDay' } },
-					totalMinutes: { $sum: '$focusMinutes' }
-				}
-			}
-		]);
-
-		const totals = new Map(rows.map((row) => [row._id, row.totalMinutes]));
-		const result: FocusTime[] = [];
-		for (let offset = 0; offset < days; offset += 1) {
-			const day = new Date(startDate.getTime() + offset * 86400000);
-			const key = formatDateKey(day);
-			const minutes = totals.get(key) ?? 0;
-			result.push({ date: key, minutes });
-		}
-
-		return result;
-	}
-
-	public async getFocusHoursTotal(userId: string, days = 365): Promise<number> {
-		const uid = new mongoose.Types.ObjectId(userId);
-		const now = new Date();
-		const startDate = startOfDay(new Date(now.getTime() - (days - 1) * 86400000));
-
-		const rows = await Todo.aggregate<{ totalMinutes: number }>([
-			{ $match: { userId: uid, focusMinutes: { $gt: 0 } } },
-			{
-				$addFields: {
-					focusDay: { $ifNull: ['$focusDate', '$updatedAt'] }
-				}
-			},
-			{ $match: { focusDay: { $gte: startDate, $lte: endOfDay(now) } } },
-			{ $group: { _id: null, totalMinutes: { $sum: '$focusMinutes' } } }
-		]);
-
-		const totalMinutes = rows[0]?.totalMinutes ?? 0;
-		return Math.round((totalMinutes / 60) * 10) / 10;
-	}
 
 	public async getActivityHeatmap(userId: string, weeks = 12): Promise<HeatmapData> {
 		const totalDays = weeks * 7;

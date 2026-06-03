@@ -3,20 +3,6 @@ import { calendarService } from '../services/calendar.service';
 import { todoService } from '../services/todo.service';
 import { logger } from '../utils/logger';
 
-type FocusRange = 'week' | 'month' | 'year';
-
-const focusRangeToDays = (range?: FocusRange): number => {
-  switch (range) {
-    case 'month':
-      return 30;
-    case 'year':
-      return 365;
-    case 'week':
-    default:
-      return 7;
-  }
-};
-
 const formatTimeRange = (start: Date, end: Date): string => {
   const formatter = new Intl.DateTimeFormat('vi-VN', {
     hour: '2-digit',
@@ -26,28 +12,22 @@ const formatTimeRange = (start: Date, end: Date): string => {
 };
 
 export function registerDashboardIPC(): void {
-  ipcMain.handle('dashboard:getStats', async (_, { userId, focusRange }) => {
+  ipcMain.handle('dashboard:getStats', async (_, { userId }) => {
     try {
-      const focusDays = focusRangeToDays(focusRange as FocusRange);
       const today = new Date();
 
       const [
         taskStats,
-        focusTime,
         todayTasks,
         activity,
-        yearFocusHours,
         calendarEvents
       ] = await Promise.all([
         todoService.getTaskStats(userId),
-        todoService.getFocusTime(userId, focusDays),
         todoService.getTodayTasks(userId),
         todoService.getActivityHeatmap(userId, 12),
-        todoService.getFocusHoursTotal(userId, 365),
         calendarService.listEventsForDay(userId, today)
       ]);
 
-      const weeklyFocusHours = Math.round((focusTime.reduce((sum, day) => sum + day.minutes, 0) / 60) * 10) / 10;
       const notifications = taskStats.overdue;
 
       const timelineEvents = calendarEvents.map((event) => ({
@@ -60,11 +40,8 @@ export function registerDashboardIPC(): void {
         success: true,
         data: {
           taskStats,
-          focusTime,
           todayTasks,
-          weeklyFocusHours,
           activity,
-          yearFocusHours,
           timelineEvents,
           notifications
         }
