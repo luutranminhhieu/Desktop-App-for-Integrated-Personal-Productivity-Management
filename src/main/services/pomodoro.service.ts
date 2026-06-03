@@ -3,13 +3,12 @@ import { existsSync } from 'fs';
 import { readFile, writeFile } from 'fs/promises';
 import path from 'path';
 
-export type PomodoroMode = 'work' | 'short_break' | 'long_break';
+export type PomodoroMode = 'work' | 'short_break';
 
 export type PomodoroSettings = {
 	sessionsPerDay: number;
 	workMinutes: number;
 	shortBreakMinutes: number;
-	longBreakMinutes: number;
 };
 
 export type PomodoroSession = {
@@ -42,11 +41,8 @@ type PomodoroStore = {
 const DEFAULT_SETTINGS: PomodoroSettings = {
 	sessionsPerDay: 12,
 	workMinutes: 25,
-	shortBreakMinutes: 5,
-	longBreakMinutes: 15
+	shortBreakMinutes: 5
 };
-
-const LONG_BREAK_EVERY = 4;
 
 class PomodoroService {
 	private readonly storePath: string;
@@ -58,7 +54,6 @@ class PomodoroService {
 	private isRunning = false;
 	private interval: NodeJS.Timeout | null = null;
 	private currentSessionSeconds = this.totalSeconds;
-	private completedSinceLongBreak = 0;
 
 	constructor() {
 		this.storePath = path.join(app.getPath('userData'), 'pomodoro.json');
@@ -122,6 +117,18 @@ class PomodoroService {
 		return this.getState();
 	}
 
+	public resetStats(): PomodoroState {
+		this.pause();
+		this.history = [];
+		this.mode = 'work';
+		this.totalSeconds = this.durationForMode(this.mode);
+		this.remainingSeconds = this.totalSeconds;
+		this.currentSessionSeconds = this.totalSeconds;
+		void this.writeStore();
+		this.emitState();
+		return this.getState();
+	}
+
 	public skip(): PomodoroState {
 		this.pause();
 		this.advanceMode();
@@ -152,8 +159,9 @@ class PomodoroService {
 
 	private handleSessionEnd(): void {
 		this.pause();
+		const completedMode = this.mode;
 		const session: PomodoroSession = {
-			mode: this.mode,
+			mode: completedMode,
 			durationSeconds: this.currentSessionSeconds,
 			completedAt: new Date().toISOString()
 		};
@@ -161,18 +169,23 @@ class PomodoroService {
 		this.history = this.history.slice(0, 200);
 		void this.writeStore();
 		this.advanceMode();
-		this.notifySessionEnd(session.mode);
-		this.emitSessionEnded(session.mode);
+		this.notifySessionEnd(completedMode);
+		this.emitSessionEnded(completedMode);
+
+		// Auto transition logic
+		if (completedMode === 'work') {
+			this.start();
+		} else if (completedMode === 'short_break') {
+			const stats = this.buildStats();
+			if (stats.completedSessions < stats.targetSessions) {
+				this.start();
+			}
+		}
 	}
 
 	private advanceMode(): void {
 		if (this.mode === 'work') {
-			this.completedSinceLongBreak += 1;
-			const isLongBreak = this.completedSinceLongBreak % LONG_BREAK_EVERY === 0;
-			this.mode = isLongBreak ? 'long_break' : 'short_break';
-			if (isLongBreak) {
-				this.completedSinceLongBreak = 0;
-			}
+			this.mode = 'short_break';
 		} else {
 			this.mode = 'work';
 		}
@@ -184,9 +197,6 @@ class PomodoroService {
 	private durationForMode(mode: PomodoroMode): number {
 		if (mode === 'short_break') {
 			return this.settings.shortBreakMinutes * 60;
-		}
-		if (mode === 'long_break') {
-			return this.settings.longBreakMinutes * 60;
 		}
 		return this.settings.workMinutes * 60;
 	}
@@ -248,8 +258,7 @@ class PomodoroService {
 		return {
 			sessionsPerDay: Math.max(1, Math.floor(settings.sessionsPerDay)),
 			workMinutes: Math.max(1, Math.floor(settings.workMinutes)),
-			shortBreakMinutes: Math.max(1, Math.floor(settings.shortBreakMinutes)),
-			longBreakMinutes: Math.max(1, Math.floor(settings.longBreakMinutes))
+			shortBreakMinutes: Math.max(1, Math.floor(settings.shortBreakMinutes))
 		};
 	}
 
@@ -267,7 +276,6 @@ class PomodoroService {
 			this.totalSeconds = this.durationForMode(this.mode);
 			this.remainingSeconds = this.totalSeconds;
 			this.currentSessionSeconds = this.totalSeconds;
-			this.completedSinceLongBreak = this.countSessionsSinceLongBreak();
 		} catch {
 			this.settings = { ...DEFAULT_SETTINGS };
 			this.history = [];
@@ -275,22 +283,10 @@ class PomodoroService {
 			this.totalSeconds = this.durationForMode(this.mode);
 			this.remainingSeconds = this.totalSeconds;
 			this.currentSessionSeconds = this.totalSeconds;
-			this.completedSinceLongBreak = 0;
 		}
 	}
 
-	private countSessionsSinceLongBreak(): number {
-		let count = 0;
-		for (const session of this.history) {
-			if (session.mode === 'long_break') {
-				break;
-			}
-			if (session.mode === 'work') {
-				count += 1;
-			}
-		}
-		return count;
-	}
+
 
 	private async writeStore(): Promise<void> {
 		const payload: PomodoroStore = {

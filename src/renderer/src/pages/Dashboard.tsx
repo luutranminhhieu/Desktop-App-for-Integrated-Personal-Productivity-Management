@@ -4,7 +4,6 @@ import FocusDayCard from '@renderer/components/dashboard/FocusDayCard';
 import TaskStatus from '@renderer/components/dashboard/TaskStatus';
 import Heatmap from '@renderer/components/dashboard/Heatmap';
 import {
-  DEFAULT_FOCUS_GOAL,
   DASHBOARD_STRINGS
 } from '@renderer/config/dashboardConfig';
 const Dashboard = (): React.JSX.Element => {
@@ -62,10 +61,9 @@ const Dashboard = (): React.JSX.Element => {
   }, [userId, focusRange]);
 
   /* ── Derived values ── */
-  const todayFocusHours = data?.focusHours?.length
-    ? data.focusHours[data.focusHours.length - 1].hours
+  const todayFocusMinutes = data?.focusTime?.length
+    ? data.focusTime[data.focusTime.length - 1].minutes
     : 0;
-  const focusGoal = Number(localStorage.getItem('focusGoal')) || DEFAULT_FOCUS_GOAL;
 
   /* ── Guard states ── */
   if (loading) {
@@ -81,15 +79,10 @@ const Dashboard = (): React.JSX.Element => {
   }
 
   return (
-    <div>
+    <div className="flex flex-col gap-4">
       {/* ── Row 1: Focus‑Day Card + Task‑Status Donut ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
-        <FocusDayCard
-          todayFocusHours={todayFocusHours}
-          focusGoal={focusGoal}
-          pomodoroCompleted={data.pomodoroStats.completed}
-          pomodoroTarget={data.pomodoroStats.target}
-        />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <FocusDayCard todayFocusMinutes={todayFocusMinutes} />
 
         <TaskStatus taskStats={data.taskStats} />
       </div>

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import type { TodoItem, TodoFormData, TodoModalMode, TodoPriority } from '@renderer/types';
+import type { TodoItem, TodoFormData, TodoModalMode } from '@renderer/types';
+import { TODO_CONFIG } from '@renderer/config/todoConfig';
+import { MODAL_CONFIG } from '@renderer/config/modalConfig';
 
 export interface TodoFormProps {
 	open: boolean;
@@ -57,21 +59,15 @@ const TodoForm = ({
 		if (key === 'title') setError('');
 	};
 
-
-
 	const handleSubmit = (): void => {
 		if (!formData.title.trim()) {
-			setError('Vui lòng nhập tiêu đề.');
+			setError(TODO_CONFIG.TODO_MODAL.validationTitleRequired);
 			return;
 		}
 		onSubmit({ ...formData, title: formData.title.trim() });
 	};
 
-	const priorities: { value: TodoPriority; label: string }[] = [
-		{ value: 'low', label: 'Low' },
-		{ value: 'medium', label: 'Medium' },
-		{ value: 'high', label: 'High' },
-	];
+	const priorities = TODO_CONFIG.TODO_MODAL.priorities;
 
 	return (
 		<div className="fixed inset-0 z-[120] flex items-center justify-center bg-[var(--color-overlay)] p-6">
@@ -79,14 +75,14 @@ const TodoForm = ({
 				{/* Header */}
 				<div className="flex items-center justify-between mb-4">
 					<h2 className="text-lg font-semibold text-[var(--color-text)]">
-						{mode === 'create' ? 'Tạo task mới' : 'Chỉnh sửa task'}
+						{mode === 'create' ? TODO_CONFIG.TODO_MODAL.titleCreate : TODO_CONFIG.TODO_MODAL.titleEdit}
 					</h2>
 					<button
 						className="text-[var(--color-muted)] hover:text-[var(--color-text)] transition-colors"
 						onClick={onClose}
 						type="button"
 					>
-						<span className="material-symbols-outlined">close</span>
+						<span className="material-symbols-outlined">{MODAL_CONFIG.COMMON.close}</span>
 					</button>
 				</div>
 
@@ -95,7 +91,7 @@ const TodoForm = ({
 					{/* Title */}
 					<div>
 						<label className="text-xs font-semibold text-[var(--color-muted)]">
-							Tiêu đề <span className="text-[var(--color-error)]">*</span>
+							{TODO_CONFIG.TODO_MODAL.labelTitle} <span className="text-[var(--color-error)]">*</span>
 						</label>
 						<input
 							className={`mt-2 w-full rounded-md border px-3 py-2 text-sm bg-[var(--color-bg)] text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent ${
@@ -103,26 +99,26 @@ const TodoForm = ({
 							}`}
 							value={formData.title}
 							onChange={(e) => handleChange('title', e.target.value)}
-							placeholder="Nhập tiêu đề công việc"
+							placeholder={TODO_CONFIG.TODO_MODAL.placeholderTitle}
 						/>
 					</div>
 
 					{/* Description */}
 					<div>
-						<label className="text-xs font-semibold text-[var(--color-muted)]">Mô tả</label>
+						<label className="text-xs font-semibold text-[var(--color-muted)]">{TODO_CONFIG.TODO_MODAL.labelDescription}</label>
 						<textarea
 							className="mt-2 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
 							rows={3}
 							value={formData.description ?? ''}
 							onChange={(e) => handleChange('description', e.target.value)}
-							placeholder="Mô tả chi tiết (tùy chọn)"
+							placeholder={TODO_CONFIG.TODO_MODAL.placeholderDescription}
 						/>
 					</div>
 
 					{/* Priority */}
 					<div>
 						<label className="text-xs font-semibold text-[var(--color-muted)]">
-							Mức độ ưu tiên
+							{TODO_CONFIG.TODO_MODAL.labelPriority}
 						</label>
 						<select
 							className="mt-2 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent"
@@ -143,7 +139,7 @@ const TodoForm = ({
 					<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 						<div>
 							<label className="text-xs font-semibold text-[var(--color-muted)]">
-								Thời điểm bắt đầu
+								{TODO_CONFIG.TODO_MODAL.labelStart}
 							</label>
 							<input
 								type="datetime-local"
@@ -154,7 +150,7 @@ const TodoForm = ({
 						</div>
 						<div>
 							<label className="text-xs font-semibold text-[var(--color-muted)]">
-								Thời điểm kết thúc
+								{TODO_CONFIG.TODO_MODAL.labelEnd}
 							</label>
 							<input
 								type="datetime-local"
@@ -178,7 +174,7 @@ const TodoForm = ({
 							onClick={onDelete}
 							type="button"
 						>
-							Xóa
+							{MODAL_CONFIG.COMMON.delete}
 						</button>
 					)}
 					<button
@@ -186,14 +182,14 @@ const TodoForm = ({
 						onClick={onClose}
 						type="button"
 					>
-						Hủy
+						{MODAL_CONFIG.COMMON.cancel}
 					</button>
 					<button
 						className="px-4 py-2 text-sm font-semibold text-white bg-[var(--color-primary)] rounded-md hover:bg-[var(--color-primary-hover)] transition-colors"
 						onClick={handleSubmit}
 						type="button"
 					>
-						{mode === 'create' ? 'Tạo mới' : 'Lưu thay đổi'}
+						{mode === 'create' ? MODAL_CONFIG.COMMON.create : MODAL_CONFIG.COMMON.saveChanges}
 					</button>
 				</div>
 			</div>

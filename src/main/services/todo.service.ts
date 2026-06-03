@@ -22,14 +22,9 @@ export type TaskStats = {
 	tasksThisMonth: number;
 };
 
-export type PomodoroStats = {
-	completed: number;
-	target: number;
-};
-
-export type FocusDay = {
+export type FocusTime = {
 	date: string;
-	hours: number;
+	minutes: number;
 };
 
 export type HeatmapData = {
@@ -166,29 +161,7 @@ export class TodoService {
 		return { total, completed, pending, overdue, urgent, canceled, tasksThisMonth };
 	}
 
-	public async getPomodoroStatsToday(userId: string, target = 10): Promise<PomodoroStats> {
-		const uid = new mongoose.Types.ObjectId(userId);
-		const now = new Date();
-		const start = startOfDay(now);
-		const end = endOfDay(now);
-
-		const rows = await Todo.aggregate<{ totalMinutes: number }>([
-			{ $match: { userId: uid, focusMinutes: { $gt: 0 } } },
-			{
-				$addFields: {
-					focusDay: { $ifNull: ['$focusDate', '$updatedAt'] }
-				}
-			},
-			{ $match: { focusDay: { $gte: start, $lte: end } } },
-			{ $group: { _id: null, totalMinutes: { $sum: '$focusMinutes' } } }
-		]);
-
-		const totalMinutes = rows[0]?.totalMinutes ?? 0;
-		const completed = Math.floor(totalMinutes / 25);
-		return { completed, target };
-	}
-
-	public async getFocusHours(userId: string, days = 7): Promise<FocusDay[]> {
+	public async getFocusTime(userId: string, days = 7): Promise<FocusTime[]> {
 		const uid = new mongoose.Types.ObjectId(userId);
 		const now = new Date();
 		const startDate = startOfDay(new Date(now.getTime() - (days - 1) * 86400000));
@@ -210,50 +183,15 @@ export class TodoService {
 		]);
 
 		const totals = new Map(rows.map((row) => [row._id, row.totalMinutes]));
-		const result: FocusDay[] = [];
+		const result: FocusTime[] = [];
 		for (let offset = 0; offset < days; offset += 1) {
 			const day = new Date(startDate.getTime() + offset * 86400000);
 			const key = formatDateKey(day);
 			const minutes = totals.get(key) ?? 0;
-			result.push({ date: key, hours: Math.round((minutes / 60) * 10) / 10 });
+			result.push({ date: key, minutes });
 		}
 
 		return result;
-	}
-
-	public async getFocusStreak(userId: string, lookbackDays = 60): Promise<number> {
-		const uid = new mongoose.Types.ObjectId(userId);
-		const now = new Date();
-		const startDate = startOfDay(new Date(now.getTime() - (lookbackDays - 1) * 86400000));
-
-		const rows = await Todo.aggregate<{ _id: string; date: string; totalMinutes: number }>([
-			{ $match: { userId: uid, focusMinutes: { $gt: 0 } } },
-			{
-				$addFields: {
-					focusDay: { $ifNull: ['$focusDate', '$updatedAt'] }
-				}
-			},
-			{ $match: { focusDay: { $gte: startDate, $lte: endOfDay(now) } } },
-			{
-				$group: {
-					_id: { $dateToString: { format: '%Y-%m-%d', date: '$focusDay' } },
-					totalMinutes: { $sum: '$focusMinutes' }
-				}
-			}
-		]);
-
-		const focusDays = new Set(rows.filter((row) => row.totalMinutes > 0).map((row) => row._id));
-		let streak = 0;
-		for (let offset = 0; offset < lookbackDays; offset += 1) {
-			const day = new Date(now.getTime() - offset * 86400000);
-			const key = formatDateKey(day);
-			if (!focusDays.has(key)) {
-				break;
-			}
-			streak += 1;
-		}
-
-		return streak;
 	}
 
 	public async getFocusHoursTotal(userId: string, days = 365): Promise<number> {

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { MODAL_CONFIG } from '@renderer/config/modalConfig';
 
 type UserInfo = {
 	id: string;
@@ -46,14 +47,14 @@ const SettingsModal = ({ isOpen, onClose, user, initials }: SettingsModalProps):
 				<div className="px-6 py-4 border-b border-[var(--color-border)] flex items-center justify-between">
 					<div className="flex items-center gap-2">
 						<span className="material-symbols-outlined text-[var(--color-primary)]">settings</span>
-						<h2 className="text-lg font-semibold text-[var(--color-text)]">Cài đặt hệ thống</h2>
+						<h2 className="text-lg font-semibold text-[var(--color-text)]">{MODAL_CONFIG.SETTINGS_MODAL.title}</h2>
 					</div>
 					<button
 						className="p-2 hover:bg-[var(--color-primary-lighter)] rounded-full transition-colors"
 						onClick={onClose}
 						type="button"
 					>
-						<span className="material-symbols-outlined text-[var(--color-muted)]">close</span>
+						<span className="material-symbols-outlined text-[var(--color-muted)]">{MODAL_CONFIG.COMMON.close}</span>
 					</button>
 				</div>
 
@@ -74,7 +75,7 @@ const SettingsModal = ({ isOpen, onClose, user, initials }: SettingsModalProps):
 							>
 								account_circle
 							</span>
-							Profile
+							{MODAL_CONFIG.SETTINGS_MODAL.tabProfile}
 						</button>
 						<button
 							className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all ${
@@ -91,7 +92,7 @@ const SettingsModal = ({ isOpen, onClose, user, initials }: SettingsModalProps):
 							>
 								lock
 							</span>
-							Bảo mật
+							{MODAL_CONFIG.SETTINGS_MODAL.tabSecurity}
 						</button>
 					</div>
 
@@ -102,50 +103,38 @@ const SettingsModal = ({ isOpen, onClose, user, initials }: SettingsModalProps):
 									<div className="relative group">
 										{avatarContent}
 										<div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-											<span className="text-[10px] uppercase tracking-wider text-white font-bold">Đổi ảnh</span>
+											<span className="text-[10px] uppercase tracking-wider text-white font-bold">{MODAL_CONFIG.SETTINGS_MODAL.changeAvatar}</span>
 										</div>
 									</div>
 									<button
 										className="rounded-full border border-[var(--color-border)] px-4 py-1 text-xs text-[var(--color-primary)] font-medium hover:bg-[var(--color-primary-light)] transition-colors"
 										type="button"
 									>
-										Save
+										{MODAL_CONFIG.COMMON.save}
 									</button>
 								</div>
 
 								<div className="space-y-4">
 									<div className="space-y-2">
 										<label className="block text-xs font-semibold text-[var(--color-muted)] uppercase tracking-tight">
-											Họ và Tên
+											{MODAL_CONFIG.SETTINGS_MODAL.labelFullName}
 										</label>
 										<div className="flex gap-3">
 											<input
 												className="flex-1 h-11 rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] px-4 outline-none focus:border-[var(--color-primary)] focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-all"
 												value={displayName}
 												onChange={(event) => setDisplayName(event.target.value)}
-												placeholder="Nhập họ và tên"
+												placeholder={MODAL_CONFIG.SETTINGS_MODAL.placeholderFullName}
 												type="text"
 											/>
 											<button
 												className="px-6 h-11 bg-[var(--color-primary)] text-white rounded-md text-sm font-medium hover:bg-[var(--color-primary-hover)] transition-all"
 												type="button"
 											>
-												Lưu
+												{MODAL_CONFIG.COMMON.save}
 											</button>
 										</div>
 									</div>
-								</div>
-
-								<div className="h-px w-full bg-[var(--color-border)]" />
-
-								<div className="space-y-3">
-									<button
-										className="w-full h-11 flex items-center justify-center gap-2 border border-[var(--color-error)] text-[var(--color-error)] rounded-md text-sm font-medium hover:bg-[var(--color-error)] hover:text-white transition-all"
-										type="button"
-									>
-										<span className="material-symbols-outlined text-xl">delete_forever</span>
-										Xóa tài khoản
-									</button>
 								</div>
 							</section>
 						)}
@@ -153,11 +142,11 @@ const SettingsModal = ({ isOpen, onClose, user, initials }: SettingsModalProps):
 						{activeTab === 'security' && (
 							<section className="space-y-6">
 								<div>
-									<h3 className="text-lg font-semibold mb-3 text-[var(--color-text)]">Đổi mật khẩu</h3>
+									<h3 className="text-lg font-semibold mb-3 text-[var(--color-text)]">{MODAL_CONFIG.SETTINGS_MODAL.changePassword}</h3>
 									<div className="space-y-3 max-w-sm">
 										<div>
 											<label className="block text-xs font-medium text-[var(--color-muted)] mb-1">
-												Mật khẩu hiện tại
+												{MODAL_CONFIG.SETTINGS_MODAL.currentPassword}
 											</label>
 											<input
 												className="w-full h-11 border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] rounded-md px-4 focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary)]/10 outline-none transition-all"
@@ -166,7 +155,7 @@ const SettingsModal = ({ isOpen, onClose, user, initials }: SettingsModalProps):
 										</div>
 										<div>
 											<label className="block text-xs font-medium text-[var(--color-muted)] mb-1">
-												Mật khẩu mới
+												{MODAL_CONFIG.SETTINGS_MODAL.newPassword}
 											</label>
 											<input
 												className="w-full h-11 border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] rounded-md px-4 focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary)]/10 outline-none transition-all"
@@ -175,28 +164,37 @@ const SettingsModal = ({ isOpen, onClose, user, initials }: SettingsModalProps):
 										</div>
 										<div>
 											<label className="block text-xs font-medium text-[var(--color-muted)] mb-1">
-												Xác nhận mật khẩu mới
+												{MODAL_CONFIG.SETTINGS_MODAL.confirmNewPassword}
 											</label>
 											<input
 												className="w-full h-11 border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] rounded-md px-4 focus:border-[var(--color-primary)] focus:ring-4 focus:ring-[var(--color-primary)]/10 outline-none transition-all"
 												type="password"
 											/>
 										</div>
-										<button
-											className="bg-[var(--color-primary)] text-white text-sm font-medium px-6 py-3 rounded-md hover:bg-[var(--color-primary-hover)] active:scale-95 transition-all shadow-sm"
-											type="button"
-										>
-											Cập nhật mật khẩu
-										</button>
+										<div className="pt-2">
+											<button
+												className="bg-[var(--color-primary)]  text-white text-sm font-medium px-6 py-3 rounded-md hover:bg-[var(--color-primary-hover)] active:scale-95 transition-all shadow-sm"
+												type="button"
+											>
+												{MODAL_CONFIG.SETTINGS_MODAL.updatePassword}
+											</button>
+										</div>
+										
+										<div className="pt-2 space-y-3">
+											<button
+												className="w-full h-11 flex items-center justify-center gap-2 border border-[var(--color-error)] text-[var(--color-error)] rounded-md text-sm font-medium hover:bg-[var(--color-error)] hover:text-white transition-all"
+												type="button"
+											>
+												<span className="material-symbols-outlined text-xl">delete_forever</span>
+												{MODAL_CONFIG.SETTINGS_MODAL.deleteAccount}
+											</button>
+										</div>
 									</div>
 								</div>
 							</section>
 						)}
-
-						
 					</div>
 				</div>
-
 			</div>
 		</div>
 	);

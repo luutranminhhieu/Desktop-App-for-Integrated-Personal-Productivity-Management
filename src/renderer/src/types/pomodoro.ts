@@ -1,10 +1,9 @@
-export type PomodoroMode = 'work' | 'short_break' | 'long_break';
+export type PomodoroMode = 'work' | 'short_break';
 
 export type PomodoroSettings = {
 	sessionsPerDay: number;
 	workMinutes: number;
 	shortBreakMinutes: number;
-	longBreakMinutes: number;
 };
 
 export type PomodoroStats = {
@@ -30,6 +29,7 @@ export type PomodoroHook = {
 	start: () => Promise<void>;
 	pause: () => Promise<void>;
 	reset: () => Promise<void>;
+	resetStats: () => Promise<void>;
 	skip: () => Promise<void>;
 	setMode: (mode: PomodoroMode) => Promise<void>;
 	updateSettings: (patch: Partial<PomodoroSettings>) => Promise<void>;

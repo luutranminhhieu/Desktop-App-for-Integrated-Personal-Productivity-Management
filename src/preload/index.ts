@@ -33,6 +33,7 @@ const api = {
     start: () => ipcRenderer.invoke('pomodoro:start'),
     pause: () => ipcRenderer.invoke('pomodoro:pause'),
     reset: () => ipcRenderer.invoke('pomodoro:reset'),
+    resetStats: () => ipcRenderer.invoke('pomodoro:resetStats'),
     skip: () => ipcRenderer.invoke('pomodoro:skip'),
     setMode: (mode) => ipcRenderer.invoke('pomodoro:setMode', { mode }),
     onTick: (callback) => {

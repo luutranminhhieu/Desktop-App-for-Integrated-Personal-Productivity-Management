@@ -1,5 +1,6 @@
 import React from 'react';
-import { TodoItem as TodoItemType } from '@renderer/types';
+import type { TodoItem as TodoItemType } from '@renderer/types';
+import { TODO_CONFIG } from '@renderer/config/todoConfig';
 
 interface TodoItemProps {
   todo: TodoItemType;
@@ -8,23 +9,13 @@ interface TodoItemProps {
   onDelete: (todoId: string) => void;
 }
 
-const priorityColors = {
-  low: '#6B7280',
-  medium: '#3B82F6',
-  high: '#EF4444',
-  urgent: '#DC2626'
-};
-
-const statusColors = {
-  pending: 'bg-[var(--color-warning)]/10 text-[var(--color-warning)]',
-  completed: 'bg-[var(--color-success)]/10 text-[var(--color-success)]',
-  canceled: 'bg-[var(--color-muted)]/10 text-[var(--color-muted)]'
-};
+const priorityColors = TODO_CONFIG.PRIORITY_COLORS;
+const statusColors = TODO_CONFIG.STATUS_COLORS;
 
 const formatDueDate = (dueDate?: string): string => {
   if (!dueDate) return '';
   const date = new Date(dueDate);
-  return date.toLocaleDateString('vi-VN', {
+  return date.toLocaleDateString(TODO_CONFIG.LOCALE, {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric'
@@ -76,8 +67,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onEdit, onDelete })
               <span
                 className={`px-2 py-1 text-[11px] font-semibold rounded ${statusColors[todo.status]}`}
               >
-                {todo.status === 'completed' ? 'XONG' : 
-                 todo.status === 'canceled' ? 'HỦY' : 'CHỜ'}
+                {TODO_CONFIG.STATUS_LABELS[todo.status]}
               </span>
             </div>
           </div>
@@ -94,11 +84,9 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onEdit, onDelete })
                 isOverdue ? 'text-[var(--color-error)]' : 'text-[var(--color-muted)]'
               }`}>
                 📅 {formatDueDate(todo.dueDate)}
-                {isOverdue && <span className="ml-1 font-bold">(QUÁ HẠN)</span>}
+                {isOverdue && <span className="ml-1 font-bold">{TODO_CONFIG.STRINGS.overdueBadge}</span>}
               </span>
             )}
-            
-
             
             {todo.tags.length > 0 && (
               <div className="flex gap-1">
@@ -121,7 +109,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onEdit, onDelete })
           <button
             onClick={() => onEdit(todo)}
             className="p-1.5 hover:bg-[var(--color-primary-lighter)] rounded transition-colors"
-            title="Chỉnh sửa"
+            title={TODO_CONFIG.STRINGS.edit}
           >
             <svg className="w-4 h-4 text-[var(--color-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -131,7 +119,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onEdit, onDelete })
           <button
             onClick={() => onDelete(todo._id)}
             className="p-1.5 hover:bg-[var(--color-error-light)] rounded transition-colors"
-            title="Xóa"
+            title={TODO_CONFIG.STRINGS.delete}
           >
             <svg className="w-4 h-4 text-[var(--color-error)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

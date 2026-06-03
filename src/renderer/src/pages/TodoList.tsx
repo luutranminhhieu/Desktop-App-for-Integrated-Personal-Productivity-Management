@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import TodoForm from '../components/todo/TodoForm';
+import { TODO_CONFIG } from '@renderer/config/todoConfig';
 import type {
 	TodoItem,
 	TodoFormData,
@@ -8,24 +9,13 @@ import type {
 	TodoStatus
 } from '@renderer/types';
 
-const filterOptions: {
-	key: 'all' | TodoStatus;
-	label: string;
-	icon: string;
-}[] = [
-	{ key: 'all', label: 'Tất cả', icon: 'all_inbox' },
-	{ key: 'pending', label: 'To-do', icon: 'schedule' },
-	{ key: 'canceled', label: 'Cancel', icon: 'cancel' },
-	{ key: 'completed', label: 'Done', icon: 'check_circle' }
-];
-
 function formatExpired(dueDate: string): string {
 	const diff = Date.now() - new Date(dueDate).getTime();
 	const hours = Math.floor(diff / 3600000);
-	if (hours < 1) return 'Expired < 1h ago';
-	if (hours < 24) return `Expired ${hours}h ago`;
+	if (hours < 1) return TODO_CONFIG.FORMATS.expiredLessAnHourAgo;
+	if (hours < 24) return TODO_CONFIG.FORMATS.expiredHoursAgo(hours);
 	const days = Math.floor(hours / 24);
-	return `Expired ${days}d ago`;
+	return TODO_CONFIG.FORMATS.expiredDaysAgo(days);
 }
 
 function formatTime(dueDate: string): string {
@@ -37,21 +27,16 @@ function formatTime(dueDate: string): string {
 }
 
 function formatDoneAt(completedAt: string): string {
-	return `Done at ${new Date(completedAt).toLocaleTimeString('en-US', {
+	const timeStr = new Date(completedAt).toLocaleTimeString('en-US', {
 		hour: 'numeric',
 		minute: '2-digit',
 		hour12: true
-	})}`;
+	});
+	return TODO_CONFIG.FORMATS.doneAt(timeStr);
 }
 
 const PriorityBadge = ({ priority }: { priority: TodoPriority }): React.JSX.Element => {
-	const styles: Record<TodoPriority, { bg: string; text: string; label: string }> = {
-		urgent: { bg: 'var(--color-error-light)', text: 'var(--color-error)', label: 'URGENT' },
-		high: { bg: 'var(--color-error-light)', text: 'var(--color-error)', label: 'HIGH' },
-		medium: { bg: 'var(--color-primary-light)', text: 'var(--color-primary)', label: 'MEDIUM' },
-		low: { bg: 'var(--color-surface)', text: 'var(--color-muted)', label: 'LOW' }
-	};
-	const s = styles[priority];
+	const s = TODO_CONFIG.PRIORITY_BADGES[priority];
 	return (
 		<span
 			className="px-2 py-0.5 rounded text-[11px] font-semibold leading-none tracking-wide"
@@ -196,7 +181,7 @@ const TaskRow = ({
 					{/* Canceled label */}
 					{isCanceled && (
 						<span className="text-[var(--color-muted)] text-xs font-medium leading-snug italic">
-							Skipped
+							{TODO_CONFIG.STRINGS.skipped}
 						</span>
 					)}
 
@@ -263,7 +248,7 @@ const TaskGroup = ({
 				<h2 className="text-lg font-semibold leading-tight text-[var(--color-text)]">
 					{title}{' '}
 					<span className="text-[var(--color-muted)] font-normal ml-2">
-						— {todos.length} tasks
+						— {todos.length} {TODO_CONFIG.STRINGS.tasksCount}
 					</span>
 				</h2>
 			</header>
@@ -288,7 +273,7 @@ const TaskGroup = ({
 			</div>
 		) : (
 			<div className="bg-[var(--color-bg)] rounded-lg border border-[var(--color-border)] p-8 text-center">
-				<p className="text-sm text-[var(--color-muted)]">Không có task nào trong nhóm này</p>
+				<p className="text-sm text-[var(--color-muted)]">{TODO_CONFIG.STRINGS.noTasksInGroup}</p>
 			</div>
 		)}
 	</div>
@@ -382,7 +367,7 @@ const TodoList = (): React.JSX.Element => {
 				options as Parameters<typeof window.api.todo.list>[0]
 			);
 			if (!response.success || !response.data) {
-				setError(response.error || 'Không thể tải danh sách task.');
+				setError(response.error || TODO_CONFIG.STRINGS.fetchError);
 				setLoading(false);
 				return;
 			}
@@ -390,7 +375,7 @@ const TodoList = (): React.JSX.Element => {
 			const items = response.data as TodoItem[];
 			setTodos(items);
 		} catch {
-			setError('Không thể tải danh sách task.');
+			setError(TODO_CONFIG.STRINGS.fetchError);
 		} finally {
 			setLoading(false);
 		}
@@ -400,7 +385,7 @@ const TodoList = (): React.JSX.Element => {
 	useEffect(() => {
 		if (!userId) {
 			setLoading(false);
-			setError('Thiếu thông tin người dùng.');
+			setError(TODO_CONFIG.STRINGS.userRequiredError);
 			return;
 		}
 		void fetchTodos();
@@ -471,7 +456,7 @@ const TodoList = (): React.JSX.Element => {
 			payload as Parameters<typeof window.api.todo.create>[0]
 		);
 		if (!response.success) {
-			setError(response.error || 'Không thể tạo task.');
+			setError(response.error || TODO_CONFIG.STRINGS.createError);
 			return;
 		}
 		setModalOpen(false);
@@ -505,7 +490,7 @@ const TodoList = (): React.JSX.Element => {
 			userId
 		);
 		if (!response.success) {
-			setError(response.error || 'Không thể cập nhật task.');
+			setError(response.error || TODO_CONFIG.STRINGS.updateError);
 			return;
 		}
 		setModalOpen(false);
@@ -515,12 +500,10 @@ const TodoList = (): React.JSX.Element => {
 
 	const handleDelete = async (): Promise<void> => {
 		if (!userId || !editingTodo) return;
-		const confirmed = window.confirm('Bạn có chắc chắn muốn xóa task này?');
-		if (!confirmed) return;
 
 		const response = await window.api.todo.delete(editingTodo._id, userId);
 		if (!response.success) {
-			setError(response.error || 'Không thể xóa task.');
+			setError(response.error || TODO_CONFIG.STRINGS.deleteError);
 			return;
 		}
 		setModalOpen(false);
@@ -545,7 +528,7 @@ const TodoList = (): React.JSX.Element => {
 			userId
 		);
 		if (!response.success) {
-			setError(response.error || 'Không thể cập nhật trạng thái.');
+			setError(response.error || TODO_CONFIG.STRINGS.updateStatusError);
 			return;
 		}
 		await reloadData();
@@ -613,21 +596,21 @@ const TodoList = (): React.JSX.Element => {
 							<span className="material-symbols-outlined text-[18px]">calendar_today</span>
 							<span>
 								{dueDateFrom || dueDateTo
-									? `${dueDateFrom ? new Date(dueDateFrom).toLocaleDateString('vi-VN') : '...'} - ${
-											dueDateTo ? new Date(dueDateTo).toLocaleDateString('vi-VN') : '...'
+									? `${dueDateFrom ? new Date(dueDateFrom).toLocaleDateString(TODO_CONFIG.LOCALE) : '...'} - ${
+											dueDateTo ? new Date(dueDateTo).toLocaleDateString(TODO_CONFIG.LOCALE) : '...'
 									  }`
-									: 'Khoảng ngày'}
+									: TODO_CONFIG.STRINGS.dateRange}
 							</span>
 						</button>
 
 						{isDateRangeOpen && (
 							<div className="absolute top-full left-0 mt-2 z-50 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg shadow-xl p-4 w-72 space-y-4">
 								<div className="flex justify-between items-center border-b border-[var(--color-border)] pb-2 mb-2">
-									<span className="text-sm font-semibold text-[var(--color-text)]">Chọn khoảng ngày</span>
+									<span className="text-sm font-semibold text-[var(--color-text)]">{TODO_CONFIG.STRINGS.selectDateRange}</span>
 								</div>
 								<div className="space-y-3">
 									<div className="space-y-1">
-										<label className="text-xs font-medium text-[var(--color-muted)]">Từ ngày</label>
+										<label className="text-xs font-medium text-[var(--color-muted)]">{TODO_CONFIG.STRINGS.fromDate}</label>
 										<input
 											type="date"
 											value={tempDateFrom}
@@ -636,7 +619,7 @@ const TodoList = (): React.JSX.Element => {
 										/>
 									</div>
 									<div className="space-y-1">
-										<label className="text-xs font-medium text-[var(--color-muted)]">Đến ngày</label>
+										<label className="text-xs font-medium text-[var(--color-muted)]">{TODO_CONFIG.STRINGS.toDate}</label>
 										<input
 											type="date"
 											value={tempDateTo}
@@ -657,7 +640,7 @@ const TodoList = (): React.JSX.Element => {
 										}}
 										type="button"
 									>
-										Xóa
+										{TODO_CONFIG.STRINGS.clear}
 									</button>
 									<button
 										className="px-3 py-1.5 text-xs font-medium text-white bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] rounded transition-colors"
@@ -668,7 +651,7 @@ const TodoList = (): React.JSX.Element => {
 										}}
 										type="button"
 									>
-										Áp dụng
+										{TODO_CONFIG.STRINGS.apply}
 									</button>
 								</div>
 							</div>
@@ -692,18 +675,18 @@ const TodoList = (): React.JSX.Element => {
 							<span className="material-symbols-outlined text-[18px]">filter_alt</span>
 							<span>
 								{activeFilter === 'all'
-									? 'Tất cả trạng thái'
+									? TODO_CONFIG.STRINGS.allStatuses
 									: activeFilter === 'pending'
-									? 'To-do'
+									? TODO_CONFIG.STRINGS.todo
 									: activeFilter === 'canceled'
-									? 'Cancel'
-									: 'Done'}
+									? TODO_CONFIG.STRINGS.cancel
+									: TODO_CONFIG.STRINGS.done}
 							</span>
 						</button>
 
 						{isStatusFilterOpen && (
 							<div className="absolute top-full left-0 mt-2 z-50 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg shadow-xl py-1.5 w-52 overflow-hidden">
-								{filterOptions.map((opt) => (
+								{TODO_CONFIG.FILTER_OPTIONS.map((opt) => (
 									<button
 										key={opt.key}
 										className={`w-full flex items-center justify-between px-4 py-2 text-sm transition-colors text-left ${
@@ -739,7 +722,7 @@ const TodoList = (): React.JSX.Element => {
 						type="button"
 					>
 						<span className="material-symbols-outlined text-[18px]">add</span>
-						Tạo task mới
+						{TODO_CONFIG.STRINGS.createNewTask}
 					</button>
 				</div>
 			</div>
@@ -756,12 +739,12 @@ const TodoList = (): React.JSX.Element => {
 							task_alt
 						</span>
 						<h3 className="text-lg font-semibold text-[var(--color-muted)] mb-2">
-							Không có task nào
+							{TODO_CONFIG.STRINGS.noTasks}
 						</h3>
 						<p className="text-sm text-[var(--color-muted)] mb-6">
 							{activeFilter !== 'all'
-								? 'Thử thay đổi bộ lọc để thấy kết quả khác'
-								: 'Bắt đầu bằng việc tạo task mới'}
+								? TODO_CONFIG.STRINGS.tryChangingFilters
+								: TODO_CONFIG.STRINGS.startByCreatingNew}
 						</p>
 					</div>
 				)}
