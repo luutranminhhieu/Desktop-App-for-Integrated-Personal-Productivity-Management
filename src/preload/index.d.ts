@@ -121,6 +121,8 @@ export interface IAuthAPI {
   requestPasswordReset: (email: string) => Promise<{ success: boolean; error?: string }>;
   resendPasswordReset: (email: string) => Promise<{ success: boolean; error?: string }>;
   resetPassword: (token: string, newPassword: string) => Promise<{ success: boolean; error?: string }>;
+  updateUsername: (userId: string, name: string) => Promise<{ success: boolean; data?: AuthUser; error?: string }>;
+  changePassword: (userId: string, currentPassword?: string, newPassword?: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 export interface IAppAPI {

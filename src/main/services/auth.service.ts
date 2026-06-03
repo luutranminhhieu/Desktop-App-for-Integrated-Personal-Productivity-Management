@@ -320,6 +320,46 @@ export class AuthService {
   public async resendPasswordReset(email: string): Promise<void> {
     return this.requestPasswordReset(email);
   }
+
+  public async updateUsername(userId: string, name: string): Promise<{ id: string; email: string; name: string; avatarUrl?: string }> {
+    if (!userId || !name) {
+      throw new Error('User ID and name are required.');
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error('User not found.');
+    }
+    user.name = name;
+    const savedUser = await user.save();
+    return {
+      id: String(savedUser._id),
+      email: savedUser.email,
+      name: savedUser.name,
+      avatarUrl: savedUser.avatarUrl
+    };
+  }
+
+  public async changePassword(userId: string, currentPassword?: string, newPassword?: string): Promise<void> {
+    if (!userId || !newPassword) {
+      throw new Error('User ID and new password are required.');
+    }
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error('User not found.');
+    }
+    if (user.password) {
+      if (!currentPassword) {
+        throw new Error('Current password is required.');
+      }
+      const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+      if (!isPasswordValid) {
+        throw new Error('Incorrect current password.');
+      }
+    }
+    const saltRounds = 10;
+    user.password = await bcrypt.hash(newPassword, saltRounds);
+    await user.save();
+  }
 }
 
 export const authService = new AuthService();

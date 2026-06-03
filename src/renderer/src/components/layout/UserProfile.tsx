@@ -14,7 +14,7 @@ const UserProfile = (): React.JSX.Element => {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
 
-	const [user] = useState<UserInfo | null>(() => {
+	const [user, setUser] = useState<UserInfo | null>(() => {
 		const stored = localStorage.getItem('user') || sessionStorage.getItem('user');
 		if (!stored) return null;
 		try {
@@ -23,6 +23,16 @@ const UserProfile = (): React.JSX.Element => {
 			return null;
 		}
 	});
+
+	const handleUserUpdate = (updatedUser: UserInfo): void => {
+		setUser(updatedUser);
+		const isRemember = localStorage.getItem('rememberLogin') === 'true' || localStorage.getItem('user') !== null;
+		if (isRemember) {
+			localStorage.setItem('user', JSON.stringify(updatedUser));
+		} else {
+			sessionStorage.setItem('user', JSON.stringify(updatedUser));
+		}
+	};
 
 	const initials = useMemo(() => {
 		const source = user?.name || user?.email || '';
@@ -109,6 +119,7 @@ const UserProfile = (): React.JSX.Element => {
 				onClose={() => setIsSettingsModalOpen(false)}
 				user={user}
 				initials={initials}
+				onUserUpdate={handleUserUpdate}
 			/>
 		</div>
 	);
