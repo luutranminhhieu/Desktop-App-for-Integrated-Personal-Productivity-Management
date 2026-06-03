@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { POMODORO_CONFIG } from '../../config/pomodoroConfig';
 
 type PomodoroTimerCardProps = {
 	mode: 'work' | 'short_break';
@@ -14,11 +15,7 @@ type PomodoroTimerCardProps = {
 	onResetStats: () => void;
 };
 
-const modeLabels: Record<'work' | 'short_break' | 'sessions', string> = {
-	work: 'Pomodoro',
-	short_break: 'Break',
-	sessions: 'Section'
-};
+const modeLabels: Record<'work' | 'short_break' | 'sessions', string> = POMODORO_CONFIG.STRINGS.modeLabels;
 
 const modeDescriptions: Record<'work' | 'short_break', string> = {
 	work: '',

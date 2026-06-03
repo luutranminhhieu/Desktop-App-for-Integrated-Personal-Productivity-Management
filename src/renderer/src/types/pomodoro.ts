@@ -9,8 +9,6 @@ export type PomodoroSettings = {
 export type PomodoroStats = {
 	completedSessions: number;
 	targetSessions: number;
-	totalWorkSeconds: number;
-	totalBreakSeconds: number;
 };
 
 export type PomodoroState = {

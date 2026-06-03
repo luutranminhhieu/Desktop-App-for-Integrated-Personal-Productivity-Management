@@ -2,7 +2,7 @@ import type { TodoPriority, TodoStatus } from '@renderer/types';
 
 export const TODO_CONFIG = {
   // Locale for date formatters
-  LOCALE: 'vi-VN',
+  LOCALE: 'en-US',
 
   // Status Filter options used in TodoList Page
   FILTER_OPTIONS: [

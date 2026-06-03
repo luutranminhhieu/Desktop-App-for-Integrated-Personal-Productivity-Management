@@ -1,5 +1,5 @@
 //Locale settings
-export const DASHBOARD_LOCALE = 'vi-VN';
+export const DASHBOARD_LOCALE = 'en-US';
 
 export const TASK_DONUT_CONFIG = {
   RADIUS: 70,
@@ -14,23 +14,22 @@ export const TASK_DONUT_CONFIG = {
 // 4. UI Translation Strings for Dashboard
 export const DASHBOARD_STRINGS = {
   // Task Status Card
-  taskStatusTitle: 'Trạng thái Task',
-  taskTotalLabel: 'Tổng số',
-  taskDone: 'Đã xong',
-  taskPending: 'Đang làm',
-  taskOverdue: 'Quá hạn',
-  taskCanceled: 'Hủy',
+  taskStatusTitle: 'Task Status',
+  taskTotalLabel: 'Totals',
+  taskDone: 'Done',
+  taskPending: 'To-do',
+  taskOverdue: 'Expired',
 
   // Heatmap Card
-  heatmapTitle: 'Hoạt động trong năm',
-  heatmapLess: 'Ít',
-  heatmapMore: 'Nhiều',
-  heatmapSuffix: 'hoạt động',
-  dayLabels: ['', 'T2', '', 'T4', '', 'T6', ''],
+  heatmapTitle: 'Activity in year',
+  heatmapLess: 'Low',
+  heatmapMore: 'High',
+  heatmapSuffix: 'activity',
+  dayLabels: ['', 'Mon', '', 'Wed', '', 'Fri', ''],
 
   // API/Guard errors
-  authError: 'Thiếu token xác thực.',
-  tokenError: 'Không thể xác thực token.',
-  fetchError: 'Không thể tải dữ liệu dashboard.',
-  noData: 'Không có dữ liệu.'
+  authError: 'No authentication token.',
+  tokenError: 'Unable to authenticate token.',
+  fetchError: 'Unable to load dashboard data.',
+  noData: 'No data available.'
 };

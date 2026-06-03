@@ -2,7 +2,7 @@ import type { CalendarViewType } from '@renderer/types';
 
 export const CALENDAR_CONFIG = {
   // Locale
-  LOCALE: 'vi-VN',
+  LOCALE: 'en-US',
   
   // Default Views configurations
   DEFAULT_VIEW: 'timeGridWeek' as CalendarViewType,

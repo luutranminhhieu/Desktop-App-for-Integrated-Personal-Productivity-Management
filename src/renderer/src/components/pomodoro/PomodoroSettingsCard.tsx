@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { POMODORO_CONFIG } from '../../config/pomodoroConfig';
 
 type PomodoroSettingsCardProps = {
 	settings: {
@@ -28,20 +29,20 @@ const PomodoroSettingsCard = ({ settings, onAdjust, onChangeSetting }: PomodoroS
 	const items = [
 		{
 			key: 'sessionsPerDay',
-			title: 'Số phiên làm việc',
-			subtitle: 'Tổng cộng cho hôm nay',
+			title: POMODORO_CONFIG.STRINGS.sessionsPerDayTitle,
+			subtitle: POMODORO_CONFIG.STRINGS.sessionsPerDaySubtitle,
 			value: settings.sessionsPerDay
 		},
 		{
 			key: 'workMinutes',
-			title: 'Làm việc (phút)',
-			subtitle: 'Thời gian tập trung tối đa',
+			title: POMODORO_CONFIG.STRINGS.workMinutesTitle,
+			subtitle: POMODORO_CONFIG.STRINGS.workMinutesSubtitle,
 			value: settings.workMinutes
 		},
 		{
 			key: 'shortBreakMinutes',
-			title: 'Thời gian nghỉ (phút)',
-			subtitle: 'Thời gian nghỉ sau mỗi phiên',
+			title: POMODORO_CONFIG.STRINGS.shortBreakMinutesTitle,
+			subtitle: POMODORO_CONFIG.STRINGS.shortBreakMinutesSubtitle,
 			value: settings.shortBreakMinutes
 		}
 	] as const;
@@ -51,7 +52,7 @@ const PomodoroSettingsCard = ({ settings, onAdjust, onChangeSetting }: PomodoroS
 			<div className="flex items-center justify-between mb-6">
 				<h3 className="text-lg font-semibold text-[var(--color-text)] flex items-center gap-2">
 					<span className="material-symbols-outlined text-[var(--color-primary)]">tune</span>
-					Thiết lập phiên
+					{POMODORO_CONFIG.STRINGS.settingsTitle}
 				</h3>
 			</div>
 			<div className="space-y-4">

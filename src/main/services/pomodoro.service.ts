@@ -20,8 +20,6 @@ export type PomodoroSession = {
 export type PomodoroStats = {
 	completedSessions: number;
 	targetSessions: number;
-	totalWorkSeconds: number;
-	totalBreakSeconds: number;
 };
 
 export type PomodoroState = {
@@ -203,8 +201,6 @@ class PomodoroService {
 
 	private buildStats(): PomodoroStats {
 		let completedSessions = 0;
-		let totalWorkSeconds = 0;
-		let totalBreakSeconds = 0;
 
 		const today = new Date();
 		const start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
@@ -215,18 +211,13 @@ class PomodoroService {
 			if (completedTime >= start.getTime() && completedTime <= end.getTime()) {
 				if (session.mode === 'work') {
 					completedSessions += 1;
-					totalWorkSeconds += session.durationSeconds;
-				} else {
-					totalBreakSeconds += session.durationSeconds;
 				}
 			}
 		}
 
 		return {
 			completedSessions,
-			targetSessions: this.settings.sessionsPerDay,
-			totalWorkSeconds,
-			totalBreakSeconds
+			targetSessions: this.settings.sessionsPerDay
 		};
 	}
 
