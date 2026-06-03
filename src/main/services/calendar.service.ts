@@ -20,7 +20,15 @@ function buildEventTimes(dueDate: Date): { startTime: Date; endTime: Date } {
   return { startTime, endTime };
 }
 
-function statusToColor(status: TodoStatus): string {
+function statusToColor(status: TodoStatus, dueDate?: Date): string {
+  const isDone = status === 'completed';
+  const isCanceled = status === 'canceled';
+  const isOverdue = !isDone && !isCanceled && dueDate && dueDate < new Date();
+
+  if (isOverdue) {
+    return EventStatusColor.canceled;
+  }
+
   const colors: Record<TodoStatus, string> = {
     pending: EventStatusColor.todo,
     completed: EventStatusColor.done,
@@ -49,7 +57,7 @@ function mapTodoToCalendarEvent(todo: ITodo) {
     title: todo.title,
     startTime: startTime.toISOString(),
     endTime: endTime.toISOString(),
-    color: statusToColor(todo.status),
+    color: statusToColor(todo.status, todo.dueDate),
     userId: String(todo.userId),
     location: '',
     notes: todo.description ?? ''

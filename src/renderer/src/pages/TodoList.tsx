@@ -500,8 +500,6 @@ const TodoList = (): React.JSX.Element => {
 
 	const handleDelete = async (): Promise<void> => {
 		if (!userId || !editingTodo) return;
-		const confirmed = window.confirm(TODO_CONFIG.STRINGS.deleteConfirm);
-		if (!confirmed) return;
 
 		const response = await window.api.todo.delete(editingTodo._id, userId);
 		if (!response.success) {

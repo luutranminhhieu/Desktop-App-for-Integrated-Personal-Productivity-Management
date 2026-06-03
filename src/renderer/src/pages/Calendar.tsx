@@ -37,7 +37,10 @@ const Calendar = (): React.JSX.Element => {
 
 	const calendarEvents = useMemo(() => {
 		return events.map((event) => {
-			const textColor = event.color === EventStatusColor.todo ? '#1A1A2E' : '#ffffff';
+			const textColor =
+				event.color === EventStatusColor.todo || event.color === EventStatusColor.canceled
+					? '#1A1A2E'
+					: '#ffffff';
 			return {
 				id: event._id,
 				title: event.title,
@@ -235,14 +238,7 @@ const Calendar = (): React.JSX.Element => {
 							onDatesChange={handleDatesChange}
 							onEventClick={handleEventClick}
 						/>
-						{loadingEvents && (
-							<div className="absolute inset-0 flex items-center justify-center bg-[var(--color-bg)]/70">
-								<div className="flex items-center gap-3 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-4 py-2 shadow-sm">
-									<span className="h-4 w-4 rounded-full border-2 border-[var(--color-primary)] border-t-transparent animate-spin"></span>
-									<span className="text-xs text-[var(--color-muted)]"></span>
-								</div>
-							</div>
-						)}
+						{loadingEvents}
 					</div>
 				</section>
 			</div>
