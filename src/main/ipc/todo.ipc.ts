@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import { todoService } from '../services/todo.service';
 import { CreateTodoSchema, UpdateTodoSchema, toDateOrUndefined } from '../utils/validation';
 import { logger } from '../utils/logger';
+import { ITodo } from '../models/Todo';
 
 function prepareDates(input: Record<string, unknown>): Record<string, unknown> {
 	const dateFields = ['startDate', 'dueDate', 'focusDate', 'completedAt'];
@@ -38,8 +39,8 @@ export function registerTodoIPC(): void {
 			const validatedPayload = {
 				...withDates,
 				userId: new mongoose.Types.ObjectId(parsed.userId)
-			} as any;
-			const data = await todoService.createTodo(validatedPayload as any);
+			} as unknown as Partial<ITodo>;
+			const data = await todoService.createTodo(validatedPayload);
 			return { success: true, data: serialize(data) };
 		} catch (error) {
 			logger.error('Error in todo:create', error);
@@ -63,7 +64,7 @@ export function registerTodoIPC(): void {
 			const safeUserId = toIdString(userId);
 			const validated = UpdateTodoSchema.parse({ todoId: safeTodoId, updates, userId: safeUserId });
 			const preparedUpdates = prepareDates({ ...validated.updates } as unknown as Record<string, unknown>);
-			const data = await todoService.updateTodo(validated.todoId, preparedUpdates as any, validated.userId);
+			const data = await todoService.updateTodo(validated.todoId, preparedUpdates as unknown as Partial<ITodo>, validated.userId);
 			return { success: true, data: serialize(data) };
 		} catch (error) {
 			logger.error('Error in todo:update', error);
