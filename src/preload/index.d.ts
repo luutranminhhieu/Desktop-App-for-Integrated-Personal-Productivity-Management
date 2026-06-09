@@ -20,6 +20,13 @@ export interface TokenPayload {
 export type TodoStatus = 'todo' | 'completed' | 'canceled';
 export type TodoPriority = 'low' | 'medium' | 'high';
 
+export interface SubTodo {
+  _id: string;
+  title: string;
+  status: 'todo' | 'completed';
+  completedAt?: string;
+}
+
 export interface TodoItem {
   _id: string;
   title: string;
@@ -37,6 +44,7 @@ export interface TodoItem {
   completedAt?: string;
   createdAt?: string;
   updatedAt?: string;
+  subtasks?: SubTodo[];
 }
 
 export interface TaskStats {
