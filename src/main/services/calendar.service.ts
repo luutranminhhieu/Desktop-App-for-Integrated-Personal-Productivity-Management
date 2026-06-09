@@ -37,7 +37,18 @@ function statusToColor(status: TodoStatus, dueDate?: Date): string {
   return colors[status] ?? EventStatusColor.todo;
 }
 
-function mapTodoToCalendarEvent(todo: ITodo) {
+export interface CalendarEvent {
+  _id: string;
+  title: string;
+  startTime: string;
+  endTime: string;
+  color: string;
+  userId: string;
+  location: string;
+  notes: string;
+}
+
+function mapTodoToCalendarEvent(todo: ITodo): CalendarEvent | null {
   if (!todo.dueDate) return null;
   
   let startTime: Date;
@@ -65,23 +76,23 @@ function mapTodoToCalendarEvent(todo: ITodo) {
 }
 
 export class CalendarService {
-  public async listEventsForDay(userId: string, date: Date) {
+  public async listEventsForDay(userId: string, date: Date): Promise<CalendarEvent[]> {
     const start = startOfDay(date);
     const end = endOfDay(date);
     const todos = await todoService.listTodos({ userId, dueDateFrom: start, dueDateTo: end });
     return todos
       .map(mapTodoToCalendarEvent)
-      .filter((item): item is NonNullable<typeof item> => Boolean(item));
+      .filter((item): item is CalendarEvent => Boolean(item));
   }
 
-  public async listEventsInRange(userId: string, startDate: Date, endDate: Date) {
+  public async listEventsInRange(userId: string, startDate: Date, endDate: Date): Promise<CalendarEvent[]> {
     if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
       throw new Error('Invalid date range.');
     }
     const todos = await todoService.listTodos({ userId, dueDateFrom: startDate, dueDateTo: endDate });
     return todos
       .map(mapTodoToCalendarEvent)
-      .filter((item): item is NonNullable<typeof item> => Boolean(item));
+      .filter((item): item is CalendarEvent => Boolean(item));
   }
 }
 

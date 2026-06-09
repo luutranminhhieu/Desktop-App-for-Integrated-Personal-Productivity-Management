@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { MODAL_CONFIG } from '@renderer/config/modalConfig';
 
 type UserInfo = {
@@ -37,8 +37,14 @@ const SettingsModal = ({
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
 	const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-	// Reset state when modal is opened or active tab changes
-	useEffect(() => {
+	const [prevIsOpen, setPrevIsOpen] = useState(isOpen);
+	const [prevUser, setPrevUser] = useState(user);
+	const [prevActiveTab, setPrevActiveTab] = useState(activeTab);
+
+	if (isOpen !== prevIsOpen || user !== prevUser || activeTab !== prevActiveTab) {
+		setPrevIsOpen(isOpen);
+		setPrevUser(user);
+		setPrevActiveTab(activeTab);
 		if (isOpen) {
 			setDisplayName(user?.name || '');
 			setCurrentPassword('');
@@ -47,7 +53,7 @@ const SettingsModal = ({
 			setErrorMsg(null);
 			setSuccessMsg(null);
 		}
-	}, [isOpen, user, activeTab]);
+	}
 
 	const handleSaveProfile = async (): Promise<void> => {
 		if (!user) return;

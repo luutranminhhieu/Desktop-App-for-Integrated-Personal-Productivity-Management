@@ -417,12 +417,22 @@ const TodoList = (): React.JSX.Element => {
 
 	/* ── Load data on mount & when filters change ── */
 	useEffect(() => {
-		if (!userId) {
-			setLoading(false);
-			setError(TODO_CONFIG.STRINGS.userRequiredError);
-			return;
-		}
-		void fetchTodos();
+		let active = true;
+		const load = async (): Promise<void> => {
+			await Promise.resolve();
+			if (!active) return;
+
+			if (!userId) {
+				setLoading(false);
+				setError(TODO_CONFIG.STRINGS.userRequiredError);
+				return;
+			}
+			await fetchTodos();
+		};
+		load().catch(() => undefined);
+		return () => {
+			active = false;
+		};
 	}, [userId, fetchTodos]);
 
 	/* ── Reload helper ── */

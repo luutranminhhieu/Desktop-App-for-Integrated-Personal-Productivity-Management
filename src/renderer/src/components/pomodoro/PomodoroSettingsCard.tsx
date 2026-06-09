@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { POMODORO_CONFIG } from '../../config/pomodoroConfig';
 
 type PomodoroSettingsCardProps = {
@@ -18,13 +18,20 @@ const PomodoroSettingsCard = ({ settings, onAdjust, onChangeSetting }: PomodoroS
 		shortBreakMinutes: settings.shortBreakMinutes.toString()
 	});
 
-	useEffect(() => {
+	const [prevSettings, setPrevSettings] = useState(settings);
+
+	if (
+		settings.sessionsPerDay !== prevSettings.sessionsPerDay ||
+		settings.workMinutes !== prevSettings.workMinutes ||
+		settings.shortBreakMinutes !== prevSettings.shortBreakMinutes
+	) {
+		setPrevSettings(settings);
 		setLocalValues({
 			sessionsPerDay: settings.sessionsPerDay.toString(),
 			workMinutes: settings.workMinutes.toString(),
 			shortBreakMinutes: settings.shortBreakMinutes.toString()
 		});
-	}, [settings]);
+	}
 
 	const items = [
 		{

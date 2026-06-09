@@ -28,7 +28,20 @@ const defaultState: PomodoroState = {
 	stats: defaultStats
 };
 
-const usePomodoro = () => {
+interface UsePomodoroReturn {
+	state: PomodoroState;
+	settings: PomodoroSettings;
+	stats: PomodoroStats;
+	start: () => Promise<void>;
+	pause: () => Promise<void>;
+	reset: () => Promise<void>;
+	resetStats: () => Promise<void>;
+	skip: () => Promise<void>;
+	setMode: (mode: PomodoroMode) => Promise<void>;
+	updateSettings: (patch: Partial<PomodoroSettings>) => Promise<void>;
+}
+
+const usePomodoro = (): UsePomodoroReturn => {
 	const [state, setState] = useState<PomodoroState>(defaultState);
 	const [settings, setSettings] = useState<PomodoroSettings>(defaultSettings);
 	const [stats, setStats] = useState<PomodoroStats>(defaultStats);

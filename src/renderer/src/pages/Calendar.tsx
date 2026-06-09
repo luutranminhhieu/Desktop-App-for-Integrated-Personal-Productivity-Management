@@ -118,7 +118,16 @@ const Calendar = (): React.JSX.Element => {
 
 	React.useEffect(() => {
 		if (!userId) return;
-		fetchEventsForRange(rangeStart, rangeEnd).catch(() => undefined);
+		let active = true;
+		const load = async (): Promise<void> => {
+			await Promise.resolve();
+			if (!active) return;
+			await fetchEventsForRange(rangeStart, rangeEnd);
+		};
+		load().catch(() => undefined);
+		return () => {
+			active = false;
+		};
 	}, [fetchEventsForRange, rangeStart, rangeEnd, userId]);
 
 	return (

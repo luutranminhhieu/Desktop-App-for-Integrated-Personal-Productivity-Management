@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { POMODORO_CONFIG } from '../../config/pomodoroConfig';
 
 type PomodoroTimerCardProps = {
@@ -43,11 +43,14 @@ const PomodoroTimerCard = ({
 }: PomodoroTimerCardProps): React.JSX.Element => {
 	const [activeTab, setActiveTab] = useState<'work' | 'short_break' | 'sessions'>('work');
 
-	useEffect(() => {
+	const [prevMode, setPrevMode] = useState(mode);
+
+	if (mode !== prevMode) {
+		setPrevMode(mode);
 		if (mode === 'work' || mode === 'short_break') {
 			setActiveTab(mode);
 		}
-	}, [mode]);
+	}
 
 	const handleTabClick = (tab: 'work' | 'short_break' | 'sessions'): void => {
 		setActiveTab(tab);

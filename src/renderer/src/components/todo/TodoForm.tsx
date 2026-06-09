@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import type { TodoItem, TodoFormData, TodoModalMode } from '@renderer/types';
 import { TODO_CONFIG } from '@renderer/config/todoConfig';
 import { MODAL_CONFIG } from '@renderer/config/modalConfig';
@@ -45,12 +45,17 @@ const TodoForm = ({
 	const [formData, setFormData] = useState<TodoFormData>(defaultFormData);
 	const [error, setError] = useState('');
 
-	useEffect(() => {
+	const [prevOpen, setPrevOpen] = useState(open);
+	const [prevTodo, setPrevTodo] = useState(todo);
+
+	if (open !== prevOpen || todo !== prevTodo) {
+		setPrevOpen(open);
+		setPrevTodo(todo);
 		if (open) {
 			setFormData(todo ? toFormData(todo) : defaultFormData);
 			setError('');
 		}
-	}, [open, todo]);
+	}
 
 	if (!open) return null;
 
