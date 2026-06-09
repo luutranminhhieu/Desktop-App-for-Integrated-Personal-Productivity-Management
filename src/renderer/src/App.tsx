@@ -6,10 +6,8 @@ import ForgotPassword from './pages/ForgotPassword';
 import Login from './pages/Login';
 import MainLayout from './components/layout/MainLayout';
 import Pomodoro from './pages/Pomodoro';
-import Profile from './pages/Profile';
 import Register from './pages/Register';
 import ResetPassword from './pages/ResetPassword';
-import Settings from './pages/Settings';
 import TodoList from './pages/TodoList';
 
 function ProtectedRoute({ children }: { children: React.JSX.Element }): JSX.Element {
@@ -71,8 +69,6 @@ function App(): React.JSX.Element {
         <Route path="/calendar" element={withLayout(<Calendar />)} />
         <Route path="/tasks" element={withLayout(<TodoList />)} />
         <Route path="/focus" element={withLayout(<Pomodoro />)} />
-        <Route path="/profile" element={withLayout(<Profile />)} />
-        <Route path="/settings" element={withLayout(<Settings />)} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
