@@ -3,6 +3,13 @@ import mongoose, { Document, Schema } from 'mongoose';
 export type TodoStatus = 'todo' | 'completed' | 'canceled';
 export type TodoPriority = 'low' | 'medium' | 'high';
 
+export interface ISubTodo {
+	_id: string;
+	title: string;
+	status: 'todo' | 'completed';
+	completedAt?: Date;
+}
+
 export interface ITodo extends Document {
 	title: string;
 	description?: string;
@@ -17,8 +24,23 @@ export interface ITodo extends Document {
 	focusMinutes: number;
 	focusDate?: Date;
 	completedAt?: Date;
-	categoryId?: string | null;
+	categoryId: string | null;
+	subtasks?: ISubTodo[];
 }
+
+const SubTodoSchema = new Schema(
+	{
+		_id: { type: String, required: true },
+		title: { type: String, required: true, trim: true },
+		status: {
+			type: String,
+			enum: ['todo', 'completed'],
+			default: 'todo'
+		},
+		completedAt: { type: Date }
+	},
+	{ _id: false, timestamps: true }
+);
 
 const TodoSchema = new Schema<ITodo>(
 	{
@@ -43,9 +65,11 @@ const TodoSchema = new Schema<ITodo>(
 		focusMinutes: { type: Number, default: 0, min: 0 },
 		focusDate: { type: Date },
 		completedAt: { type: Date },
-		categoryId: { type: String, default: null }
+		categoryId: { type: String, default: null },
+		subtasks: { type: [SubTodoSchema], default: [] }
 	},
 	{ timestamps: true }
 );
 
 export const Todo = mongoose.model<ITodo>('Todo', TodoSchema);
+

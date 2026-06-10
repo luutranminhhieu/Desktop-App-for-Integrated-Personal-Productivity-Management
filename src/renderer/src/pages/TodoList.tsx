@@ -1,318 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import TodoForm from '../components/todo/TodoForm';
+import TodoListComponent from '../components/todo/TodoList';
 import { TODO_CONFIG } from '@renderer/config/todoConfig';
 import type {
 	TodoItem,
 	TodoFormData,
 	TodoModalMode,
-	TodoPriority,
-	TodoStatus
+	TodoStatus,
+	SubTodo
 } from '@renderer/types';
-
-function formatExpired(dueDate: string): string {
-	const diff = Date.now() - new Date(dueDate).getTime();
-	const hours = Math.floor(diff / 3600000);
-	if (hours < 1) return TODO_CONFIG.FORMATS.expiredLessAnHourAgo;
-	if (hours < 24) return TODO_CONFIG.FORMATS.expiredHoursAgo(hours);
-	const days = Math.floor(hours / 24);
-	return TODO_CONFIG.FORMATS.expiredDaysAgo(days);
-}
-
-function formatTime(dueDate: string): string {
-	return new Date(dueDate).toLocaleTimeString('en-US', {
-		hour: 'numeric',
-		minute: '2-digit',
-		hour12: true
-	});
-}
-
-function formatDoneAt(completedAt: string): string {
-	const timeStr = new Date(completedAt).toLocaleTimeString('en-US', {
-		hour: 'numeric',
-		minute: '2-digit',
-		hour12: true
-	});
-	return TODO_CONFIG.FORMATS.doneAt(timeStr);
-}
-
-const PriorityBadge = ({ priority }: { priority: TodoPriority }): React.JSX.Element => {
-	const s = TODO_CONFIG.PRIORITY_BADGES[priority];
-	return (
-		<span
-			className="px-2 py-0.5 rounded text-[11px] font-semibold leading-none tracking-wide"
-			style={{ backgroundColor: s.bg, color: s.text }}
-		>
-			{s.label}
-		</span>
-	);
-};
-
-const TaskCheckbox = ({
-	status,
-	onClick
-}: {
-	status: TodoStatus;
-	onClick: () => void;
-}): React.JSX.Element => {
-	if (status === 'completed') {
-		return (
-			<button
-				onClick={onClick}
-				className="w-4 h-4 bg-[var(--color-success)] flex items-center justify-center rounded-full text-white shrink-0 cursor-pointer hover:opacity-80 transition-colors"
-				type="button"
-			>
-				<span className="material-symbols-outlined font-bold" style={{ fontSize: '12px' }}>
-					check
-				</span>
-			</button>
-		);
-	}
-	if (status === 'canceled') {
-		return (
-			<div className="w-4 h-4 border-2 border-[var(--color-border)] flex items-center justify-center rounded-full text-[var(--color-muted)] shrink-0">
-				<span
-					className="block"
-					style={{ width: '8px', height: '2px', backgroundColor: 'var(--color-muted)' }}
-				/>
-			</div>
-		);
-	}
-	return (
-		<button
-			onClick={onClick}
-			className="w-4 h-4 border-2 border-[var(--color-border)] rounded-full cursor-pointer hover:border-[var(--color-primary)] transition-colors shrink-0"
-			type="button"
-		/>
-	);
-};
-
-interface TaskRowProps {
-	todo: TodoItem;
-	onToggle: (todo: TodoItem) => void;
-	onEdit: (todo: TodoItem) => void;
-	onDelete: (todo: TodoItem) => void;
-	onDragStart: (e: React.DragEvent, todo: TodoItem) => void;
-	onDragEnd: () => void;
-	onDragOver: (e: React.DragEvent, todo: TodoItem) => void;
-	onDrop: (e: React.DragEvent, todo: TodoItem) => void;
-	isDragging?: boolean;
-	isDragOver?: boolean;
-}
-
-const TaskRow = ({
-	todo,
-	onToggle,
-	onEdit,
-	onDelete,
-	onDragStart,
-	onDragEnd,
-	onDragOver,
-	onDrop,
-	isDragging = false,
-	isDragOver = false
-}: TaskRowProps): React.JSX.Element => {
-	const isDone = todo.status === 'completed';
-	const isCanceled = todo.status === 'canceled';
-	const isMuted = isDone || isCanceled;
-	const isOverdue =
-		!isDone &&
-		!isCanceled &&
-		todo.dueDate &&
-		new Date(todo.dueDate) < new Date();
-
-	const rowClasses = [
-		'task-row flex items-center gap-4 px-4 py-3 border-b border-[var(--color-border)] transition-all cursor-grab active:cursor-grabbing select-none',
-		isDone ? 'bg-[var(--color-primary-lighter)]' : '',
-		isMuted ? 'opacity-60' : 'hover:bg-[var(--color-bg)]',
-		isDragging ? 'opacity-30 border-dashed border-[var(--color-primary)] bg-[var(--color-primary-lighter)]' : '',
-		isDragOver ? 'border-t-2 border-t-[var(--color-primary)] bg-[var(--color-primary-light)] bg-opacity-10' : ''
-	]
-		.filter(Boolean)
-		.join(' ');
-
-	return (
-		<div
-			className={rowClasses}
-			draggable="true"
-			onDragStart={(e) => onDragStart(e, todo)}
-			onDragEnd={onDragEnd}
-			onDragOver={(e) => onDragOver(e, todo)}
-			onDrop={(e) => onDrop(e, todo)}
-		>
-			<TaskCheckbox status={todo.status} onClick={() => onToggle(todo)} />
-
-			<div className="flex-1 min-w-0">
-				<div className="flex items-baseline gap-2 min-w-0">
-					<span
-						className={`text-sm font-medium leading-relaxed truncate shrink-0 max-w-[60%] ${
-							isMuted ? 'text-[var(--color-muted)]' : 'text-[var(--color-text)]'
-						} ${isDone ? 'line-through' : ''}`}
-					>
-						{todo.title}
-					</span>
-					{todo.description && (
-						<span
-							className={`text-xs truncate text-[var(--color-muted)] flex-grow flex-shrink min-w-0 ${
-								isMuted ? 'opacity-70' : ''
-							}`}
-							title={todo.description}
-						>
-							— {todo.description}
-						</span>
-					)}
-				</div>
-				<div className="flex items-center gap-4 mt-1 flex-wrap">
-					{/* Priority badge (only for active tasks) */}
-					{!isDone && !isCanceled && <PriorityBadge priority={todo.priority} />}
-
-					{/* Expired indicator */}
-					{isOverdue && todo.dueDate && (
-						<span className="flex items-center gap-1 text-[var(--color-error)] text-xs font-medium leading-snug">
-							<span
-								className="material-symbols-outlined"
-								style={{ fontSize: '14px' }}
-							>
-								event
-							</span>
-
-							{formatExpired(todo.dueDate)}
-						</span>
-					)}
-
-					{/* Time for non-overdue active tasks */}
-					{!isOverdue && !isDone && !isCanceled && todo.dueDate && (
-						<span className="text-[var(--color-muted)] text-xs font-medium leading-snug">
-							{formatTime(todo.dueDate)}
-						</span>
-					)}
-
-					{/* Done timestamp */}
-					{isDone && todo.completedAt && (
-						<span className="text-[var(--color-muted)] text-xs font-medium leading-snug">
-							{formatDoneAt(todo.completedAt)}
-						</span>
-					)}
-
-					{/* Canceled label */}
-					{isCanceled && (
-						<span className="text-[var(--color-muted)] text-xs font-medium leading-snug italic">
-							{TODO_CONFIG.STRINGS.skipped}
-						</span>
-					)}
-
-					{/* Tags (compact) */}
-					{todo.tags.length > 0 && (
-						<div className="flex gap-1">
-							{todo.tags.slice(0, 2).map((tag) => (
-								<span
-									key={tag}
-									className="px-1.5 py-px text-[10px] bg-[var(--color-primary-lighter)] text-[var(--color-primary)] rounded"
-								>
-									#{tag}
-								</span>
-							))}
-							{todo.tags.length > 2 && (
-								<span className="px-1.5 py-px text-[10px] bg-[var(--color-primary-lighter)] text-[var(--color-primary)] rounded">
-									+{todo.tags.length - 2}
-								</span>
-							)}
-						</div>
-					)}
-				</div>
-			</div>
-
-			<div className="flex items-center gap-1">
-				<button
-					className="task-actions opacity-0 text-[var(--color-muted)] hover:text-[var(--color-primary)] transition-opacity p-1 cursor-pointer"
-					onClick={(e) => {
-						e.stopPropagation();
-						onEdit(todo);
-					}}
-					type="button"
-				>
-					<span className="material-symbols-outlined">more_horiz</span>
-				</button>
-				<button
-					className="task-actions opacity-0 text-[var(--color-muted)] hover:text-[var(--color-error)] transition-opacity p-1 cursor-pointer"
-					onClick={(e) => {
-						e.stopPropagation();
-						onDelete(todo);
-					}}
-					type="button"
-					title="Xóa nhanh"
-				>
-					<span className="material-symbols-outlined" style={{ fontSize: '20px' }}>close</span>
-				</button>
-			</div>
-		</div>
-	);
-};
-
-interface TaskGroupProps {
-	title?: string;
-	todos: TodoItem[];
-	onToggle: (todo: TodoItem) => void;
-	onEdit: (todo: TodoItem) => void;
-	onDelete: (todo: TodoItem) => void;
-	onDragStart: (e: React.DragEvent, todo: TodoItem) => void;
-	onDragEnd: () => void;
-	onDragOverTask: (e: React.DragEvent, todo: TodoItem) => void;
-	onDropTask: (e: React.DragEvent, todo: TodoItem) => void;
-	draggingTodoId?: string | null;
-	dragOverTodoId?: string | null;
-}
-
-const TaskGroup = ({
-	title,
-	todos,
-	onToggle,
-	onEdit,
-	onDelete,
-	onDragStart,
-	onDragEnd,
-	onDragOverTask,
-	onDropTask,
-	draggingTodoId,
-	dragOverTodoId
-}: TaskGroupProps): React.JSX.Element => (
-	<div className="space-y-4">
-		{title && (
-			<header className="flex items-center justify-between border-b border-[var(--color-border)] pb-2">
-				<h2 className="text-lg font-semibold leading-tight text-[var(--color-text)]">
-					{title}{' '}
-					<span className="text-[var(--color-muted)] font-normal ml-2">
-						— {todos.length} {TODO_CONFIG.STRINGS.tasksCount}
-					</span>
-				</h2>
-			</header>
-		)}
-
-		{todos.length > 0 ? (
-			<div className="bg-[var(--color-bg)] rounded-lg border border-[var(--color-border)] overflow-hidden">
-				{todos.map((todo) => (
-					<TaskRow
-						key={todo._id}
-						todo={todo}
-						onToggle={onToggle}
-						onEdit={onEdit}
-						onDelete={onDelete}
-						onDragStart={onDragStart}
-						onDragEnd={onDragEnd}
-						onDragOver={onDragOverTask}
-						onDrop={onDropTask}
-						isDragging={draggingTodoId === todo._id}
-						isDragOver={dragOverTodoId === todo._id}
-					/>
-				))}
-			</div>
-		) : (
-			<div className="bg-[var(--color-bg)] rounded-lg border border-[var(--color-border)] p-8 text-center">
-				<p className="text-sm text-[var(--color-muted)]">{TODO_CONFIG.STRINGS.noTasksInGroup}</p>
-			</div>
-		)}
-	</div>
-);
-
 
 /* ════════════════════════════════════════════════════════════ */
 /*  Main TodoList Page                                         */
@@ -335,6 +31,8 @@ const TodoList = (): React.JSX.Element => {
 	const [todos, setTodos] = useState<TodoItem[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState('');
+	const [expandedTodos, setExpandedTodos] = useState<Record<string, boolean>>({});
+	const [focusTodoId, setFocusTodoId] = useState<string | null>(null);
 
 	/* ── UI state ── */
 	const [activeFilter, setActiveFilter] = useState<'all' | TodoStatus>('all');
@@ -439,6 +137,102 @@ const TodoList = (): React.JSX.Element => {
 	const reloadData = useCallback(async (): Promise<void> => {
 		await fetchTodos();
 	}, [fetchTodos]);
+
+	/* ── Subtask Handlers ── */
+	const handleToggleExpand = (todoId: string, forceFocus: boolean): void => {
+		setExpandedTodos((prev) => {
+			const nextVal = !prev[todoId];
+			if (nextVal && forceFocus) {
+				setFocusTodoId(todoId);
+			}
+			return { ...prev, [todoId]: nextVal };
+		});
+	};
+
+	const handleSubtaskToggle = async (todo: TodoItem, subtaskId: string): Promise<void> => {
+		if (!userId) return;
+		const updatedSubtasks = (todo.subtasks || []).map((sub) => {
+			if (sub._id === subtaskId) {
+				const newStatus = sub.status === 'completed' ? 'todo' : 'completed';
+				return {
+					...sub,
+					status: newStatus,
+					completedAt: newStatus === 'completed' ? new Date().toISOString() : undefined
+				} as SubTodo;
+			}
+			return sub;
+		});
+
+		const response = await window.api.todo.update(
+			todo._id,
+			{ subtasks: updatedSubtasks },
+			userId
+		);
+		if (!response.success) {
+			setError(response.error || 'Failed to update subtask status');
+			return;
+		}
+		await reloadData();
+	};
+
+	const handleSubtaskDelete = async (todo: TodoItem, subtaskId: string): Promise<void> => {
+		if (!userId) return;
+		const updatedSubtasks = (todo.subtasks || []).filter((sub) => sub._id !== subtaskId);
+
+		const response = await window.api.todo.update(
+			todo._id,
+			{ subtasks: updatedSubtasks },
+			userId
+		);
+		if (!response.success) {
+			setError(response.error || 'Failed to delete subtask');
+			return;
+		}
+		await reloadData();
+	};
+
+	const handleSubtaskCreate = async (todo: TodoItem, title: string): Promise<void> => {
+		if (!userId) return;
+		const newSubtask: SubTodo = {
+			_id: window.crypto.randomUUID(),
+			title,
+			status: 'todo'
+		};
+		const updatedSubtasks = [...(todo.subtasks || []), newSubtask];
+
+		const response = await window.api.todo.update(
+			todo._id,
+			{ subtasks: updatedSubtasks },
+			userId
+		);
+		if (!response.success) {
+			setError(response.error || 'Failed to create subtask');
+			return;
+		}
+		setExpandedTodos((prev) => ({ ...prev, [todo._id]: true }));
+		await reloadData();
+	};
+
+	const handleSubtaskEdit = async (todo: TodoItem, subtaskId: string, title: string): Promise<void> => {
+		if (!userId) return;
+		const updatedSubtasks = (todo.subtasks || []).map((sub) => {
+			if (sub._id === subtaskId) {
+				return { ...sub, title } as SubTodo;
+			}
+			return sub;
+		});
+
+		const response = await window.api.todo.update(
+			todo._id,
+			{ subtasks: updatedSubtasks },
+			userId
+		);
+		if (!response.success) {
+			setError(response.error || 'Failed to edit subtask');
+			return;
+		}
+		await reloadData();
+	};
 
 	/* ── Drag & Drop Handlers ── */
 	const handleDragStart = (e: React.DragEvent, todo: TodoItem): void => {
@@ -608,7 +402,7 @@ const TodoList = (): React.JSX.Element => {
 		setModalMode('edit');
 		setModalOpen(true);
 	};
-	
+
 	return (
 		<div className="max-w-[1200px] mx-auto h-[calc(100vh-60px)] flex flex-col overflow-hidden">
 
@@ -808,7 +602,7 @@ const TodoList = (): React.JSX.Element => {
 
 				{!loading && filteredTodos.length > 0 && (
 					<section className="space-y-8">
-						<TaskGroup
+						<TodoListComponent
 							todos={filteredTodos}
 							onToggle={handleToggleStatus}
 							onEdit={openEditModal}
@@ -819,6 +613,14 @@ const TodoList = (): React.JSX.Element => {
 							onDropTask={handleDropTask}
 							draggingTodoId={draggingTodo?._id}
 							dragOverTodoId={dragOverTodoId}
+							expandedTodos={expandedTodos}
+							onToggleExpand={handleToggleExpand}
+							onSubtaskToggle={handleSubtaskToggle}
+							onSubtaskDelete={handleSubtaskDelete}
+							onSubtaskCreate={handleSubtaskCreate}
+							onSubtaskEdit={handleSubtaskEdit}
+							focusTodoId={focusTodoId}
+							setFocusTodoId={setFocusTodoId}
 						/>
 					</section>
 				)}

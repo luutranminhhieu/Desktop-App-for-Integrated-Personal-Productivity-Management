@@ -10,6 +10,13 @@ function toDate(val: unknown): Date {
   return new Date(val as string);
 }
 
+export const SubTodoSchema = z.object({
+  _id: z.string().optional(),
+  title: z.string().min(1, 'Subtask title is required'),
+  status: z.enum(['todo', 'completed']).default('todo'),
+  completedAt: z.string().nullable().optional()
+});
+
 export const CreateTodoSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   description: z.string().optional(),
@@ -24,7 +31,8 @@ export const CreateTodoSchema = z.object({
   focusMinutes: z.number().nonnegative().default(0),
   focusDate: z.string().optional(),
   completedAt: z.string().optional(),
-  categoryId: z.string().nullable().optional()
+  categoryId: z.string().nullable().optional(),
+  subtasks: z.array(SubTodoSchema).optional()
 });
 
 export const UpdateTodoSchema = z.object({
@@ -43,7 +51,8 @@ export const UpdateTodoSchema = z.object({
     focusMinutes: z.number().nonnegative().optional(),
     focusDate: z.string().nullable().optional(),
     completedAt: z.string().nullable().optional(),
-    categoryId: z.string().nullable().optional()
+    categoryId: z.string().nullable().optional(),
+    subtasks: z.array(SubTodoSchema).optional()
   })
 });
 
