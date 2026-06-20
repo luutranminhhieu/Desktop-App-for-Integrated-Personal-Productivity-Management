@@ -162,7 +162,6 @@ export const TodoItem: React.FC<TodoItemProps> = ({
 						}}
 						className="w-6 h-6 flex items-center justify-center rounded hover:bg-[var(--color-primary-lighter)] text-[var(--color-muted)] hover:text-[var(--color-primary)] transition-colors cursor-pointer"
 						type="button"
-						title={todo.subtasks && todo.subtasks.length > 0 ? "Thu gọn/Mở rộng subtask" : "Thêm subtask"}
 					>
 						<span className="material-symbols-outlined" style={{ fontSize: '18px' }}>
 							{todo.subtasks && todo.subtasks.length > 0

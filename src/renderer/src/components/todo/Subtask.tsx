@@ -153,7 +153,7 @@ export const NewSubtaskForm = ({ todo, onCreate, focusOnMount = false, setFocusO
 				type="button"
 			>
 				<span className="material-symbols-outlined" style={{ fontSize: '16px' }}>add</span>
-				<span>Thêm subtask</span>
+				<span>Add Subtask</span>
 			</button>
 		);
 	}
@@ -165,7 +165,7 @@ export const NewSubtaskForm = ({ todo, onCreate, focusOnMount = false, setFocusO
 				type="text"
 				value={title}
 				onChange={(e) => setTitle(e.target.value)}
-				placeholder="Nhập tiêu đề subtask..."
+				placeholder="Enter subtask title..."
 				onKeyDown={(e) => {
 					if (e.key === 'Enter') handleAdd();
 					if (e.key === 'Escape') handleCancel();
