@@ -1,10 +1,10 @@
-# 🎯 promos
+# promos
 
 > Cross-platform desktop application for integrated personal productivity management. Built with **Electron + React 19 + TypeScript + Tailwind CSS** and connected directly to **MongoDB Atlas**.
 
 ---
 
-## 🚀 Key Modules
+## Key Modules
 
 *   **Smart Todo List**: Priority-based task management with rich text notes (Tiptap Editor) and a Kanban board layout.
 *   **Integrated Calendar**: Dynamic calendar view (FullCalendar) mapping task deadlines dynamically without redundant databases.
@@ -13,7 +13,7 @@
 
 ---
 
-## 🛠️ Quick Start
+## Quick Start
 
 ### 1. Environment Configuration
 Create a local `.env` file at the project root by copying the template file:
@@ -40,10 +40,3 @@ npm run dev
 ```bash
 # Build for Windows (.exe)
 npm run build:win
-
-# Build for macOS (.dmg)
-npm run build:mac
-
-# Build for Linux (.AppImage)
-npm run build:linux
-```
