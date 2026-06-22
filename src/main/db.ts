@@ -10,7 +10,7 @@ try {
   envPath = app.isPackaged
     ? join(dirname(app.getPath('exe')), '.env')
     : join(process.cwd(), '.env');
-} catch (error) {
+} catch {
   envPath = join(process.cwd(), '.env');
 }
 
