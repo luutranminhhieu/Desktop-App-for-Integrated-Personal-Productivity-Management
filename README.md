@@ -40,10 +40,3 @@ npm run dev
 ```bash
 # Build for Windows (.exe)
 npm run build:win
-
-# Build for macOS (.dmg)
-npm run build:mac
-
-# Build for Linux (.AppImage)
-npm run build:linux
-```
