@@ -1,8 +1,20 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import { logger } from './utils/logger';
+import { app } from 'electron';
+import { join, dirname } from 'path';
 
-dotenv.config();
+// Load env variables from executable directory in production, or cwd in development
+let envPath: string;
+try {
+  envPath = app.isPackaged
+    ? join(dirname(app.getPath('exe')), '.env')
+    : join(process.cwd(), '.env');
+} catch (error) {
+  envPath = join(process.cwd(), '.env');
+}
+
+dotenv.config({ path: envPath });
 
 export const connectDB = async (): Promise<void> => {
   try {

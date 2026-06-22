@@ -2,6 +2,9 @@ appId: com.promos.app
 productName: Promos
 directories:
   buildResources: build
+extraFiles:
+  - from: .env
+    to: .env
 files:
   - '!**/.vscode/*'
   - '!src/*'
