@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import UserProfile from './UserProfile';
 
-type SidebarKey = 'dashboard' | 'calendar' | 'tasks' | 'notes' | 'focus';
+type SidebarKey = 'dashboard' | 'calendar' | 'tasks' | 'focus';
 
 const navItems: Array<{ key: SidebarKey; label: string; icon: string; path: string }> = [
 	{ key: 'dashboard', label: 'Dashboard', icon: 'dashboard', path: '/' },
