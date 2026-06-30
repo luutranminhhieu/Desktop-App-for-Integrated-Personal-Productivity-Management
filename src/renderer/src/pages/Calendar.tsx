@@ -30,7 +30,7 @@ const Calendar = (): React.JSX.Element => {
 	const [monthDate, setMonthDate] = useState<Dayjs>(dayjs());
 	const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
 	const [events, setEvents] = useState<CalendarEventRecord[]>([]);
-	const [loadingEvents, setLoadingEvents] = useState(false);
+
 	const [eventsError, setEventsError] = useState('');
 	const [selectedEvent, setSelectedEvent] = useState<CalendarEventRecord | null>(null);
 	const calendarRef = useRef<FullCalendar | null>(null);
@@ -61,7 +61,6 @@ const Calendar = (): React.JSX.Element => {
 	const fetchEventsForRange = useCallback(
 		async (start: Dayjs, end: Dayjs): Promise<void> => {
 			if (!userId) return;
-			setLoadingEvents(true);
 			setEventsError('');
 			const response = await window.api.calendar.listRange(
 				userId,
@@ -71,12 +70,10 @@ const Calendar = (): React.JSX.Element => {
 
 			if (!response.success || !response.data) {
 				setEventsError(response.error || CALENDAR_CONFIG.STRINGS.fetchError);
-				setLoadingEvents(false);
 				return;
 			}
 
 			setEvents(response.data as CalendarEventRecord[]);
-			setLoadingEvents(false);
 		},
 		[userId]
 	);
@@ -89,7 +86,6 @@ const Calendar = (): React.JSX.Element => {
 		setMonthDate(startDay);
 		fetchEventsForRange(startDay, endDay).catch(() => {
 			setEventsError(CALENDAR_CONFIG.STRINGS.fetchError);
-			setLoadingEvents(false);
 		});
 	};
 
@@ -145,8 +141,6 @@ const Calendar = (): React.JSX.Element => {
 					<div className="flex flex-col gap-4">
 						<div className="flex items-center justify-between">
 							<h4 className="text-[15px] font-bold">{CALENDAR_CONFIG.STRINGS.taskDetailsHeader}</h4>
-							<span className="text-xs font-bold text-[var(--color-muted)] bg-[var(--color-primary-lighter)] px-2 rounded">
-							</span>
 						</div>
 						{selectedEvent ? (
 							<div className="p-4 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-lg shadow-sm">
@@ -248,7 +242,6 @@ const Calendar = (): React.JSX.Element => {
 							onDatesChange={handleDatesChange}
 							onEventClick={handleEventClick}
 						/>
-						{loadingEvents}
 					</div>
 				</section>
 			</div>
