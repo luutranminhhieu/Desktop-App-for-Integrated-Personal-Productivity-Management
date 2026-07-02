@@ -1,10 +1,6 @@
 # ⚡ FocusHub — Integrated Personal Productivity Management
 
 <p align="center">
-  <img src="resources/focushub_banner.png" alt="FocusHub Banner" width="100%">
-</p>
-
-<p align="center">
   <a href="https://github.com/luutranminhhieu/Desktop-App-for-Integrated-Personal-Productivity-Management">
     <img src="https://img.shields.io/badge/Version-1.0.0-blue.svg?style=for-the-badge" alt="Version">
   </a>
