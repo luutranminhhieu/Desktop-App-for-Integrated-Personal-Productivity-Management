@@ -1,4 +1,4 @@
-# ⚡ FocusHub — Integrated Personal Productivity Management
+# ⚡ Promos — Integrated Personal Productivity Management
 
 <p align="center">
   <a href="https://github.com/luutranminhhieu/Desktop-App-for-Integrated-Personal-Productivity-Management">
@@ -26,15 +26,15 @@
 ## About the Project
 
 ### What does the project do?
-**FocusHub** (original project name: *promos*) is a cross-platform desktop application for integrated personal productivity management (**Integrated Personal Productivity Management**). The project is meticulously designed to provide users with a seamless, efficient, and minimalist workspace.
+**Promos** (original project name: *promos*) is a cross-platform desktop application for integrated personal productivity management (**Integrated Personal Productivity Management**). The project is meticulously designed to provide users with a seamless, efficient, and minimalist workspace.
 
 ### Why was it created?
-In modern work environments, tool fragmentation (taking notes, scheduling, tracking tasks, and using Pomodoro timers across different software) leads to distraction due to constant context switching (**Context Switching**). FocusHub was born to address this issue by integrating all core productivity utilities into a single, unified desktop window.
+In modern work environments, tool fragmentation (taking notes, scheduling, tracking tasks, and using Pomodoro timers across different software) leads to distraction due to constant context switching (**Context Switching**). Promos was born to address this issue by integrating all core productivity utilities into a single, unified desktop window.
 
-### 🛠️ Key Solutions & Features
+### Key Solutions & Features
 *   **Avoid Distraction**: Consolidates note-taking, planning, Pomodoro tracking, and progress monitoring into a single, cohesive application.
 *   **Prevent CPU Throttling**: The Pomodoro timer runs directly in the background process (Node.js Main Process) instead of the Renderer/Browser, ensuring absolute accuracy even when the application is minimized.
-*   **Smart Time Synchronization**: Automatically maps task deadlines into calendar events on the Lịch biểu (FullCalendar) without requiring redundant data entry.
+*   **Smart Time Synchronization**: Automatically maps task deadlines into calendar events on the Schedule (FullCalendar) without requiring redundant data entry.
 *   **Visual Productivity Reporting**: A 12-week productivity heatmap helps users review and evaluate their daily focus efforts at a glance.
 
 ---
