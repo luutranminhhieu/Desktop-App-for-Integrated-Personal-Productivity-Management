@@ -157,6 +157,7 @@ export interface ITodoAPI {
   update: (todoId: string, updates: Partial<TodoItem>, userId: string) => Promise<{ success: boolean; data?: TodoItem; error?: string }>;
   delete: (todoId: string, userId: string) => Promise<{ success: boolean; error?: string }>;
   stats: (userId: string) => Promise<{ success: boolean; data?: TaskStats; error?: string }>;
+  reorder: (orderedIds: string[], userId: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 export interface IDashboardAPI {

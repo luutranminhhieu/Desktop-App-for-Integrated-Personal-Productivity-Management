@@ -19,7 +19,8 @@ const api = {
     list: (options) => ipcRenderer.invoke('todo:list', options),
     update: (todoId, updates, userId) => ipcRenderer.invoke('todo:update', { todoId, updates, userId }),
     delete: (todoId, userId) => ipcRenderer.invoke('todo:delete', { todoId, userId }),
-    stats: (userId) => ipcRenderer.invoke('todo:stats', { userId })
+    stats: (userId) => ipcRenderer.invoke('todo:stats', { userId }),
+    reorder: (orderedIds, userId) => ipcRenderer.invoke('todo:reorder', { orderedIds, userId })
   },
   dashboard: {
     getStats: (userId, focusRange) => ipcRenderer.invoke('dashboard:getStats', { userId, focusRange })
