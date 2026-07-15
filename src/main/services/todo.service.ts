@@ -88,7 +88,7 @@ export class TodoService {
 		}
 
 		const todos = await Todo.find(filter)
-			.sort({ dueDate: 1, createdAt: -1 })
+			.sort({ sortOrder: 1, dueDate: 1, createdAt: -1 })
 			.limit(options.limit ?? DEFAULT_LIST_LIMIT)
 			.lean();
 		return todos as unknown as ITodo[];
@@ -98,7 +98,7 @@ export class TodoService {
 		const todo = await Todo.findOneAndUpdate(
 			{ _id: todoId, userId: new mongoose.Types.ObjectId(userId) },
 			updates,
-			{ new: true }
+			{ returnDocument: 'after' }
 		).lean();
 
 		if (!todo) {
@@ -175,6 +175,17 @@ export class TodoService {
 		}
 
 		return { startDate: formatDateKey(startDate), values };
+	}
+
+	public async reorderTodos(orderedIds: string[], userId: string): Promise<void> {
+		const uid = new mongoose.Types.ObjectId(userId);
+		const bulkOps = orderedIds.map((id, index) => ({
+			updateOne: {
+				filter: { _id: new mongoose.Types.ObjectId(id), userId: uid },
+				update: { $set: { sortOrder: index } }
+			}
+		}));
+		await Todo.bulkWrite(bulkOps);
 	}
 }
 

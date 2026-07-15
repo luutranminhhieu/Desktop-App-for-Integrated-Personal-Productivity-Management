@@ -94,5 +94,16 @@ export function registerTodoIPC(): void {
 			return { success: false, error: (error as Error).message };
 		}
 	});
+
+	ipcMain.handle('todo:reorder', async (_, { orderedIds, userId }) => {
+		try {
+			const safeUserId = toIdString(userId);
+			await todoService.reorderTodos(orderedIds, safeUserId);
+			return { success: true };
+		} catch (error) {
+			logger.error('Error in todo:reorder', error);
+			return { success: false, error: (error as Error).message };
+		}
+	});
 }
 

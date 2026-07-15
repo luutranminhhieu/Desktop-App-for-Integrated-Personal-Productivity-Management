@@ -25,6 +25,7 @@ export interface ITodo extends Document {
 	focusDate?: Date;
 	completedAt?: Date;
 	categoryId: string | null;
+	sortOrder: number;
 	subtasks?: ISubTodo[];
 }
 
@@ -66,6 +67,7 @@ const TodoSchema = new Schema<ITodo>(
 		focusDate: { type: Date },
 		completedAt: { type: Date },
 		categoryId: { type: String, default: null },
+		sortOrder: { type: Number, default: 0 },
 		subtasks: { type: [SubTodoSchema], default: [] }
 	},
 	{ timestamps: true }

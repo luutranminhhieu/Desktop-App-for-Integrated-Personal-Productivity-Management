@@ -267,6 +267,12 @@ const TodoList = (): React.JSX.Element => {
 			if (draggedIndex !== -1 && targetIndex !== -1) {
 				const [removed] = result.splice(draggedIndex, 1);
 				result.splice(targetIndex, 0, removed);
+
+				// Lưu thứ tự mới xuống DB
+				const orderedIds = result.map((t) => t._id);
+				if (userId) {
+					window.api.todo.reorder(orderedIds, userId);
+				}
 			}
 			return result;
 		});
